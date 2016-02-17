@@ -1,5 +1,5 @@
 {
-    "name": "atom/uploader",
+    "name": "atom-azimov/uploader",
     "description": "A lightweight PHP library to file uploads with ORM embeddable objects, ORM entities, etc.",
     "license": "MIT",
     "type": "package",
