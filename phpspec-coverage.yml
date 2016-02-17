@@ -1,0 +1,9 @@
+code_generation: false
+extensions:
+  - PhpSpec\Extension\CodeCoverageExtension
+code_coverage: ~
+
+suites:
+  default:
+    namespace: 'Atom'
+    psr4_prefix: 'Atom'

@@ -1,0 +1,5 @@
+code_generation: false
+suites:
+  default:
+    namespace: 'Atom\Uploader'
+    psr4_prefix: 'Atom\Uploader'
