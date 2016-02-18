@@ -21,35 +21,43 @@ trait Uploadable
      */
     protected $fileInfo;
 
-    public function __construct(\SplFileInfo $file) {
+    public function __construct(\SplFileInfo $file)
+    {
         $this->file = $file;
     }
 
-    public function getFile() {
+    public function getFile()
+    {
         return $this->file;
     }
 
-    public function setFile($file) {
+    public function setFile($file)
+    {
         $this->file = $file;
     }
 
-    public function getUri() {
+    public function getUri()
+    {
         return $this->uri;
     }
 
-    public function setUri($uri) {
+    public function setUri($uri)
+    {
         $this->uri = $uri;
     }
 
-    public function getFileInfo() {
+    public function getFileInfo()
+    {
         return $this->fileInfo;
     }
 
-    public function setFileInfo(\SplFileInfo $fileInfo) {
+    public function setFileInfo(\SplFileInfo $fileInfo)
+    {
         $this->fileInfo = $fileInfo;
     }
 
-    public function toArray() {
+    public function toArray()
+    {
         return [
             'file' => (string)$this->file,
             'uri' => (string)$this->uri,
@@ -57,7 +65,8 @@ trait Uploadable
         ];
     }
 
-    public function __toString() {
+    public function __toString()
+    {
         return (string)$this->file;
     }
 }

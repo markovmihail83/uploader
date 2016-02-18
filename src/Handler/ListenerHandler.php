@@ -16,17 +16,20 @@ class ListenerHandler
 
     private $uploadHandler;
 
-    public function __construct(IContainer $container) {
+    public function __construct(IContainer $container)
+    {
         $this->container = $container;
         $this->uploadedFiles = [];
         $this->movedFiles = [];
     }
 
-    private function getUploadHandler() {
+    private function getUploadHandler()
+    {
         return $this->uploadHandler ?: $this->uploadHandler = $this->container->getUploadHandler();
     }
 
-    public function prePersist($id, $fileReference) {
+    public function prePersist($id, $fileReference)
+    {
         if (!$this->hasUploadedFile($fileReference)) {
             return;
         }
@@ -35,11 +38,13 @@ class ListenerHandler
         $this->uploadedFiles[$id] = $fileReference;
     }
 
-    public function postPersist($id) {
+    public function postPersist($id)
+    {
         $this->detachUploadedFile($id);
     }
 
-    public function preUpdate($id, $fileReference, $oldFileReference) {
+    public function preUpdate($id, $fileReference, $oldFileReference)
+    {
         if (!$this->hasUploadedFile($fileReference)) {
             return;
         }
@@ -54,12 +59,14 @@ class ListenerHandler
         }
     }
 
-    public function postUpdate($id) {
+    public function postUpdate($id)
+    {
         $this->detachUploadedFile($id);
         $this->deleteMovedFile($id);
     }
 
-    public function postLoad($fileReference) {
+    public function postLoad($fileReference)
+    {
         if (!$fileReference) {
             return;
         }
@@ -70,7 +77,8 @@ class ListenerHandler
         $uploadHandler->injectFileInfo($fileReference);
     }
 
-    public function postRemove($fileReference) {
+    public function postRemove($fileReference)
+    {
         if (!$fileReference) {
             return;
         }
@@ -78,7 +86,8 @@ class ListenerHandler
         $this->getUploadHandler()->delete($fileReference);
     }
 
-    public function postFlush() {
+    public function postFlush()
+    {
         if (empty($this->uploadedFiles)) {
             return;
         }
@@ -90,20 +99,23 @@ class ListenerHandler
         }
     }
 
-    private function deleteMovedFile($id) {
+    private function deleteMovedFile($id)
+    {
         if (isset($this->movedFiles[$id])) {
             $this->getUploadHandler()->delete($this->movedFiles[$id], true);
             unset($this->movedFiles[$id]);
         }
     }
 
-    private function detachUploadedFile($id) {
+    private function detachUploadedFile($id)
+    {
         if (isset($this->uploadedFiles[$id])) {
             unset($this->uploadedFiles[$id]);
         }
     }
 
-    private function hasUploadedFile($fileReference) {
+    private function hasUploadedFile($fileReference)
+    {
         return $fileReference && $this->getUploadHandler()->hasUploadedFile($fileReference);
     }
 

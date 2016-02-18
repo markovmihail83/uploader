@@ -81,11 +81,13 @@ class FileMetadataSpec extends ObjectBehavior
         $this->getNamingStrategy()->shouldBe(self::NAMING_STRATEGY);
     }
 
-    function it_should_check_injectable_uri() {
+    function it_should_check_injectable_uri()
+    {
         $this->isInjectableUri()->shouldBe(self::INJECT_URI_ON_LOAD);
     }
 
-    function it_should_check_injectable_file_info() {
+    function it_should_check_injectable_file_info()
+    {
         $this->isInjectableFileInfo()->shouldBe(self::INJECT_FILE_INFO_ON_LOAD);
     }
 

@@ -11,12 +11,14 @@ class MetadataFactory
 
     private $metadataIdentityMap;
 
-    public function __construct(array $metadataIds, array $metadataIdentityMap) {
+    public function __construct(array $metadataIds, array $metadataIdentityMap)
+    {
         $this->metadataIdentityMap = $metadataIds;
         $this->metadataCollection = $metadataIdentityMap;
     }
 
-    public function getMetadata($className) {
+    public function getMetadata($className)
+    {
         if (is_object($className)) {
             $className = get_class($className);
         }
@@ -36,7 +38,8 @@ class MetadataFactory
         return $metadata;
     }
 
-    public function hasMetadata($className) {
+    public function hasMetadata($className)
+    {
         if (is_object($className)) {
             $className = get_class($className);
         }
@@ -49,7 +52,8 @@ class MetadataFactory
      *
      * @return FileMetadata
      */
-    private function createMetadata(array $metadata) {
+    private function createMetadata(array $metadata)
+    {
         $newMetadata = new FileMetadata(
             $metadata['file_setter'],
             $metadata['file_getter'],

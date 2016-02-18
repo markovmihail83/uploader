@@ -4,7 +4,8 @@ namespace Atom\Uploader\Storage;
 
 class LocalStorage implements IStorage
 {
-    public function writeStream($prefix, $path, $resource) {
+    public function writeStream($prefix, $path, $resource)
+    {
         $location = $this->applyPathPrefix($prefix, $path);
         $this->ensureDirectory(dirname($location));
         $writeStream = @fopen($location, 'w+');
@@ -18,19 +19,22 @@ class LocalStorage implements IStorage
         return fclose($writeStream);
     }
 
-    public function delete($prefix, $path) {
+    public function delete($prefix, $path)
+    {
         $location = $this->applyPathPrefix($prefix, $path);
 
         return is_file($location) && @unlink($location);
     }
 
-    private function ensureDirectory($dir) {
+    private function ensureDirectory($dir)
+    {
         if (!is_dir($dir)) {
             mkdir($dir, 0755, true);
         }
     }
 
-    private function applyPathPrefix($prefix, $path) {
+    private function applyPathPrefix($prefix, $path)
+    {
         $path = ltrim($path, '\\/');
         $prefix = rtrim($prefix, '\\/');
 
@@ -43,7 +47,8 @@ class LocalStorage implements IStorage
         return str_replace(':\\\\', '://', $path);
     }
 
-    public function resolveFileInfo($prefix, $path) {
+    public function resolveFileInfo($prefix, $path)
+    {
         if (empty($path)) {
             return null;
         }

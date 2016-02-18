@@ -17,15 +17,18 @@ class LocalStorageSpec extends ObjectBehavior
 
     private $fsPrefix;
 
-    function __construct() {
+    function __construct()
+    {
         $this->fsPrefix = self::virtualPath(uniqid());
     }
 
-    function let() {
+    function let()
+    {
         self::createFile(self::joinPath($this->fsPrefix, self::PATH));
     }
 
-    function letGo() {
+    function letGo()
+    {
         $filePath = self::joinPath($this->fsPrefix, self::PATH);
 
         if (file_exists($filePath)) {
@@ -33,42 +36,50 @@ class LocalStorageSpec extends ObjectBehavior
         }
     }
 
-    function it_should_not_write_file_when_could_not_create_file() {
+    function it_should_not_write_file_when_could_not_create_file()
+    {
         $location = self::joinPath($this->fsPrefix, self::PATH);
         @unlink($location);
         @chmod(dirname($location), 0400);
         $this->writeStream($this->fsPrefix, self::PATH, tmpfile())->shouldBe(false);
     }
 
-    function it_should_write_stream() {
+    function it_should_write_stream()
+    {
         $fileName = uniqid('directory/');
         $this->writeStream($this->fsPrefix, $fileName, tmpfile())->shouldBe(true);
         $filePath = self::joinPath($this->fsPrefix, $fileName);
         Test::assertTrue(file_exists($filePath));
     }
 
-    function it_should_delete_file() {
+    function it_should_delete_file()
+    {
         $this->delete($this->fsPrefix, self::PATH);
         Test::assertFalse(file_exists(self::joinPath($this->fsPrefix, self::PATH)));
     }
 
-    function it_should_not_delete_when_file_not_found() {
+    function it_should_not_delete_when_file_not_found()
+    {
         $this->delete($this->fsPrefix, 'not/existen/file')->shouldBe(false);
     }
 
-    function it_should_not_delete_when_path_is_empty($fs, $handler) {
+    function it_should_not_delete_when_path_is_empty($fs, $handler)
+    {
         $this->delete($this->fsPrefix, '')->shouldBe(false);
     }
 
-    function it_should_resolve_file_info() {
+    function it_should_resolve_file_info()
+    {
         $this->resolveFileInfo($this->fsPrefix, self::PATH)->shouldBeAnInstanceOf(\SplFileInfo::class);
     }
 
-    function it_should_not_resolve_file_info_when_path_is_empty($fs) {
+    function it_should_not_resolve_file_info_when_path_is_empty($fs)
+    {
         $this->resolveFileInfo($this->fsPrefix, '')->shouldBe(null);
     }
 
-    function it_should_not_resolve_file_info_when_path_is_not_file() {
+    function it_should_not_resolve_file_info_when_path_is_not_file()
+    {
         $this->resolveFileInfo($this->fsPrefix, 'non/existen/file')->shouldBe(null);
     }
 }

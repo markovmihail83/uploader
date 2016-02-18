@@ -47,16 +47,19 @@ class FlysystemStorageSpec extends ObjectBehavior
         $this->delete(self::FS_PREFIX, '')->shouldBe(false);
     }
 
-    function it_should_resolve_file_info($fs) {
+    function it_should_resolve_file_info($fs)
+    {
         $fs->getMetadata(self::PATH)->willReturn(['path' => self::PATH]);
         $this->resolveFileInfo(self::FS_PREFIX, self::PATH)->shouldBeAnInstanceOf(\SplFileInfo::class);
     }
 
-    function it_should_not_resolve_file_info_when_path_is_empty($fs) {
+    function it_should_not_resolve_file_info_when_path_is_empty($fs)
+    {
         $this->resolveFileInfo(self::FS_PREFIX, '')->shouldBe(null);
     }
 
-    function it_should_not_resolve_file_info_when_path_is_not_file($fs, $handler) {
+    function it_should_not_resolve_file_info_when_path_is_not_file($fs, $handler)
+    {
         $handler->isFile()->willReturn(false);
         $this->resolveFileInfo(self::FS_PREFIX, self::PATH)->shouldBe(null);
     }

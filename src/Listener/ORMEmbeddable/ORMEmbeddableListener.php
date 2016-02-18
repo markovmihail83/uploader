@@ -28,13 +28,15 @@ class ORMEmbeddableListener implements EventSubscriber
      *                                                 a file reference(which defined in the mappings).
      * @param array           $events                  doctrine subscribed events
      */
-    public function __construct(ListenerHandler $handler, array $fileReferenceProperties, array $events) {
+    public function __construct(ListenerHandler $handler, array $fileReferenceProperties, array $events)
+    {
         $this->handler = $handler;
         $this->fileReferenceProperties = $fileReferenceProperties;
         $this->events = $events;
     }
 
-    public function prePersist(LifecycleEventArgs $event) {
+    public function prePersist(LifecycleEventArgs $event)
+    {
         $entity = $event->getEntity();
 
         foreach ($this->getFileReferenceFields($entity) as $field) {
@@ -45,7 +47,8 @@ class ORMEmbeddableListener implements EventSubscriber
         }
     }
 
-    public function postPersist(LifecycleEventArgs $event) {
+    public function postPersist(LifecycleEventArgs $event)
+    {
         $entity = $event->getEntity();
 
         foreach ($this->getFileReferenceFields($entity) as $field) {
@@ -53,7 +56,8 @@ class ORMEmbeddableListener implements EventSubscriber
         }
     }
 
-    public function preUpdate(PreUpdateEventArgs $event) {
+    public function preUpdate(PreUpdateEventArgs $event)
+    {
         $entity = $event->getEntity();
 
         foreach ($this->getFileReferenceFields($entity) as $field) {
@@ -69,7 +73,8 @@ class ORMEmbeddableListener implements EventSubscriber
         }
     }
 
-    public function postUpdate(LifecycleEventArgs $event) {
+    public function postUpdate(LifecycleEventArgs $event)
+    {
         $entity = $event->getEntity();
 
         foreach ($this->getFileReferenceFields($entity) as $field) {
@@ -77,7 +82,8 @@ class ORMEmbeddableListener implements EventSubscriber
         }
     }
 
-    public function postLoad(LifecycleEventArgs $event) {
+    public function postLoad(LifecycleEventArgs $event)
+    {
         $entity = $event->getEntity();
 
         foreach ($this->getFileReferenceFields($entity) as $field) {
@@ -85,7 +91,8 @@ class ORMEmbeddableListener implements EventSubscriber
         }
     }
 
-    public function postRemove(LifecycleEventArgs $event) {
+    public function postRemove(LifecycleEventArgs $event)
+    {
         $entity = $event->getEntity();
 
         foreach ($this->getFileReferenceFields($entity) as $field) {
@@ -93,29 +100,34 @@ class ORMEmbeddableListener implements EventSubscriber
         }
     }
 
-    public function postFlush() {
+    public function postFlush()
+    {
         $this->handler->postFlush();
     }
 
-    private function getFileId($entity, $field) {
+    private function getFileId($entity, $field)
+    {
         return spl_object_hash($entity) . '#' . $field;
     }
 
 
-    private function getFileReferenceFields($entity) {
+    private function getFileReferenceFields($entity)
+    {
         $className = ClassUtils::getClass($entity);
 
         return isset($this->fileReferenceProperties[$className]) ? $this->fileReferenceProperties[$className] : [];
     }
 
-    private function getFieldValue(LifecycleEventArgs $event, $field) {
+    private function getFieldValue(LifecycleEventArgs $event, $field)
+    {
         $entity = $event->getEntity();
         $metadata = $event->getEntityManager()->getClassMetadata(ClassUtils::getClass($entity));
 
         return $metadata->getFieldValue($entity, $field);
     }
 
-    public function getSubscribedEvents() {
+    public function getSubscribedEvents()
+    {
         return $this->events;
     }
 }

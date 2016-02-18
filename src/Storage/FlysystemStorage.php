@@ -8,15 +8,18 @@ class FlysystemStorage implements IStorage
 {
     private $manager;
 
-    public function __construct(MountManager $manager) {
+    public function __construct(MountManager $manager)
+    {
         $this->manager = $manager;
     }
 
-    public function writeStream($prefix, $path, $resource) {
+    public function writeStream($prefix, $path, $resource)
+    {
         return $this->manager->getFilesystem($prefix)->writeStream($path, $resource);
     }
 
-    public function delete($prefix, $path) {
+    public function delete($prefix, $path)
+    {
         $fs = $this->manager->getFilesystem($prefix);
 
         if (empty($path) || !$fs->get($path)->isFile()) {
@@ -26,7 +29,8 @@ class FlysystemStorage implements IStorage
         return $fs->delete($path);
     }
 
-    public function resolveFileInfo($prefix, $path) {
+    public function resolveFileInfo($prefix, $path)
+    {
         $fs = $this->manager->getFilesystem($prefix);
 
         if (empty($path) || !$fs->get($path)->isFile()) {

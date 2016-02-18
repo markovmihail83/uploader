@@ -26,13 +26,15 @@ class ORMListener implements EventSubscriber
      *                                               in the mappings).
      * @param array           $events                doctrine subscribed events
      */
-    public function __construct(ListenerHandler $handler, array $fileReferenceEntities, array $events) {
+    public function __construct(ListenerHandler $handler, array $fileReferenceEntities, array $events)
+    {
         $this->handler = $handler;
         $this->fileReferenceEntities = $fileReferenceEntities;
         $this->events = $events;
     }
 
-    public function prePersist(LifecycleEventArgs $event) {
+    public function prePersist(LifecycleEventArgs $event)
+    {
         $entity = $event->getEntity();
 
         if (!$this->isFileReference($entity)) {
@@ -42,7 +44,8 @@ class ORMListener implements EventSubscriber
         $this->handler->prePersist($this->getFileId($entity), $entity);
     }
 
-    public function postPersist(LifecycleEventArgs $event) {
+    public function postPersist(LifecycleEventArgs $event)
+    {
         $entity = $event->getEntity();
 
         if (!$this->isFileReference($entity)) {
@@ -52,7 +55,8 @@ class ORMListener implements EventSubscriber
         $this->handler->postPersist($this->getFileId($entity));
     }
 
-    public function preUpdate(PreUpdateEventArgs $event) {
+    public function preUpdate(PreUpdateEventArgs $event)
+    {
         $entity = $event->getEntity();
 
         if (!$this->isFileReference($entity)) {
@@ -62,7 +66,8 @@ class ORMListener implements EventSubscriber
         $this->handler->preUpdate($this->getFileId($entity), $entity, $this->getOldEntity($event, $entity));
     }
 
-    public function postUpdate(LifecycleEventArgs $event) {
+    public function postUpdate(LifecycleEventArgs $event)
+    {
         $entity = $event->getEntity();
 
         if (!$this->isFileReference($entity)) {
@@ -72,7 +77,8 @@ class ORMListener implements EventSubscriber
         $this->handler->postUpdate($this->getFileId($entity));
     }
 
-    public function postLoad(LifecycleEventArgs $event) {
+    public function postLoad(LifecycleEventArgs $event)
+    {
         $entity = $event->getEntity();
 
         if (!$this->isFileReference($entity)) {
@@ -82,7 +88,8 @@ class ORMListener implements EventSubscriber
         $this->handler->postLoad($entity);
     }
 
-    public function postRemove(LifecycleEventArgs $event) {
+    public function postRemove(LifecycleEventArgs $event)
+    {
         $entity = $event->getEntity();
 
         if (!$this->isFileReference($entity)) {
@@ -92,15 +99,18 @@ class ORMListener implements EventSubscriber
         $this->handler->postRemove($entity);
     }
 
-    public function postFlush() {
+    public function postFlush()
+    {
         $this->handler->postFlush();
     }
 
-    private function getFileId($entity) {
+    private function getFileId($entity)
+    {
         return spl_object_hash($entity);
     }
 
-    private function getOldEntity(PreUpdateEventArgs $event, $entity) {
+    private function getOldEntity(PreUpdateEventArgs $event, $entity)
+    {
         $oldEntity = clone $entity;
 
         $metadata = $event->getEntityManager()->getClassMetadata(ClassUtils::getClass($entity));
@@ -116,11 +126,13 @@ class ORMListener implements EventSubscriber
         return $oldEntity;
     }
 
-    private function isFileReference($entity) {
+    private function isFileReference($entity)
+    {
         return isset($this->fileReferenceEntities[ClassUtils::getClass($entity)]);
     }
 
-    public function getSubscribedEvents() {
+    public function getSubscribedEvents()
+    {
         return $this->events;
     }
 }

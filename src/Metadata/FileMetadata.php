@@ -60,56 +60,64 @@ class FileMetadata
     /**
      * @return string
      */
-    public function getFileInfoSetter() {
+    public function getFileInfoSetter()
+    {
         return $this->fileInfoSetter;
     }
 
     /**
      * @return string
      */
-    public function getFileSetter() {
+    public function getFileSetter()
+    {
         return $this->fileSetter;
     }
 
     /**
      * @return string
      */
-    public function getFileGetter() {
+    public function getFileGetter()
+    {
         return $this->fileGetter;
     }
 
     /**
      * @return string
      */
-    public function getUriSetter() {
+    public function getUriSetter()
+    {
         return $this->uriSetter;
     }
 
     /**
      * @return string
      */
-    public function getFilesystemPrefix() {
+    public function getFilesystemPrefix()
+    {
         return $this->filesystemPrefix;
     }
 
     /**
      * @return string
      */
-    public function getUriPrefix() {
+    public function getUriPrefix()
+    {
         return $this->uriPrefix;
     }
 
     /**
      * @return string
      */
-    public function getStorageType() {
+    public function getStorageType()
+    {
         return $this->storageType;
     }
 
     /**
      * @return string
      */
-    public function getNamingStrategy() {
+    public function getNamingStrategy()
+    {
         return $this->namingStrategy;
     }
 
@@ -118,21 +126,24 @@ class FileMetadata
      *
      * @return bool
      */
-    public function isDeletable($onUpdate = false) {
+    public function isDeletable($onUpdate = false)
+    {
         return $onUpdate ? $this->deleteOnUpdate : $this->deleteOnRemove;
     }
 
     /**
      * @return bool
      */
-    public function isInjectableUri() {
+    public function isInjectableUri()
+    {
         return $this->injectUriOnLoad;
     }
 
     /**
      * @return bool
      */
-    public function isInjectableFileInfo() {
+    public function isInjectableFileInfo()
+    {
         return $this->injectFileInfoOnLoad;
     }
 }

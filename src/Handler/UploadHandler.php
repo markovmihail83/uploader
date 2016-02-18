@@ -38,7 +38,8 @@ class UploadHandler
         $this->container = $container;
     }
 
-    public function move($fileReference, $onUpdate = false) {
+    public function move($fileReference, $onUpdate = false)
+    {
         $metadata = $this->metadataFactory->getMetadata($fileReference);
         $file = $this->propertyHandler->getFile($fileReference, $metadata);
         $fileName = $this->namingFactory->getNamer($metadata->getNamingStrategy())->name($file);
@@ -53,7 +54,8 @@ class UploadHandler
         $this->dispatcher->dispatch(IUploadEvent::POST_UPLOAD, $fileReference, $metadata, $onUpdate);
     }
 
-    public function delete($fileReference, $onUpdate = false) {
+    public function delete($fileReference, $onUpdate = false)
+    {
         $metadata = $this->metadataFactory->getMetadata($fileReference);
         $file = $this->propertyHandler->getFile($fileReference, $metadata);
 
@@ -77,14 +79,16 @@ class UploadHandler
         return $isDeleted;
     }
 
-    public function hasUploadedFile($fileReference) {
+    public function hasUploadedFile($fileReference)
+    {
         $metadata = $this->metadataFactory->getMetadata($fileReference);
         $file = $this->propertyHandler->getFile($fileReference, $metadata);
 
         return $file instanceof \SplFileInfo;
     }
 
-    public function isEqualFiles($fileReference1, $fileReference2) {
+    public function isEqualFiles($fileReference1, $fileReference2)
+    {
         if (!$fileReference1 instanceof $fileReference2) {
             return false;
         }
@@ -96,7 +100,8 @@ class UploadHandler
         return $filePath1 === $filePath2;
     }
 
-    public function injectUri($fileReference) {
+    public function injectUri($fileReference)
+    {
         $metadata = $this->metadataFactory->getMetadata($fileReference);
         $path = (string)$this->propertyHandler->getFile($fileReference, $metadata);
         $path = ltrim($path, '\\/');
@@ -118,7 +123,8 @@ class UploadHandler
         $this->dispatcher->dispatch(IUploadEvent::POST_INJECT_URI, $fileReference, $metadata);
     }
 
-    public function injectFileInfo($fileReference) {
+    public function injectFileInfo($fileReference)
+    {
         $metadata = $this->metadataFactory->getMetadata($fileReference);
         $path = (string)$this->propertyHandler->getFile($fileReference, $metadata);
 
@@ -143,7 +149,8 @@ class UploadHandler
         $this->dispatcher->dispatch(IUploadEvent::POST_INJECT_FILE_INFO, $fileReference, $metadata);
     }
 
-    private function moveUploadedFile(\SplFileInfo $file, $fileName, FileMetadata $metadata) {
+    private function moveUploadedFile(\SplFileInfo $file, $fileName, FileMetadata $metadata)
+    {
         $storage = $this->getStorageFactory()->getStorage($metadata->getStorageType());
         $stream = fopen($file->getRealPath(), 'r+');
         $isMoved = $storage->writeStream($metadata->getFilesystemPrefix(), $fileName, $stream);
@@ -161,13 +168,15 @@ class UploadHandler
         }
     }
 
-    private function updateFile($fileReference, $fileName, FileMetadata $metadata) {
+    private function updateFile($fileReference, $fileName, FileMetadata $metadata)
+    {
         $this->propertyHandler->setFile($fileReference, $metadata, $fileName);
         $this->injectUri($fileReference);
         $this->injectFileInfo($fileReference);
     }
 
-    private function deleteFile(FileMetadata $metadata, $file) {
+    private function deleteFile(FileMetadata $metadata, $file)
+    {
         if ($file instanceof \SplFileInfo) {
             return $this->deleteFileInfo($file);
         }
@@ -177,11 +186,13 @@ class UploadHandler
         return $storage->delete($metadata->getFilesystemPrefix(), $file);
     }
 
-    private function getStorageFactory() {
+    private function getStorageFactory()
+    {
         return $this->storageFactory ?: $this->storageFactory = $this->container->getStorageFactory();
     }
 
-    private function deleteFileInfo(\SplFileInfo $fileInfo) {
+    private function deleteFileInfo(\SplFileInfo $fileInfo)
+    {
         return unlink($fileInfo->getRealPath());
     }
 }

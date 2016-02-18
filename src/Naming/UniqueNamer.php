@@ -11,7 +11,8 @@ class UniqueNamer implements INamer
      *
      * @return string
      */
-    public function name(\SplFileInfo $file) {
+    public function name(\SplFileInfo $file)
+    {
         $name = uniqid(null, true);
 
         $extension = $file->getExtension();

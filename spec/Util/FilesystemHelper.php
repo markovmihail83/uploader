@@ -28,7 +28,8 @@ trait FilesystemHelper
         return $path;
     }
 
-    public static function createFile($path, $contents = '', $directoryPerm = 0777) {
+    public static function createFile($path, $contents = '', $directoryPerm = 0777)
+    {
         @mkdir(dirname($path), $directoryPerm, true);
         file_put_contents($path, $contents);
     }
