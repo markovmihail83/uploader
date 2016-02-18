@@ -21,7 +21,8 @@
         "phpspec/phpspec": "^2.4",
         "phpunit/phpunit": "^5.1",
         "php-vfs/php-vfs": "^1.3",
-        "oneup/flysystem-bundle": "^1.2",
-        "henrikbjorn/phpspec-code-coverage": "^2.@dev"
+        "henrikbjorn/phpspec-code-coverage": "^2.0.2",
+        "league/flysystem": "^1.0",
+        "satooshi/php-coveralls": "^1.0"
     }
 }

@@ -1,7 +1,9 @@
 code_generation: false
 extensions:
   - PhpSpec\Extension\CodeCoverageExtension
-code_coverage: ~
+code_coverage:
+  format: [clover]
+  output: {clover: coverage.xml}
 
 suites:
   default:

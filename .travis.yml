@@ -3,8 +3,11 @@ php:
   - 5.6
   - 7.0
 
-before_script:
-  - composer install --prefer-dist
+install:
+  - composer install --prefer-dist --no-interaction --dev
 
 script:
-  - vendor/bin/phpspec -c=phpspec-coverage.yml run
+  - vendor/bin/phpspec -c=phpspec-ci.yml run
+
+after_script:
+  - travis_retry vendor/bin/coveralls
