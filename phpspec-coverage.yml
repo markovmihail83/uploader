@@ -5,5 +5,5 @@ code_coverage: ~
 
 suites:
   default:
-    namespace: 'Atom'
-    psr4_prefix: 'Atom'
+    namespace: 'Atom\Uploader'
+    psr4_prefix: 'Atom\Uploader'
