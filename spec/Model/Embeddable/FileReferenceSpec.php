@@ -49,9 +49,10 @@ class FileReferenceSpec extends ObjectBehavior
     function it_should_convert_self_to_an_array(\SplFileInfo $fileInfo)
     {
         $this->setUri('/uri');
+        $fileInfo->getRealPath()->willReturn(self::REAL_PATH);
         $this->setFileInfo($fileInfo);
         $this->toArray()->shouldHaveKeyWithValue('uri', '/uri');
         $this->toArray()->shouldHaveKeyWithValue('file', self::REAL_PATH);
-        $this->toArray()->shouldHaveKeyWithValue('fileInfo', $fileInfo);
+        $this->toArray()->shouldHaveKeyWithValue('fileInfo', self::REAL_PATH);
     }
 }
