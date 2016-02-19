@@ -11,3 +11,6 @@ script:
 
 after_script:
   - travis_retry vendor/bin/coveralls
+
+notifications:
+  webhooks: https://webhooks.gitter.im/e/a083ae222d5812ae9f01
