@@ -7,6 +7,7 @@ A lightweight PHP library to file uploads with ORM embeddable objects, ORM entit
 [![Latest Unstable Version](https://poser.pugx.org/atom-azimov/uploader/v/unstable)](https://packagist.org/packages/atom-azimov/uploader)
 [![Dependency Status](https://www.versioneye.com/user/projects/56c5662a18b271002c69af86/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56c5662a18b271002c69af86)
 [![Total Downloads](https://poser.pugx.org/atom-azimov/uploader/downloads)](https://packagist.org/packages/atom-azimov/uploader)
+[![Coverage Status](https://coveralls.io/repos/github/atom-azimov/uploader/badge.svg?branch=master)](https://coveralls.io/github/atom-azimov/uploader?branch=master)
 
 ---
 
