@@ -3,9 +3,13 @@
 
 namespace spec\Atom\Uploader\Model\Embeddable;
 
+use Atom\Uploader\Model\Embeddable\FileReference;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
+/**
+ * @mixin FileReference
+ */
 class FileReferenceSpec extends ObjectBehavior
 {
     const REAL_PATH = '/fully/qualified/path/to/file';

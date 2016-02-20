@@ -3,9 +3,13 @@
 namespace spec\Atom\Uploader\Naming;
 
 use Atom\Uploader\Naming\INamer;
+use Atom\Uploader\Naming\UniqueNamer;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
+/**
+ * @mixin UniqueNamer
+ */
 class UniqueNamerSpec extends ObjectBehavior
 {
     function it_is_initializable()

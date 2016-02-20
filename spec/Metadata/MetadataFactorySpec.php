@@ -5,10 +5,14 @@ namespace spec\Atom\Uploader\Metadata;
 
 use Atom\Uploader\Exception\NoSuchMetadataException;
 use Atom\Uploader\Metadata\FileMetadata;
+use Atom\Uploader\Metadata\MetadataFactory;
 use Atom\Uploader\Model\Embeddable\FileReference;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
+/**
+ * @mixin MetadataFactory
+ */
 class MetadataFactorySpec extends ObjectBehavior
 {
     function let()
@@ -48,8 +52,8 @@ class MetadataFactorySpec extends ObjectBehavior
         $this->getMetadata(FileReference::class)->shouldBeAnInstanceOf(FileMetadata::class);
     }
 
-    function it_should_throw_exception_when_getting_a_metadata($nonExistenMetadata)
+    function it_should_throw_exception_when_getting_a_metadata($nonExistentMetadata)
     {
-        $this->shouldThrow(NoSuchMetadataException::class)->duringGetMetadata($nonExistenMetadata);
+        $this->shouldThrow(NoSuchMetadataException::class)->duringGetMetadata($nonExistentMetadata);
     }
 }

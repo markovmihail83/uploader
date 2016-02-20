@@ -7,6 +7,9 @@ use Atom\Uploader\Metadata\FileMetadata;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
+/**
+ * @mixin FileMetadata
+ */
 class FileMetadataSpec extends ObjectBehavior
 {
     const FILE_WRITE_PROP = 'file';

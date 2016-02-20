@@ -5,9 +5,13 @@ namespace spec\Atom\Uploader\Storage;
 
 use Atom\Uploader\Exception\NoSuchStorageException;
 use Atom\Uploader\Storage\IStorage;
+use Atom\Uploader\Storage\StorageFactory;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
+/**
+ * @mixin StorageFactory
+ */
 class StorageFactorySpec extends ObjectBehavior
 {
     function let(IStorage $storage)
@@ -22,6 +26,6 @@ class StorageFactorySpec extends ObjectBehavior
 
     function it_should_throw_exception_when_getting_a_storage()
     {
-        $this->shouldThrow(NoSuchStorageException::class)->duringGetStorage('non_existen_storage');
+        $this->shouldThrow(NoSuchStorageException::class)->duringGetStorage('non_existent_storage');
     }
 }

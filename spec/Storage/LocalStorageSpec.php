@@ -3,12 +3,16 @@
 
 namespace spec\Atom\Uploader\Storage;
 
+use Atom\Uploader\Storage\LocalStorage;
 use org\bovigo\vfs\vfsStream;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use spec\Atom\Uploader\Util\FilesystemHelper;
 use PHPUnit_Framework_TestCase as Test;
 
+/**
+ * @mixin LocalStorage
+ */
 class LocalStorageSpec extends ObjectBehavior
 {
     use FilesystemHelper;
@@ -53,7 +57,7 @@ class LocalStorageSpec extends ObjectBehavior
 
     function it_should_not_delete_when_file_not_found()
     {
-        $this->delete($this->fsPrefix, 'not/existen/file')->shouldBe(false);
+        $this->delete($this->fsPrefix, 'not/existent/file')->shouldBe(false);
     }
 
     function it_should_not_delete_when_path_is_empty()
@@ -73,6 +77,6 @@ class LocalStorageSpec extends ObjectBehavior
 
     function it_should_not_resolve_file_info_when_path_is_not_file()
     {
-        $this->resolveFileInfo($this->fsPrefix, 'non/existen/file')->shouldBe(null);
+        $this->resolveFileInfo($this->fsPrefix, 'non/existent/file')->shouldBe(null);
     }
 }
