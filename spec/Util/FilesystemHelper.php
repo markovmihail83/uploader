@@ -3,26 +3,39 @@
 namespace spec\Atom\Uploader\Util;
 
 
-use VirtualFileSystem\FileSystem;
+use org\bovigo\vfs\vfsStream;
+use org\bovigo\vfs\vfsStreamWrapper;
 
 trait FilesystemHelper
 {
-    private static $_virtualFilesystem;
 
-    private static function virtualPath($path)
+    public function mount()
     {
-        if (null === static::$_virtualFilesystem) {
-            self::$_virtualFilesystem = new FileSystem();
+        if (!in_array('vfs', stream_get_wrappers())) {
+            vfsStreamWrapper::register();
         }
+    }
 
-        $location = self::$_virtualFilesystem->path($path);
+    public function unMount()
+    {
+        if (in_array('vfs', stream_get_wrappers())) {
+            vfsStreamWrapper::unregister();
+        }
+    }
 
-        return self::normalizePath($location);
+    public function __construct()
+    {
+        $this->mount();
+    }
+
+    public function __destruct()
+    {
+        $this->unMount();
     }
 
     private static function createVirtualFile($path, $contents = '')
     {
-        $path = self::virtualPath($path);
+        $path = vfsStream::url($path);
         self::createVirtualFile($path, $contents);
 
         return $path;
@@ -32,13 +45,6 @@ trait FilesystemHelper
     {
         @mkdir(dirname($path), $directoryPerm, true);
         file_put_contents($path, $contents);
-    }
-
-    public static function normalizePath($path)
-    {
-        $path = str_replace('/', DIRECTORY_SEPARATOR, $path);
-
-        return str_replace(':\\\\', '://', $path);
     }
 
     public static function joinPath()
@@ -51,6 +57,6 @@ trait FilesystemHelper
             return $carry . '/' . trim($item, '\\/');
         });
 
-        return self::normalizePath($path);
+        return $path;
     }
 }

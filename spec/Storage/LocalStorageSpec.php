@@ -3,7 +3,7 @@
 
 namespace spec\Atom\Uploader\Storage;
 
-use Atom\Uploader\Exception\FileNotFoundException;
+use org\bovigo\vfs\vfsStream;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 use spec\Atom\Uploader\Util\FilesystemHelper;
@@ -19,7 +19,8 @@ class LocalStorageSpec extends ObjectBehavior
 
     function __construct()
     {
-        $this->fsPrefix = self::virtualPath(uniqid());
+        $this->mount();
+        $this->fsPrefix = vfsStream::url(uniqid());
     }
 
     function let()
@@ -63,7 +64,7 @@ class LocalStorageSpec extends ObjectBehavior
         $this->delete($this->fsPrefix, 'not/existen/file')->shouldBe(false);
     }
 
-    function it_should_not_delete_when_path_is_empty($fs, $handler)
+    function it_should_not_delete_when_path_is_empty()
     {
         $this->delete($this->fsPrefix, '')->shouldBe(false);
     }
@@ -73,7 +74,7 @@ class LocalStorageSpec extends ObjectBehavior
         $this->resolveFileInfo($this->fsPrefix, self::PATH)->shouldBeAnInstanceOf(\SplFileInfo::class);
     }
 
-    function it_should_not_resolve_file_info_when_path_is_empty($fs)
+    function it_should_not_resolve_file_info_when_path_is_empty()
     {
         $this->resolveFileInfo($this->fsPrefix, '')->shouldBe(null);
     }
