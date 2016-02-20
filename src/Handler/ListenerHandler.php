@@ -45,7 +45,7 @@ class ListenerHandler
 
     public function preUpdate($id, $fileReference, $oldFileReference)
     {
-        if (!$this->hasUploadedFile($fileReference)) {
+        if (!$oldFileReference || !$this->hasUploadedFile($fileReference)) {
             return;
         }
 

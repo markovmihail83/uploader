@@ -17,24 +17,16 @@ class LocalStorageSpec extends ObjectBehavior
 
     private $fsPrefix;
 
-    function __construct()
+    function let()
     {
         $this->mount();
         $this->fsPrefix = vfsStream::url(uniqid());
-    }
-
-    function let()
-    {
         self::createFile(self::joinPath($this->fsPrefix, self::PATH));
     }
 
     function letGo()
     {
-        $filePath = self::joinPath($this->fsPrefix, self::PATH);
-
-        if (file_exists($filePath)) {
-            unlink($filePath);
-        }
+        $this->unMount();
     }
 
     function it_should_not_write_file_when_could_not_create_file()

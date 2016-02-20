@@ -2,8 +2,6 @@
 
 namespace spec\Atom\Uploader\Util;
 
-
-use org\bovigo\vfs\vfsStream;
 use org\bovigo\vfs\vfsStreamWrapper;
 
 trait FilesystemHelper
@@ -22,25 +20,7 @@ trait FilesystemHelper
             vfsStreamWrapper::unregister();
         }
     }
-
-    public function __construct()
-    {
-        $this->mount();
-    }
-
-    public function __destruct()
-    {
-        $this->unMount();
-    }
-
-    private static function createVirtualFile($path, $contents = '')
-    {
-        $path = vfsStream::url($path);
-        self::createVirtualFile($path, $contents);
-
-        return $path;
-    }
-
+    
     public static function createFile($path, $contents = '', $directoryPerm = 0777)
     {
         @mkdir(dirname($path), $directoryPerm, true);

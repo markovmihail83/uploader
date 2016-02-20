@@ -18,7 +18,7 @@ class UploadHandler
 
     private $storageFactory;
 
-    private $namingFactory;
+    private $namerFactory;
 
     private $dispatcher;
 
@@ -28,12 +28,12 @@ class UploadHandler
         MetadataFactory $metadataFactory,
         IPropertyHandler $propertyHandler,
         IContainer $container,
-        NamerFactory $namingFactory,
+        NamerFactory $namerFactory,
         IEventDispatcher $dispatcher
     ) {
         $this->metadataFactory = $metadataFactory;
         $this->propertyHandler = $propertyHandler;
-        $this->namingFactory = $namingFactory;
+        $this->namerFactory = $namerFactory;
         $this->dispatcher = $dispatcher;
         $this->container = $container;
     }
@@ -42,7 +42,7 @@ class UploadHandler
     {
         $metadata = $this->metadataFactory->getMetadata($fileReference);
         $file = $this->propertyHandler->getFile($fileReference, $metadata);
-        $fileName = $this->namingFactory->getNamer($metadata->getNamingStrategy())->name($file);
+        $fileName = $this->namerFactory->getNamer($metadata->getNamingStrategy())->name($file);
         $event = $this->dispatcher->dispatch(IUploadEvent::PRE_UPLOAD, $fileReference, $metadata, $onUpdate);
 
         if ($event->isActionStopped()) {
@@ -89,10 +89,6 @@ class UploadHandler
 
     public function isEqualFiles($fileReference1, $fileReference2)
     {
-        if (!$fileReference1 instanceof $fileReference2) {
-            return false;
-        }
-
         $metadata = $this->metadataFactory->getMetadata($fileReference1);
         $filePath1 = (string)$this->propertyHandler->getFile($fileReference1, $metadata);
         $filePath2 = (string)$this->propertyHandler->getFile($fileReference2, $metadata);
@@ -103,6 +99,11 @@ class UploadHandler
     public function injectUri($fileReference)
     {
         $metadata = $this->metadataFactory->getMetadata($fileReference);
+
+        if (!$metadata->isInjectableUri() || false === $metadata->getUriSetter()) {
+            return;
+        }
+        
         $path = (string)$this->propertyHandler->getFile($fileReference, $metadata);
         $path = ltrim($path, '\\/');
         $uriPrefix = (string)$metadata->getUriPrefix();

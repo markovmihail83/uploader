@@ -28,7 +28,7 @@ class ListenerHandlerSpec extends ObjectBehavior
         $handler->injectFileInfo(Argument::type(FileReference::class))->willReturn(null);
     }
 
-    function it_should_do_nothing_when_no_file_reference($container)
+    function it_should_do_nothing_when_no_file_reference($container, $oldFileReference, $fileReference)
     {
         $container->getUploadHandler()->shouldNotBeCalled();
         $id = uniqid();
@@ -36,6 +36,8 @@ class ListenerHandlerSpec extends ObjectBehavior
         $this->prePersist($id, null);
         $this->postPersist($id);
         $this->preUpdate($id, null, null);
+        $this->preUpdate($id, $fileReference, null);
+        $this->preUpdate($id, null, $oldFileReference);
         $this->postUpdate($id);
         $this->postLoad(null);
         $this->postRemove(null);
