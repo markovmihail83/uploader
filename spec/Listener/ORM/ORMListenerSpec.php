@@ -87,7 +87,7 @@ class ORMListenerSpec extends ObjectBehavior
 
     function it_should_call_same_method_of_listener_handler(ListenerHandler $handler, $event, $fileReference)
     {
-        $id = spl_object_hash($fileReference->getWrappedObject());
+        $id = Argument::type('string');
         
         $handler->prePersist($id, $fileReference)->shouldBeCalled();
         $handler->postPersist($id)->shouldBeCalled();
