@@ -6,7 +6,7 @@ AtomUploader is a simple yet flexible PHP library for file uploads via ORM embed
 [![Build Status](https://travis-ci.org/atom-azimov/uploader.svg?branch=master)](https://travis-ci.org/atom-azimov/uploader)
 [![Latest Stable Version](https://poser.pugx.org/atom-azimov/uploader/v/stable)](https://packagist.org/packages/atom-azimov/uploader)
 [![Latest Unstable Version](https://poser.pugx.org/atom-azimov/uploader/v/unstable)](https://packagist.org/packages/atom-azimov/uploader)
-[![Dependency Status](https://www.versioneye.com/user/projects/56c5662a18b271002c69af86/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56c5662a18b271002c69af86)
+[![Dependency Status](https://www.versioneye.com/user/projects/56c6762318b271002c69b141/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56c6762318b271002c69b141)
 [![Total Downloads](https://poser.pugx.org/atom-azimov/uploader/downloads)](https://packagist.org/packages/atom-azimov/uploader)
 [![Coverage Status](https://coveralls.io/repos/github/atom-azimov/uploader/badge.svg?branch=master)](https://coveralls.io/github/atom-azimov/uploader?branch=master)
 
