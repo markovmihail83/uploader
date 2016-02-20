@@ -3,10 +3,12 @@
     "description": "AtomUploader is a simple yet flexible PHP library for file uploads via ORM embeddable objects, ORM entities, etc.",
     "license": "MIT",
     "type": "library",
-    "authors": {
-        "name": "Elbek Azimov",
-        "email": "atom.azimov@gmail.com"
-    },
+    "authors": [
+        {
+            "name": "Elbek Azimov",
+            "email": "atom.azimov@gmail.com"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Atom\\Uploader\\": "src/"
