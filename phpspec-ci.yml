@@ -6,6 +6,8 @@ code_coverage:
   output: {clover: coverage.xml}
   blacklist_files:
     - src/Event/UploadEvent.php
+  blacklist:
+    - src/ThirdParty
 
 suites:
   default:

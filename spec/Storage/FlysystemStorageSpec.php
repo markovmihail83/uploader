@@ -6,6 +6,7 @@
 namespace spec\Atom\Uploader\Storage;
 
 use Atom\Uploader\Storage\FlysystemStorage;
+use Atom\Uploader\ThirdParty\FlysystemStreamWrapper;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Handler;
 use League\Flysystem\MountManager;
@@ -20,12 +21,14 @@ class FlysystemStorageSpec extends ObjectBehavior
     const FS_PREFIX = 'fs_prefix';
     const PATH = 'path/to/file';
 
-    function let(MountManager $manager, Filesystem $fs, Handler $handler)
+    function let(MountManager $manager, Filesystem $fs, Handler $handler, FlysystemStreamWrapper $wrapper)
     {
-        $this->beConstructedWith($manager);
+        $this->beConstructedWith($manager, $wrapper);
+        $wrapper->isExist()->willReturn(true);
         $manager->getFilesystem(self::FS_PREFIX)->willReturn($fs);
         $fs->get(Argument::type('string'))->willReturn($handler);
         $handler->isFile()->willReturn(true);
+        $wrapper->register(Argument::type('string'), $fs, Argument::any())->willReturn(true);
     }
 
     function it_should_write_stream($fs)

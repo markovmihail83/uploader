@@ -16,7 +16,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "spec\\Atom\\Uploader\\": "spec/"
+            "spec\\Atom\\Uploader\\": "spec/",
+            "App\\": "example-app/src/"
         }
     },
     "require": {
@@ -29,7 +30,8 @@
         "henrikbjorn/phpspec-code-coverage": "^2.0.2",
         "league/flysystem": "^1.0",
         "satooshi/php-coveralls": "^1.0",
-        "mikey179/vfsStream": "^1.6"
+        "mikey179/vfsStream": "^1.6",
+        "twistor/flysystem-stream-wrapper": "^1.0"
     },
     "extra": {
         "branch-alias": {

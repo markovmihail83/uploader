@@ -2,4 +2,8 @@
 /vendor
 /coverage
 /coverage.xml
+/example-app/src/Resources/data/*
+!/example-app/src/Resources/data/.gitkeep
+/example-app/src/Resources/public/uploads/*
+!/example-app/src/Resources/public/uploads/.gitkeep
 /composer.lock

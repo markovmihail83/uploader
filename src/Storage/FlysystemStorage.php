@@ -5,6 +5,7 @@
 
 namespace Atom\Uploader\Storage;
 
+use Atom\Uploader\ThirdParty\FlysystemStreamWrapper;
 use League\Flysystem\FilesystemInterface;
 use League\Flysystem\MountManager;
 
@@ -12,9 +13,12 @@ class FlysystemStorage implements IStorage
 {
     private $manager;
 
-    public function __construct(MountManager $manager)
+    private $wrapper;
+
+    public function __construct(MountManager $manager, FlysystemStreamWrapper $wrapper)
     {
         $this->manager = $manager;
+        $this->wrapper = $wrapper;
     }
 
     public function writeStream($prefix, $path, $resource)
@@ -48,12 +52,8 @@ class FlysystemStorage implements IStorage
 
     private function tryRegisterFilesystemWrapper($prefix, FilesystemInterface $fs)
     {
-        if (in_array($prefix, stream_get_wrappers())) {
-            return;
-        }
-
-        if (class_exists('Twistor\FlysystemStreamWrapper')) {
-            \Twistor\FlysystemStreamWrapper::register($prefix, $fs);
+        if ($this->wrapper->isExist()) {
+            $this->wrapper->register($prefix, $fs);
         }
     }
 }
