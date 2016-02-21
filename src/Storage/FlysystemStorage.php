@@ -5,6 +5,7 @@
 
 namespace Atom\Uploader\Storage;
 
+use League\Flysystem\FilesystemInterface;
 use League\Flysystem\MountManager;
 
 class FlysystemStorage implements IStorage
@@ -40,6 +41,19 @@ class FlysystemStorage implements IStorage
             return null;
         }
 
-        return new \SplFileInfo($fs->getMetadata($path)['path']);
+        $this->tryRegisterFilesystemWrapper($prefix, $fs);
+
+        return new \SplFileInfo(sprintf('%s://%s', $prefix, $path));
+    }
+
+    private function tryRegisterFilesystemWrapper($prefix, FilesystemInterface $fs)
+    {
+        if (in_array($prefix, stream_get_wrappers())) {
+            return;
+        }
+
+        if (class_exists('Twistor\FlysystemStreamWrapper')) {
+            \Twistor\FlysystemStreamWrapper::register($prefix, $fs);
+        }
     }
 }
