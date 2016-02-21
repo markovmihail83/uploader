@@ -61,9 +61,9 @@ trait Uploadable
     public function toArray()
     {
         return [
-            'file' => (string)$this->file,
-            'uri' => (string)$this->uri,
-            'fileInfo' => $this->fileInfo ? $this->fileInfo->getRealPath() : null
+            'file' => $this->file ? (string)$this->file : null,
+            'uri' => $this->uri ? (string)$this->uri : null,
+            'fileInfo' => $this->fileInfo ? (string)$this->fileInfo : null,
         ];
     }
 

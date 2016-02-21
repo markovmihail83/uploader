@@ -76,7 +76,6 @@ class UploadHandlerSpec extends ObjectBehavior
 
         $filePath = self::joinPath($this->fsPrefix, uniqid());
         self::createFile($filePath);
-        $fileInfo->getRealPath()->willReturn($filePath);
         $fileInfo->__toString()->willReturn($filePath);
         $fileInfo->isWritable()->willReturn(true);
 
@@ -274,7 +273,7 @@ class UploadHandlerSpec extends ObjectBehavior
     function it_should_delete_file_from_instance_of_splFileInfo($fileReference, $fileInfo)
     {
         $this->delete($fileReference)->shouldBe(true);
-        Test::assertFalse(file_exists($fileInfo->getWrappedObject()->getRealPath()));
+        Test::assertFalse(file_exists((string)$fileInfo->getWrappedObject()));
     }
 
     function it_should_not_have_uploaded_file_when_file_reference_has_no_uploaded_file($fileReference, $propertyHandler)
@@ -292,7 +291,7 @@ class UploadHandlerSpec extends ObjectBehavior
     {
         $storage->writeStream($this->fsPrefix, Argument::type('string'), Argument::type('resource'))->willReturn(false);
         $this->shouldThrow(FileCouldNotBeMovedException::class)->duringMove($fileReference);
-        Test::assertTrue(file_exists($fileInfo->getWrappedObject()->getRealPath()));
+        Test::assertTrue(file_exists((string)$fileInfo->getWrappedObject()));
     }
 
     function it_should_move_a_file($fileReference, $propertyHandler, $storage)

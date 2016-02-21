@@ -14,19 +14,18 @@ use Prophecy\Argument;
  */
 class FileReferenceSpec extends ObjectBehavior
 {
-    const REAL_PATH = '/fully/qualified/path/to/file';
+    const PATH = '/fully/qualified/path/to/file';
 
     function let(\SplFileInfo $file)
     {
         $this->beConstructedWith($file);
 
-        $file->getRealPath()->willReturn(self::REAL_PATH);
-        $file->__toString()->willReturn(self::REAL_PATH);
+        $file->__toString()->willReturn(self::PATH);
     }
 
     function it_should_get_a_file_as_string()
     {
-        $this->__toString()->shouldBe(self::REAL_PATH);
+        $this->__toString()->shouldBe(self::PATH);
     }
 
     function it_should_set_an_uri()
@@ -55,10 +54,10 @@ class FileReferenceSpec extends ObjectBehavior
     function it_should_convert_self_to_an_array(\SplFileInfo $fileInfo)
     {
         $this->setUri('/uri');
-        $fileInfo->getRealPath()->willReturn(self::REAL_PATH);
+        $fileInfo->__toString()->willReturn(self::PATH);
         $this->setFileInfo($fileInfo);
         $this->toArray()->shouldHaveKeyWithValue('uri', '/uri');
-        $this->toArray()->shouldHaveKeyWithValue('file', self::REAL_PATH);
-        $this->toArray()->shouldHaveKeyWithValue('fileInfo', self::REAL_PATH);
+        $this->toArray()->shouldHaveKeyWithValue('file', self::PATH);
+        $this->toArray()->shouldHaveKeyWithValue('fileInfo', self::PATH);
     }
 }

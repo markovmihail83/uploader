@@ -106,7 +106,7 @@ class UploadHandler
         if (!$metadata->isInjectableUri() || false === $metadata->getUriSetter()) {
             return;
         }
-        
+
         $path = (string)$this->propertyHandler->getFile($fileReference, $metadata);
         $path = ltrim($path, '\\/');
         $uriPrefix = (string)$metadata->getUriPrefix();
@@ -156,11 +156,11 @@ class UploadHandler
     private function moveUploadedFile(\SplFileInfo $file, $fileName, FileMetadata $metadata)
     {
         $storage = $this->getStorageFactory()->getStorage($metadata->getStorageType());
-        $stream = fopen($file->getRealPath(), 'r+');
+        $stream = fopen((string)$file, 'r+');
         $isMoved = $storage->writeStream($metadata->getFilesystemPrefix(), $fileName, $stream);
 
         if (!$isMoved) {
-            throw new FileCouldNotBeMovedException($file->getRealPath(), $fileName);
+            throw new FileCouldNotBeMovedException((string)$file, $fileName);
         }
 
         if (is_resource($stream)) {
@@ -168,7 +168,7 @@ class UploadHandler
         }
 
         if ($file->isWritable()) {
-            $this->deleteFileInfo($file);
+            unlink((string)$file);
         }
     }
 
@@ -182,7 +182,7 @@ class UploadHandler
     private function deleteFile(FileMetadata $metadata, $file)
     {
         if ($file instanceof \SplFileInfo) {
-            return $this->deleteFileInfo($file);
+            return unlink((string)$file);
         }
 
         $storage = $this->getStorageFactory()->getStorage($metadata->getStorageType());
@@ -193,10 +193,5 @@ class UploadHandler
     private function getStorageFactory()
     {
         return $this->storageFactory ?: $this->storageFactory = $this->container->getStorageFactory();
-    }
-
-    private function deleteFileInfo(\SplFileInfo $fileInfo)
-    {
-        return unlink($fileInfo->getRealPath());
     }
 }
