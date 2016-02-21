@@ -115,7 +115,7 @@ class UploadHandler
             return;
         }
 
-        $uri = str_replace('/', DIRECTORY_SEPARATOR, sprintf($uriPrefix, $path));
+        $uri = sprintf($uriPrefix, $path);
 
         $event = $this->dispatcher->dispatch(IUploadEvent::PRE_INJECT_URI, $fileReference, $metadata);
 
