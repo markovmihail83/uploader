@@ -51,10 +51,10 @@ class ORMListenerSpec extends ObjectBehavior
         $em->getClassMetadata(Argument::type('string'))->willReturn($metadata);
         
         $event->getEntityChangeSet()->willReturn([
-            'file',
-            'some-embeddable.field',
-            'uri',
-            'file_info',
+            'file' => ['file', null],
+            'some-embeddable.field' => [null, null],
+            'uri' => ['file_info', null],
+            'file_info' => ['uri', null],
         ]);
 
         $event->getOldValue('file')->willReturn('file');

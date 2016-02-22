@@ -117,12 +117,12 @@ class ORMListener implements EventSubscriber
 
         $metadata = $event->getEntityManager()->getClassMetadata(ClassUtils::getClass($entity));
 
-        foreach ($event->getEntityChangeSet() as $changedField) {
-            if (false !== strpos($changedField, '.')) {
+        foreach ($event->getEntityChangeSet() as $name => $field) {
+            if (false !== strpos($name, '.')) {
                 continue;
             }
 
-            $metadata->setFieldValue($oldEntity, $changedField, $event->getOldValue($changedField));
+            $metadata->setFieldValue($oldEntity, $name, $field[0]);
         }
 
         return $oldEntity;
