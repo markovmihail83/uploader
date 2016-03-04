@@ -33,8 +33,11 @@ class ORMEmbeddableListenerSpec extends ObjectBehavior
         $entity,
         $notFileReferenceEntity,
         EntityManagerInterface $em,
-        ClassMetadata $metadata
-    ) {
+        ClassMetadata $metadata,
+        ClassMetadata $embeddedMetadata,
+        \ReflectionClass $embeddedReflection
+    )
+    {
         $this->events = [
             Events::prePersist,
             Events::postPersist,
@@ -45,8 +48,9 @@ class ORMEmbeddableListenerSpec extends ObjectBehavior
             Events::postFlush,
         ];
 
+        $entityClass = get_class($entity->getWrappedObject());
         $fileReferenceProperties = [
-            get_class($entity->getWrappedObject()) => [
+            $entityClass => [
                 self::FILE_REFERENCE_PROPERTY
             ]
         ];
@@ -55,34 +59,59 @@ class ORMEmbeddableListenerSpec extends ObjectBehavior
 
         $event->getEntity()->willReturn($entity);
         $event->getEntityManager()->willReturn($em);
-        $em->getClassMetadata(Argument::type('string'))->willReturn($metadata);
+        $em->getClassMetadata($entityClass)->willReturn($metadata);
+        $em->getClassMetadata(FileReference::class)->willReturn($embeddedMetadata);
 
+        $event->hasChangedField(self::FILE_REFERENCE_PROPERTY)->willReturn(true);
         $event->getOldValue(self::FILE_REFERENCE_PROPERTY)->willReturn($oldFileReference);
         $event->getNewValue(self::FILE_REFERENCE_PROPERTY)->willReturn($fileReference);
 
-        $event->hasChangedField(self::FILE_REFERENCE_PROPERTY)->willReturn(true);
+        $embeddedMetadata->getReflectionClass()->willReturn($embeddedReflection);
+        $embeddedReflection->newInstanceWithoutConstructor()->willReturn($oldFileReference);
+
+        $event->getEntityChangeSet()->willReturn([]);
+
+        $metadata->getFieldMapping(self::FILE_REFERENCE_PROPERTY . '.file')->willReturn([
+            'originalClass' => FileReference::class,
+            'originalField' => 'file'
+        ]);
 
         $metadata->getFieldValue($entity, self::FILE_REFERENCE_PROPERTY)->willReturn($fileReference);
 
-        $metadata->getFieldValue(
-            $entity,
-            Argument::not(self::FILE_REFERENCE_PROPERTY)
-        )->willReturn($notFileReferenceEntity);
+        $metadata
+            ->getFieldValue($entity, Argument::not(self::FILE_REFERENCE_PROPERTY))
+            ->willReturn($notFileReferenceEntity);
     }
 
-    function it_should_get_the_events()
+    function it_should_get_events()
     {
         $this->getSubscribedEvents()->shouldEqual($this->events);
     }
 
-    function it_should_do_nothing_when_file_field_is_not_changed_on_update($event, $handler)
+    function it_should_get_an_embedded_file_reference_from_old_values_if_that_has_been_updated_but_not_replaced(
+        $event,
+        $handler,
+        $fileReference,
+        $embeddedMetadata,
+        $oldFileReference
+    )
     {
+        $event->getEntityChangeSet()->willReturn([
+            self::FILE_REFERENCE_PROPERTY . '.file' => ['old-file', 'new-file'],
+            'another-field' => ['old-value', 'new-value'],
+        ]);
+
         $event->hasChangedField(self::FILE_REFERENCE_PROPERTY)->willReturn(false);
-        $handler->preUpdate(Argument::any(), Argument::any(), Argument::any())->shouldNotBeCalled();
+        $embeddedMetadata->setFieldValue($oldFileReference, 'file', 'old-file')->shouldBeCalled();
+
+        $handler
+            ->preUpdate(Argument::type('string'), $fileReference, $oldFileReference)
+            ->shouldBeCalled();
+
         $this->preUpdate($event);
     }
 
-    function it_should_do_nothing_when_entity_is_not_file_reference($handler, $event, $notFileReferenceEntity)
+    function it_should_do_nothing_if_the_entity_is_not_a_file_reference($handler, $event, $notFileReferenceEntity)
     {
         $event->getEntity()->willReturn($notFileReferenceEntity);
         $handler->prePersist(Argument::any(), Argument::any())->shouldNotBeCalled();
@@ -100,7 +129,12 @@ class ORMEmbeddableListenerSpec extends ObjectBehavior
         $this->postRemove($event);
     }
 
-    function it_should_call_same_method_of_listener_handler(ListenerHandler $handler, $event, $fileReference, $oldFileReference)
+    function it_should_delegate_events_to_the_handler(
+        ListenerHandler $handler,
+        $event,
+        $fileReference,
+        $oldFileReference
+    )
     {
         $id = Argument::type('string');
 

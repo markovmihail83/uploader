@@ -24,9 +24,9 @@ class ORMListener implements EventSubscriber
      * ORMEmbeddableListener constructor.
      *
      * @param ListenerHandler $handler
-     * @param array           $fileReferenceEntities Map of entity classnames that is a file reference (which defined
+     * @param array $fileReferenceEntities Map of entity classnames that is a file reference (which defined
      *                                               in the mappings).
-     * @param array           $events                doctrine subscribed events
+     * @param array $events doctrine subscribed events
      */
     public function __construct(ListenerHandler $handler, array $fileReferenceEntities, array $events)
     {

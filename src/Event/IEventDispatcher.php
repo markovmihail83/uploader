@@ -11,13 +11,12 @@ use Atom\Uploader\Metadata\FileMetadata;
 interface IEventDispatcher
 {
     /**
-     * @param string       $eventName
+     * @param string $eventName
      *
-     * @param object       $fileReference
+     * @param object $fileReference
      * @param FileMetadata $metadata
-     * @param bool         $onUpdate
      *
      * @return IUploadEvent
      */
-    public function dispatch($eventName, $fileReference, FileMetadata $metadata, $onUpdate = false);
+    public function dispatch($eventName, $fileReference, FileMetadata $metadata);
 }

@@ -23,7 +23,7 @@ trait FilesystemHelper
             vfsStreamWrapper::unregister();
         }
     }
-    
+
     public static function createFile($path, $contents = '', $directoryPerm = 0777)
     {
         @mkdir(dirname($path), $directoryPerm, true);
@@ -32,13 +32,16 @@ trait FilesystemHelper
 
     public static function joinPath()
     {
-        $path = array_reduce(func_get_args(), function ($carry, $item) {
-            if (null === $carry) {
-                return rtrim($item, '\\/');
-            }
+        $path = array_reduce(
+            func_get_args(),
+            function ($carry, $item) {
+                if (null === $carry) {
+                    return rtrim($item, '\\/');
+                }
 
-            return $carry . '/' . trim($item, '\\/');
-        });
+                return $carry . '/' . trim($item, '\\/');
+            }
+        );
 
         return $path;
     }

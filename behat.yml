@@ -1,0 +1,9 @@
+default:
+  suites:
+    example-app:
+      paths: [%paths.base%/features/example-app]
+      contexts:
+        - Context\ExampleAppContext
+
+  autoload:
+    'Context': %paths.base%/features

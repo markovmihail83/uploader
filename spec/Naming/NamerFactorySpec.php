@@ -26,7 +26,7 @@ class NamerFactorySpec extends ObjectBehavior
         $this->shouldThrow(NoSuchNamingException::class)->duringGetNamer('it_is_not_registered_namer');
     }
 
-    function it_should_get_namer($namer)
+    function it_should_get_a_namer($namer)
     {
         $this->getNamer('my_namer_strategy')->shouldBe($namer);
     }

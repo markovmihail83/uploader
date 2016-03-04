@@ -1,0 +1,7 @@
+---
+- name: Install app requirements.
+  apt:
+    name: "{{item}}"
+    force: yes
+  with_items: "{{ app_requirements }}"
+  when: app_requirements is defined and app_requirements|length > 0

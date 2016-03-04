@@ -33,7 +33,8 @@ class UploadHandler
         IContainer $container,
         NamerFactory $namerFactory,
         IEventDispatcher $dispatcher
-    ) {
+    )
+    {
         $this->metadataFactory = $metadataFactory;
         $this->propertyHandler = $propertyHandler;
         $this->namerFactory = $namerFactory;
@@ -41,45 +42,53 @@ class UploadHandler
         $this->container = $container;
     }
 
-    public function move($fileReference, $onUpdate = false)
+    public function upload($fileReference)
     {
-        $metadata = $this->metadataFactory->getMetadata($fileReference);
-        $file = $this->propertyHandler->getFile($fileReference, $metadata);
-        $fileName = $this->namerFactory->getNamer($metadata->getNamingStrategy())->name($file);
-        $event = $this->dispatcher->dispatch(IUploadEvent::PRE_UPLOAD, $fileReference, $metadata, $onUpdate);
-
-        if ($event->isActionStopped()) {
-            return;
-        }
-
-        $this->moveUploadedFile($file, $fileName, $metadata);
-        $this->updateFile($fileReference, $fileName, $metadata);
-        $this->dispatcher->dispatch(IUploadEvent::POST_UPLOAD, $fileReference, $metadata, $onUpdate);
+        $this->move($fileReference, IUploadEvent::PRE_UPLOAD, IUploadEvent::POST_UPLOAD);
     }
 
-    public function delete($fileReference, $onUpdate = false)
+    public function update($fileReference)
+    {
+        $this->move($fileReference, IUploadEvent::PRE_UPDATE, IUploadEvent::POST_UPDATE);
+    }
+
+    public function deleteOldFile($fileReference)
     {
         $metadata = $this->metadataFactory->getMetadata($fileReference);
         $file = $this->propertyHandler->getFile($fileReference, $metadata);
 
-        if (empty($file) || !$metadata->isDeletable($onUpdate)) {
+        if (empty($file) || !$metadata->isOldFileDeletable()) {
             return false;
         }
 
-        $event = $this->dispatcher->dispatch(IUploadEvent::PRE_REMOVE, $fileReference, $metadata, $onUpdate);
+        return $this->remove(
+            $fileReference,
+            $metadata,
+            $file,
+            IUploadEvent::PRE_REMOVE_OLD_FILE,
+            IUploadEvent::POST_REMOVE_OLD_FILE
+        );
+    }
 
-        if ($event->isActionStopped()) {
+    public function delete($fileReference)
+    {
+        $metadata = $this->metadataFactory->getMetadata($fileReference);
+        $file = $this->propertyHandler->getFile($fileReference, $metadata);
+
+        if (empty($file) || !$metadata->isDeletable()) {
             return false;
         }
 
-        $isDeleted = $this->deleteFile($metadata, $file);
+        return $this->remove($fileReference, $metadata, $file, IUploadEvent::PRE_REMOVE, IUploadEvent::POST_REMOVE);
+    }
 
-        if ($isDeleted) {
-            $this->propertyHandler->setFile($fileReference, $metadata, null);
-            $this->dispatcher->dispatch(IUploadEvent::POST_REMOVE, $fileReference, $metadata, $onUpdate);
-        }
+    public function isFilesEqual($fileReference1, $fileReference2)
+    {
+        $metadata = $this->metadataFactory->getMetadata($fileReference1);
+        $filePath1 = (string)$this->propertyHandler->getFile($fileReference1, $metadata);
+        $filePath2 = (string)$this->propertyHandler->getFile($fileReference2, $metadata);
 
-        return $isDeleted;
+        return $filePath1 === $filePath2;
     }
 
     public function hasUploadedFile($fileReference)
@@ -88,15 +97,6 @@ class UploadHandler
         $file = $this->propertyHandler->getFile($fileReference, $metadata);
 
         return $file instanceof \SplFileInfo;
-    }
-
-    public function isEqualFiles($fileReference1, $fileReference2)
-    {
-        $metadata = $this->metadataFactory->getMetadata($fileReference1);
-        $filePath1 = (string)$this->propertyHandler->getFile($fileReference1, $metadata);
-        $filePath2 = (string)$this->propertyHandler->getFile($fileReference2, $metadata);
-
-        return $filePath1 === $filePath2;
     }
 
     public function injectUri($fileReference)
@@ -153,6 +153,42 @@ class UploadHandler
         $this->dispatcher->dispatch(IUploadEvent::POST_INJECT_FILE_INFO, $fileReference, $metadata);
     }
 
+    private function remove($fileReference, $metadata, $file, $preEventName, $postEventName)
+    {
+        $event = $this->dispatcher->dispatch($preEventName, $fileReference, $metadata);
+
+        if ($event->isActionStopped()) {
+            return false;
+        }
+
+        $isDeleted = $this->deleteFile($metadata, $file);
+
+        if ($isDeleted) {
+            $this->propertyHandler->setFile($fileReference, $metadata, null);
+            $this->dispatcher->dispatch($postEventName, $fileReference, $metadata);
+        }
+
+        return $isDeleted;
+    }
+
+    private function move($fileReference, $preEventName, $postEventName)
+    {
+        $metadata = $this->metadataFactory->getMetadata($fileReference);
+        $file = $this->propertyHandler->getFile($fileReference, $metadata);
+        $fileName = $this->namerFactory->getNamer($metadata->getNamingStrategy())->name($file);
+        $event = $this->dispatcher->dispatch($preEventName, $fileReference, $metadata);
+
+        if ($event->isActionStopped()) {
+            return;
+        }
+
+        $this->moveUploadedFile($file, $fileName, $metadata);
+        $this->propertyHandler->setFile($fileReference, $metadata, $fileName);
+        $this->injectUri($fileReference);
+        $this->injectFileInfo($fileReference);
+        $this->dispatcher->dispatch($postEventName, $fileReference, $metadata);
+    }
+
     private function moveUploadedFile(\SplFileInfo $file, $fileName, FileMetadata $metadata)
     {
         $storage = $this->getStorageFactory()->getStorage($metadata->getStorageType());
@@ -170,13 +206,6 @@ class UploadHandler
         if ($file->isWritable()) {
             unlink((string)$file);
         }
-    }
-
-    private function updateFile($fileReference, $fileName, FileMetadata $metadata)
-    {
-        $this->propertyHandler->setFile($fileReference, $metadata, $fileName);
-        $this->injectUri($fileReference);
-        $this->injectFileInfo($fileReference);
     }
 
     private function deleteFile(FileMetadata $metadata, $file)

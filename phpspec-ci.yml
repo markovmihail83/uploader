@@ -2,8 +2,12 @@ code_generation: false
 extensions:
   - PhpSpec\Extension\CodeCoverageExtension
 code_coverage:
-  format: [clover]
-  output: {clover: coverage.xml}
+  format:
+    - clover
+    - html
+  output:
+    clover: coverage.xml
+    html: coverage
   blacklist_files:
     - src/Event/UploadEvent.php
   blacklist:

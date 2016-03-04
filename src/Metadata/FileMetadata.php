@@ -24,7 +24,7 @@ class FileMetadata
 
     private $namingStrategy;
 
-    private $deleteOnUpdate;
+    private $deleteOldFile;
 
     private $deleteOnRemove;
 
@@ -41,11 +41,12 @@ class FileMetadata
         $uriPrefix,
         $storageType,
         $namingStrategy,
-        $deleteOnUpdate,
+        $deleteOldFile,
         $deleteOnRemove,
         $injectUriOnLoad,
         $injectFileInfoOnLoad
-    ) {
+    )
+    {
         $this->fileSetter = $fileSetter;
         $this->fileGetter = $fileGetter;
         $this->uriSetter = $uriSetter;
@@ -54,7 +55,7 @@ class FileMetadata
         $this->uriPrefix = $uriPrefix;
         $this->storageType = $storageType;
         $this->namingStrategy = $namingStrategy;
-        $this->deleteOnUpdate = $deleteOnUpdate;
+        $this->deleteOldFile = $deleteOldFile;
         $this->deleteOnRemove = $deleteOnRemove;
         $this->injectUriOnLoad = $injectUriOnLoad;
         $this->injectFileInfoOnLoad = $injectFileInfoOnLoad;
@@ -125,13 +126,19 @@ class FileMetadata
     }
 
     /**
-     * @param bool $onUpdate
-     *
      * @return bool
      */
-    public function isDeletable($onUpdate = false)
+    public function isDeletable()
     {
-        return $onUpdate ? $this->deleteOnUpdate : $this->deleteOnRemove;
+        return $this->deleteOnRemove;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isOldFileDeletable()
+    {
+        return $this->deleteOldFile;
     }
 
     /**

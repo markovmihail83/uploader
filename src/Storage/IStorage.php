@@ -8,8 +8,8 @@ namespace Atom\Uploader\Storage;
 interface IStorage
 {
     /**
-     * @param string   $prefix
-     * @param string   $path
+     * @param string $prefix
+     * @param string $path
      * @param resource $resource
      *
      * @throws \Exception

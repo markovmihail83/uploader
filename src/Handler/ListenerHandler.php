@@ -14,7 +14,7 @@ class ListenerHandler
 
     private $uploadedFiles;
 
-    private $movedFiles;
+    private $oldFiles;
 
     private $uploadHandler;
 
@@ -22,7 +22,7 @@ class ListenerHandler
     {
         $this->container = $container;
         $this->uploadedFiles = [];
-        $this->movedFiles = [];
+        $this->oldFiles = [];
     }
 
     private function getUploadHandler()
@@ -36,7 +36,7 @@ class ListenerHandler
             return;
         }
 
-        $this->getUploadHandler()->move($fileReference);
+        $this->getUploadHandler()->upload($fileReference);
         $this->uploadedFiles[$id] = $fileReference;
     }
 
@@ -45,26 +45,26 @@ class ListenerHandler
         $this->detachUploadedFile($id);
     }
 
-    public function preUpdate($id, $fileReference, $oldFileReference)
+    public function preUpdate($id, $newFileReference, $oldFileReference)
     {
-        if (!$oldFileReference || !$this->hasUploadedFile($fileReference)) {
+        if (!$this->hasUploadedFile($newFileReference)) {
             return;
         }
 
         $uploadHandler = $this->getUploadHandler();
 
-        $uploadHandler->move($fileReference, true);
-        $this->uploadedFiles[$id] = $fileReference;
+        $uploadHandler->update($newFileReference);
+        $this->uploadedFiles[$id] = $newFileReference;
 
-        if (!$uploadHandler->isEqualFiles($fileReference, $oldFileReference)) {
-            $this->movedFiles[$id] = $oldFileReference;
+        if ($oldFileReference && !$uploadHandler->isFilesEqual($newFileReference, $oldFileReference)) {
+            $this->oldFiles[$id] = $oldFileReference;
         }
     }
 
     public function postUpdate($id)
     {
         $this->detachUploadedFile($id);
-        $this->deleteMovedFile($id);
+        $this->deleteOldFile($id);
     }
 
     public function postLoad($fileReference)
@@ -101,11 +101,11 @@ class ListenerHandler
         }
     }
 
-    private function deleteMovedFile($id)
+    private function deleteOldFile($id)
     {
-        if (isset($this->movedFiles[$id])) {
-            $this->getUploadHandler()->delete($this->movedFiles[$id], true);
-            unset($this->movedFiles[$id]);
+        if (isset($this->oldFiles[$id])) {
+            $this->getUploadHandler()->deleteOldFile($this->oldFiles[$id]);
+            unset($this->oldFiles[$id]);
         }
     }
 

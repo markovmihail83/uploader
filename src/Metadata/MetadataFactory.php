@@ -66,7 +66,7 @@ class MetadataFactory
             $metadata['uri_prefix'],
             $metadata['storage_type'],
             $metadata['naming_strategy'],
-            $metadata['delete_on_update'],
+            $metadata['delete_old_file'],
             $metadata['delete_on_remove'],
             $metadata['inject_uri_on_load'],
             $metadata['inject_file_info_on_load']

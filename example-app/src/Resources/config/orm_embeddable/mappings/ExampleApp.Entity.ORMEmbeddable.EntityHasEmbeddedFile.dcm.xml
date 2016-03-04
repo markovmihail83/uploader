@@ -1,0 +1,16 @@
+<!--
+  ~ Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+  -->
+
+<doctrine-mapping xmlns="http://doctrine-project.org/schemas/orm/doctrine-mapping"
+                  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                  xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
+                   https://raw.github.com/doctrine/doctrine2/master/doctrine-mapping.xsd">
+    <entity name="ExampleApp\Entity\ORMEmbeddable\EntityHasEmbeddedFile" table="embedded_uploadable">
+        <id name="id" type="integer">
+            <generator strategy="AUTO"/>
+        </id>
+
+        <embedded name="fileReference" class="Atom\Uploader\Model\Embeddable\FileReference"/>
+    </entity>
+</doctrine-mapping>

@@ -33,7 +33,7 @@ class MetadataFactorySpec extends ObjectBehavior
                 'uri_prefix' => '/uploads/%s',
                 'storage_type' => 'my_storage',
                 'naming_strategy' => 'my_naming',
-                'delete_on_update' => true,
+                'delete_old_file' => true,
                 'delete_on_remove' => true,
                 'inject_file_info_on_load' => false,
                 'inject_uri_on_load' => true,

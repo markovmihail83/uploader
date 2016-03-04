@@ -1,4 +1,4 @@
-AtomUploader is a simple yet flexible PHP library for file uploads via ORM embeddable objects, ORM entities, etc.
+This is a simple yet flexible PHP library for file uploads via ORM embeddable objects, ORM entities, etc.
 ===
 
 [![Join the chat at https://gitter.im/atom-azimov/uploader](https://badges.gitter.im/atom-azimov/uploader.svg)](https://gitter.im/atom-azimov/uploader?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)

@@ -24,12 +24,12 @@ class ORMEmbeddableListener implements EventSubscriber
      * ORMEmbeddableListener constructor.
      *
      * @param ListenerHandler $handler
-     * @param array           $fileReferenceProperties Map of properties that is a file reference.
+     * @param array $fileReferenceProperties Map of properties that is a file reference.
      *                                                 e.g.: [entityClassName => [property1, property2, ...]]
      *                                                 note:
      *                                                 the "property1, property2, ..." must be property's name that is
      *                                                 a file reference(which defined in the mappings).
-     * @param array           $events                  doctrine subscribed events
+     * @param array $events doctrine subscribed events
      */
     public function __construct(ListenerHandler $handler, array $fileReferenceProperties, array $events)
     {
@@ -64,15 +64,16 @@ class ORMEmbeddableListener implements EventSubscriber
         $entity = $event->getEntity();
 
         foreach ($this->getFileReferenceFields($entity) as $field) {
-            if (!$event->hasChangedField($field)) {
-                continue;
+            if ($event->hasChangedField($field)) {
+                $newFileReference = $event->getNewValue($field);
+                $oldFileReference = $event->getOldValue($field);
+            } else {
+                $newFileReference = $this->getFieldValue($event, $field);
+                $oldFileReference = $this->getEmbeddedFieldFromOldValues($event, $field);
             }
 
             $id = $this->getFileId($entity, $field);
-            $fileReference = $event->getNewValue($field);
-            $oldFileReference = $event->getOldValue($field);
-
-            $this->handler->preUpdate($id, $fileReference, $oldFileReference);
+            $this->handler->preUpdate($id, $newFileReference, $oldFileReference);
         }
     }
 
@@ -119,6 +120,34 @@ class ORMEmbeddableListener implements EventSubscriber
         $className = ClassUtils::getClass($entity);
 
         return isset($this->fileReferenceProperties[$className]) ? $this->fileReferenceProperties[$className] : [];
+    }
+
+    private function getEmbeddedFieldFromOldValues(PreUpdateEventArgs $event, $fieldName)
+    {
+        $oldValue = null;
+        $em = $event->getEntityManager();
+        $entityMetadata = $em->getClassMetadata(ClassUtils::getClass($event->getEntity()));
+        $embeddedMetadata = null;
+
+        foreach ($event->getEntityChangeSet() as $name => $field) {
+            if (false === strpos($name, $fieldName)) {
+                continue;
+            }
+
+            $mapping = $entityMetadata->getFieldMapping($name);
+
+            if (!$embeddedMetadata) {
+                $embeddedMetadata = $em->getClassMetadata($mapping['originalClass']);
+            }
+
+            if (!$oldValue) {
+                $oldValue = $embeddedMetadata->getReflectionClass()->newInstanceWithoutConstructor();
+            }
+
+            $embeddedMetadata->setFieldValue($oldValue, $mapping['originalField'], $field[0]);
+        }
+
+        return $oldValue;
     }
 
     private function getFieldValue(LifecycleEventArgs $event, $field)

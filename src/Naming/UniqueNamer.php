@@ -8,6 +8,7 @@ namespace Atom\Uploader\Naming;
 
 class UniqueNamer implements INamer
 {
+    use EscapeFilename;
 
     /**
      * @param \SplFileInfo $file
@@ -17,10 +18,9 @@ class UniqueNamer implements INamer
     public function name(\SplFileInfo $file)
     {
         $name = uniqid(null, true);
+        $extension = $this->escape($file->getExtension());
 
-        $extension = $file->getExtension();
-
-        if ($extension) {
+        if (!empty($extension)) {
             $name = sprintf('%s.%s', $name, $extension);
         }
 

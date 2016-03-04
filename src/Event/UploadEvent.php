@@ -15,19 +15,11 @@ trait UploadEvent
 
     private $actionStopped;
 
-    private $onUpdate;
-
-    public function __construct($fileReference, FileMetadata $metadata, $onUpdate = false)
+    public function __construct($fileReference, FileMetadata $metadata)
     {
         $this->fileReference = $fileReference;
         $this->metadata = $metadata;
         $this->actionStopped = false;
-        $this->onUpdate = $onUpdate;
-    }
-
-    public function isUpdating()
-    {
-        return $this->onUpdate;
     }
 
     public function stopAction()

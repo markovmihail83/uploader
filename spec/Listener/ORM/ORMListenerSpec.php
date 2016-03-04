@@ -29,7 +29,8 @@ class ORMListenerSpec extends ObjectBehavior
         FileReference $fileReference,
         EntityManagerInterface $em,
         ClassMetadata $metadata
-    ) {
+    )
+    {
         $this->events = [
             Events::prePersist,
             Events::postPersist,
@@ -49,13 +50,15 @@ class ORMListenerSpec extends ObjectBehavior
         $event->getEntity()->willReturn($fileReference);
         $event->getEntityManager()->willReturn($em);
         $em->getClassMetadata(Argument::type('string'))->willReturn($metadata);
-        
-        $event->getEntityChangeSet()->willReturn([
-            'file' => ['file', null],
-            'some-embeddable.field' => [null, null],
-            'uri' => ['file_info', null],
-            'file_info' => ['uri', null],
-        ]);
+
+        $event->getEntityChangeSet()->willReturn(
+            [
+                'file' => ['file', null],
+                'some-embeddable.field' => [null, null],
+                'uri' => ['file_info', null],
+                'file_info' => ['uri', null],
+            ]
+        );
 
         $event->getOldValue('file')->willReturn('file');
         $event->getOldValue('file_info')->willReturn('file_info');
@@ -64,12 +67,12 @@ class ORMListenerSpec extends ObjectBehavior
         $metadata->setFieldValue(Argument::any(), Argument::type('string'), Argument::any())->willReturn(null);
     }
 
-    function it_should_get_the_events()
+    function it_should_get_events()
     {
         $this->getSubscribedEvents()->shouldEqual($this->events);
     }
 
-    function it_should_do_nothing_when_entity_is_not_file_reference($handler, $event, $notFileReference)
+    function it_should_do_nothing_if_the_entity_is_not_a_file_reference($handler, $event, $notFileReference)
     {
         $event->getEntity()->willReturn($notFileReference);
         $handler->prePersist(Argument::any(), Argument::any())->shouldNotBeCalled();
@@ -87,10 +90,10 @@ class ORMListenerSpec extends ObjectBehavior
         $this->postRemove($event);
     }
 
-    function it_should_call_same_method_of_listener_handler(ListenerHandler $handler, $event, $fileReference)
+    function it_should_delegate_events_to_the_handler(ListenerHandler $handler, $event, $fileReference)
     {
         $id = Argument::type('string');
-        
+
         $handler->prePersist($id, $fileReference)->shouldBeCalled();
         $handler->postPersist($id)->shouldBeCalled();
         $handler->preUpdate($id, $fileReference, Argument::type(FileReference::class))->shouldBeCalled();

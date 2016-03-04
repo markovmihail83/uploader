@@ -1,0 +1,10 @@
+Atom\Uploader\Model\Embeddable\FileReference:
+  filesystem_prefix: embeddableFs
+  storage_type: flysystem
+  uri_prefix: /flysystem-uploads/%s
+  naming_strategy: basename
+ExampleApp\Entity\ORM\UploadableEntity:
+  uri_setter: uriField
+  file_info_setter: fileInfoField
+  file_setter: fileField
+  file_getter: fileField
