@@ -12,14 +12,12 @@ class StorageFactory
 {
     private $storageMap;
 
-    public function __construct()
+    /**
+     * @param IStorage[] $storageMap
+     */
+    public function __construct(array $storageMap)
     {
-        $this->storageMap = [];
-    }
-
-    public function addStorage($key, IStorage $storage)
-    {
-        $this->storageMap[$key] = $storage;
+        $this->storageMap = $storageMap;
     }
 
     /**

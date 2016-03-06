@@ -150,9 +150,10 @@ class Setup
         $flysystemStorage = new FlysystemStorage($mountManager, new FlysystemStreamWrapper());
         $localStorage = new LocalStorage();
 
-        $storageFactory = new StorageFactory();
-        $storageFactory->addStorage('flysystem', $flysystemStorage);
-        $storageFactory->addStorage('local', $localStorage);
+        $storageFactory = new StorageFactory([
+            'flysystem' => $flysystemStorage,
+            'local' => $localStorage
+        ]);
 
         return $storageFactory;
     }
