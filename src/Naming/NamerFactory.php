@@ -12,14 +12,12 @@ class NamerFactory
 {
     private $namingMap;
 
-    public function __construct()
+    /**
+     * @param INamer[] $namingMap
+     */
+    public function __construct(array $namingMap)
     {
-        $this->namingMap = [];
-    }
-
-    public function addNamer($strategy, INamer $namingService)
-    {
-        $this->namingMap[$strategy] = $namingService;
+        $this->namingMap = $namingMap;
     }
 
     /**

@@ -18,7 +18,7 @@ class NamerFactorySpec extends ObjectBehavior
 {
     function let(INamer $namer)
     {
-        $this->addNamer('my_namer_strategy', $namer);
+        $this->beConstructedWith(['my_namer' => $namer]);
     }
 
     function it_should_throw_exception_when_getting_a_namer()
@@ -28,6 +28,6 @@ class NamerFactorySpec extends ObjectBehavior
 
     function it_should_get_a_namer($namer)
     {
-        $this->getNamer('my_namer_strategy')->shouldBe($namer);
+        $this->getNamer('my_namer')->shouldBe($namer);
     }
 }

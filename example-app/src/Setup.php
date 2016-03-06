@@ -161,9 +161,10 @@ class Setup
     {
         $uniqueNamer = new UniqueNamer();
         $basenameNamer = new BasenameNamer();
-        $namerFactory = new NamerFactory();
-        $namerFactory->addNamer('unique_id', $uniqueNamer);
-        $namerFactory->addNamer('basename', $basenameNamer);
+        $namerFactory = new NamerFactory([
+            'unique_id' => $uniqueNamer,
+            'basename' => $basenameNamer,
+        ]);
 
         return $namerFactory;
     }
