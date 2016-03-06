@@ -17,30 +17,30 @@ use Prophecy\Argument;
  */
 class MetadataFactorySpec extends ObjectBehavior
 {
-    function let()
+    function let(FileMetadata $metadata)
     {
-        $metadataIds = [
+        $metadata->getFileGetter()->willReturn('file');
+        $metadata->getFileSetter()->willReturn('file');
+        $metadata->getUriSetter()->willReturn('uri');
+        $metadata->getFileInfoSetter()->willReturn('fileInfo');
+        $metadata->getFilesystemPrefix()->willReturn('fs_prefix');
+        $metadata->getUriPrefix()->willReturn('/uploads/%s');
+        $metadata->getStorageType()->willReturn('my_storage');
+        $metadata->getNamingStrategy()->willReturn('my_namer');
+        $metadata->isOldFileDeletable()->willReturn(true);
+        $metadata->isDeletable()->willReturn(true);
+        $metadata->isInjectableUri()->willReturn(true);
+        $metadata->isInjectableFileInfo()->willReturn(true);
+
+        $fileReferenceClasses = [
             FileReference::class => 0
         ];
 
-        $metadataIdentityMap = [
-            0 => [
-                'file_setter' => 'file',
-                'file_getter' => 'file',
-                'uri_setter' => 'uri',
-                'file_info_setter' => 'fileInfo',
-                'filesystem_prefix' => 'fs_prefix',
-                'uri_prefix' => '/uploads/%s',
-                'storage_type' => 'my_storage',
-                'naming_strategy' => 'my_naming',
-                'delete_old_file' => true,
-                'delete_on_remove' => true,
-                'inject_file_info_on_load' => false,
-                'inject_uri_on_load' => true,
-            ]
+        $metadataMap = [
+            0 => $metadata
         ];
 
-        $this->beConstructedWith($metadataIds, $metadataIdentityMap);
+        $this->beConstructedWith($fileReferenceClasses, $metadataMap);
     }
 
     function it_should_check_existence_of_metadata($nonExistentMetadata)

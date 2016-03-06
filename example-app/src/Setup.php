@@ -6,6 +6,7 @@
 namespace ExampleApp;
 
 
+use Atom\Uploader\Metadata\FileMetadata;
 use Atom\Uploader\Naming\BasenameNamer;
 use Atom\Uploader\Storage\LocalStorage;
 use ExampleApp\Command\ORM\GetCommand;
@@ -169,35 +170,52 @@ class Setup
 
     private static function createMetadataFactory()
     {
-        $metadataIds = [];
-        $metadataIdentityMap = [];
+        $fileReferenceClasses = [];
+        $metadataMap = [];
 
         foreach (func_get_args() as $argument) {
             foreach ($argument as $fileReferenceClass => $mapping) {
                 $defaults = self::DEFAULT_MAPPING;
 
-                if (isset($metadataIds[$fileReferenceClass])) {
-                    $defaults = $metadataIdentityMap[$metadataIds[$fileReferenceClass]];
+                if (isset($fileReferenceClasses[$fileReferenceClass])) {
+                    $defaults = $metadataMap[$fileReferenceClasses[$fileReferenceClass]];
                 }
 
                 $metadata = array_merge($defaults, $mapping);
-                $metadataIndex = array_search($metadata, $metadataIdentityMap);
+                $metadataIndex = array_search($metadata, $metadataMap);
 
                 if (false === $metadataIndex) {
-                    $metadataIndex = array_push($metadataIdentityMap, $metadata) - 1;
+                    $metadataIndex = array_push($metadataMap, $metadata) - 1;
                 }
 
-                $metadataIds[$fileReferenceClass] = $metadataIndex;
+                $fileReferenceClasses[$fileReferenceClass] = $metadataIndex;
             }
         }
 
-        $diff = array_diff(array_keys($metadataIdentityMap), array_values($metadataIds));
+        $diff = array_diff(array_keys($metadataMap), array_values($fileReferenceClasses));
 
         foreach ($diff as $unusedMetadataId) {
-            unset($metadataIdentityMap[$unusedMetadataId]);
+            unset($metadataMap[$unusedMetadataId]);
         }
 
-        return new MetadataFactory($metadataIds, $metadataIdentityMap);
+        foreach ($metadataMap as &$metadata) {
+            $metadata = new FileMetadata(
+                $metadata['file_setter'],
+                $metadata['file_getter'],
+                $metadata['uri_setter'],
+                $metadata['file_info_setter'],
+                $metadata['filesystem_prefix'],
+                $metadata['uri_prefix'],
+                $metadata['storage_type'],
+                $metadata['naming_strategy'],
+                $metadata['delete_old_file'],
+                $metadata['delete_on_remove'],
+                $metadata['inject_uri_on_load'],
+                $metadata['inject_file_info_on_load']
+            );
+        }
+
+        return new MetadataFactory($fileReferenceClasses, $metadataMap);
     }
 
     private static function createOrmListener(ListenerHandler $handler)
