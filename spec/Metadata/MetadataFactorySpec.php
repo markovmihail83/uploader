@@ -25,7 +25,7 @@ class MetadataFactorySpec extends ObjectBehavior
         $metadata->getFileInfoSetter()->willReturn('fileInfo');
         $metadata->getFilesystemPrefix()->willReturn('fs_prefix');
         $metadata->getUriPrefix()->willReturn('/uploads/%s');
-        $metadata->getStorageType()->willReturn('my_storage');
+        $metadata->getFsAdapter()->willReturn('my_filesystem');
         $metadata->getNamingStrategy()->willReturn('my_namer');
         $metadata->isOldFileDeletable()->willReturn(true);
         $metadata->isDeletable()->willReturn(true);

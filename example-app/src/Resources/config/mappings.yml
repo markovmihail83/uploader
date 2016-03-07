@@ -1,6 +1,6 @@
 Atom\Uploader\Model\Embeddable\FileReference:
-  filesystem_prefix: embeddableFs
-  storage_type: flysystem
+  fs_prefix: embeddableFs
+  fs_adapter: flysystem
   uri_prefix: /flysystem-uploads/%s
   naming_strategy: basename
 ExampleApp\Entity\ORM\UploadableEntity:

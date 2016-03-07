@@ -11,14 +11,14 @@ use Atom\Uploader\Event\IUploadEvent;
 use Atom\Uploader\Exception\FileCouldNotBeMovedException;
 use Atom\Uploader\Handler\IPropertyHandler;
 use Atom\Uploader\Handler\UploadHandler;
-use Atom\Uploader\LazyLoad\IStorageFactoryLazyLoader;
+use Atom\Uploader\LazyLoad\IFilesystemFactoryLazyLoader;
 use Atom\Uploader\Metadata\FileMetadata;
 use Atom\Uploader\Metadata\MetadataFactory;
 use Atom\Uploader\Model\Embeddable\FileReference;
 use Atom\Uploader\Naming\INamer;
 use Atom\Uploader\Naming\NamerFactory;
-use Atom\Uploader\Storage\IStorage;
-use Atom\Uploader\Storage\StorageFactory;
+use Atom\Uploader\Filesystem\IFilesystem;
+use Atom\Uploader\Filesystem\FilesystemFactory;
 use org\bovigo\vfs\vfsStream;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument as Arg;
@@ -37,13 +37,13 @@ class UploadHandlerSpec extends ObjectBehavior
     function let(
         MetadataFactory $metadataFactory,
         IPropertyHandler $propertyHandler,
-        IStorageFactoryLazyLoader $storageFactoryLazyLoader,
+        IFilesystemFactoryLazyLoader $filesystemFactoryLazyLoader,
         NamerFactory $namerFactory,
         IEventDispatcher $dispatcher,
         IUploadEvent $uploadEvent,
         FileReference $fileReference,
-        StorageFactory $storageFactory,
-        IStorage $storage,
+        FilesystemFactory $filesystemFactory,
+        IFilesystem $filesystem,
         \SplFileInfo $fileInfo,
         FileMetadata $metadata,
         INamer $namer
@@ -52,8 +52,8 @@ class UploadHandlerSpec extends ObjectBehavior
         $this->mount();
         $this->fsPrefix = vfsStream::url(uniqid());
 
-        $storageFactoryLazyLoader->getStorageFactory()->willReturn($storageFactory);
-        $this->beConstructedWith($metadataFactory, $propertyHandler, $storageFactoryLazyLoader, $namerFactory, $dispatcher);
+        $filesystemFactoryLazyLoader->getFilesystemFactory()->willReturn($filesystemFactory);
+        $this->beConstructedWith($metadataFactory, $propertyHandler, $filesystemFactoryLazyLoader, $namerFactory, $dispatcher);
 
         $dispatcher->dispatch(Arg::type('string'), $fileReference, $metadata)->willReturn($uploadEvent);
 
@@ -61,13 +61,13 @@ class UploadHandlerSpec extends ObjectBehavior
         $metadata->isDeletable()->willReturn(true);
         $metadata->isOldFileDeletable()->willReturn(true);
         $metadata->getUriPrefix()->willReturn('/uploads/%s');
-        $metadata->getStorageType()->willReturn('my_storage');
+        $metadata->getFsAdapter()->willReturn('my_filesystem');
         $metadata->getFilesystemPrefix()->willReturn($this->fsPrefix);
         $metadata->getUriSetter()->willReturn('uri');
         $metadata->isInjectableUri()->willReturn(true);
         $metadata->isInjectableFileInfo()->willReturn(true);
 
-        $storageFactory->getStorage(Arg::type('string'))->willReturn($storage);
+        $filesystemFactory->getFilesystem(Arg::type('string'))->willReturn($filesystem);
         $namerFactory->getNamer(Arg::type('string'))->willReturn($namer);
         $metadataFactory->getMetadata(Arg::any())->willReturn($metadata);
         $metadataFactory->hasMetadata(Arg::type(FileReference::class))->willReturn(true);
@@ -98,9 +98,9 @@ class UploadHandlerSpec extends ObjectBehavior
 
         $uploadEvent->isActionStopped()->willReturn(false);
 
-        $storage->delete($this->fsPrefix, Arg::type('string'))->willReturn(true);
-        $storage->writeStream($this->fsPrefix, Arg::type('string'), Arg::any())->willReturn(true);
-        $storage->resolveFileInfo($this->fsPrefix, Arg::type('string'))->willReturn($fileInfo);
+        $filesystem->delete($this->fsPrefix, Arg::type('string'))->willReturn(true);
+        $filesystem->writeStream($this->fsPrefix, Arg::type('string'), Arg::any())->willReturn(true);
+        $filesystem->resolveFileInfo($this->fsPrefix, Arg::type('string'))->willReturn($fileInfo);
         $namer->name(Arg::type(\SplFileInfo::class))->willReturn(uniqid());
     }
 
@@ -111,7 +111,7 @@ class UploadHandlerSpec extends ObjectBehavior
 
     function it_should_not_handle_a_file_reference_if_action_is_stopped_on_event(
         $fileReference,
-        $storage,
+        $filesystem,
         $uploadEvent,
         $propertyHandler
     )
@@ -124,8 +124,8 @@ class UploadHandlerSpec extends ObjectBehavior
         $this->injectUri($fileReference);
         $this->injectFileInfo($fileReference);
 
-        $storage->writeStream(Arg::any(), Arg::any(), Arg::any())->shouldNotBeenCalled();
-        $storage->delete($this->fsPrefix, Arg::any())->shouldNotBeenCalled();
+        $filesystem->writeStream(Arg::any(), Arg::any(), Arg::any())->shouldNotBeenCalled();
+        $filesystem->delete($this->fsPrefix, Arg::any())->shouldNotBeenCalled();
         $propertyHandler->setFile($fileReference, Arg::any(), Arg::any())->shouldNotBeenCalled();
         $propertyHandler->setUri($fileReference, Arg::any(), Arg::any())->shouldNotBeenCalled();
         $propertyHandler->setFileInfo($fileReference, Arg::any(), Arg::any())->shouldNotBeenCalled();
@@ -188,9 +188,9 @@ class UploadHandlerSpec extends ObjectBehavior
         $this->injectFileInfo($fileReference);
     }
 
-    function it_should_not_inject_a_file_info_if_a_file_info_is_not_resolved($fileReference, $propertyHandler, $storage)
+    function it_should_not_inject_a_file_info_if_a_file_info_is_not_resolved($fileReference, $propertyHandler, $filesystem)
     {
-        $storage->resolveFileInfo($this->fsPrefix, Arg::type('string'))->willReturn(null);
+        $filesystem->resolveFileInfo($this->fsPrefix, Arg::type('string'))->willReturn(null);
         $propertyHandler->setFileInfo(Arg::any(), Arg::any())->shouldNotBeCalled();
         $this->injectFileInfo($fileReference);
     }
@@ -215,10 +215,10 @@ class UploadHandlerSpec extends ObjectBehavior
         $this->delete($fileReference)->shouldBe(false);
     }
 
-    function it_should_not_delete_if_that_could_not_delete_from_storage($fileReference, $storage, $propertyHandler)
+    function it_should_not_delete_if_that_could_not_delete_from_filesystem($fileReference, $filesystem, $propertyHandler)
     {
-        $propertyHandler->getFile($fileReference, Arg::any())->willReturn('relative/file/path/on/storage');
-        $storage->delete($this->fsPrefix, 'relative/file/path/on/storage')->willReturn(false);
+        $propertyHandler->getFile($fileReference, Arg::any())->willReturn('relative/file/path/on/filesystem');
+        $filesystem->delete($this->fsPrefix, 'relative/file/path/on/filesystem')->willReturn(false);
         $this->delete($fileReference)->shouldBe(false);
     }
 
@@ -280,7 +280,7 @@ class UploadHandlerSpec extends ObjectBehavior
 
     function it_should_delete_a_file($fileReference, $propertyHandler)
     {
-        $propertyHandler->getFile($fileReference, Arg::any())->willReturn('relative/file/path/on/storage');
+        $propertyHandler->getFile($fileReference, Arg::any())->willReturn('relative/file/path/on/filesystem');
         $this->delete($fileReference)->shouldBe(true);
     }
 
@@ -304,30 +304,30 @@ class UploadHandlerSpec extends ObjectBehavior
         $this->shouldHaveUploadedFile($fileReference);
     }
 
-    function it_should_throw_exception_on_upload($fileReference, $storage, $fileInfo)
+    function it_should_throw_exception_on_upload($fileReference, $filesystem, $fileInfo)
     {
-        $storage->writeStream($this->fsPrefix, Arg::type('string'), Arg::type('resource'))->willReturn(false);
+        $filesystem->writeStream($this->fsPrefix, Arg::type('string'), Arg::type('resource'))->willReturn(false);
         $this->shouldThrow(FileCouldNotBeMovedException::class)->duringUpload($fileReference);
         Test::assertTrue(file_exists((string)$fileInfo->getWrappedObject()));
     }
 
-    function it_should_throw_exception_on_update($fileReference, $storage, $fileInfo)
+    function it_should_throw_exception_on_update($fileReference, $filesystem, $fileInfo)
     {
-        $storage->writeStream($this->fsPrefix, Arg::type('string'), Arg::type('resource'))->willReturn(false);
+        $filesystem->writeStream($this->fsPrefix, Arg::type('string'), Arg::type('resource'))->willReturn(false);
         $this->shouldThrow(FileCouldNotBeMovedException::class)->duringUpdate($fileReference);
         Test::assertTrue(file_exists((string)$fileInfo->getWrappedObject()));
     }
 
-    function it_should_upload_a_file($fileReference, $propertyHandler, $storage)
+    function it_should_upload_a_file($fileReference, $propertyHandler, $filesystem)
     {
-        $storage->writeStream($this->fsPrefix, Arg::type('string'), Arg::any())->shouldBeCalled();
+        $filesystem->writeStream($this->fsPrefix, Arg::type('string'), Arg::any())->shouldBeCalled();
         $propertyHandler->setFile($fileReference, Arg::any(), Arg::type('string'))->shouldBeCalled();
         $this->upload($fileReference);
     }
 
-    function it_should_update_a_file($fileReference, $propertyHandler, $storage)
+    function it_should_update_a_file($fileReference, $propertyHandler, $filesystem)
     {
-        $storage->writeStream($this->fsPrefix, Arg::type('string'), Arg::any())->shouldBeCalled();
+        $filesystem->writeStream($this->fsPrefix, Arg::type('string'), Arg::any())->shouldBeCalled();
         $propertyHandler->setFile($fileReference, Arg::any(), Arg::type('string'))->shouldBeCalled();
         $this->update($fileReference);
     }

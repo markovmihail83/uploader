@@ -3,13 +3,13 @@
  * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
-namespace Atom\Uploader\Storage;
+namespace Atom\Uploader\Filesystem;
 
 use Atom\Uploader\ThirdParty\FlysystemStreamWrapper;
 use League\Flysystem\FilesystemInterface;
 use League\Flysystem\MountManager;
 
-class FlysystemStorage implements IStorage
+class FlysystemAdapter implements IFilesystem
 {
     private $manager;
 

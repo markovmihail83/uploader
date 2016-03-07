@@ -7,16 +7,16 @@ namespace ExampleApp\DependencyInjection;
 
 
 use Atom\Uploader\Handler\UploadHandler;
-use Atom\Uploader\LazyLoad\IStorageFactoryLazyLoader;
+use Atom\Uploader\LazyLoad\IFilesystemFactoryLazyLoader;
 use Atom\Uploader\LazyLoad\IUploadHandlerLazyLoader;
 use Atom\Uploader\Listener\ORM\ORMListener;
 use Atom\Uploader\Listener\ORMEmbeddable\ORMEmbeddableListener;
-use Atom\Uploader\Storage\StorageFactory;
+use Atom\Uploader\Filesystem\FilesystemFactory;
 use ExampleApp\Event\EventDispatcher;
 
-class AppContainer implements IAppContainer, IUploadHandlerLazyLoader, IStorageFactoryLazyLoader
+class AppContainer implements IAppContainer, IUploadHandlerLazyLoader, IFilesystemFactoryLazyLoader
 {
-    private $storageFactory;
+    private $filesystemFactory;
 
     private $handler;
 
@@ -27,11 +27,11 @@ class AppContainer implements IAppContainer, IUploadHandlerLazyLoader, IStorageF
     private $dispatcher;
 
     /**
-     * @param StorageFactory $storageFactory
+     * @param FilesystemFactory $filesystemFactory
      */
-    public function setStorageFactory(StorageFactory $storageFactory)
+    public function setFilesystemFactory(FilesystemFactory $filesystemFactory)
     {
-        $this->storageFactory = $storageFactory;
+        $this->filesystemFactory = $filesystemFactory;
     }
 
     /**
@@ -83,11 +83,11 @@ class AppContainer implements IAppContainer, IUploadHandlerLazyLoader, IStorageF
     }
 
     /**
-     * @return StorageFactory
+     * @return FilesystemFactory
      */
-    public function getStorageFactory()
+    public function getFilesystemFactory()
     {
-        return $this->storageFactory;
+        return $this->filesystemFactory;
     }
 
     /**

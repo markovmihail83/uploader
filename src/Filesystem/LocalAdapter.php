@@ -3,9 +3,9 @@
  * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
-namespace Atom\Uploader\Storage;
+namespace Atom\Uploader\Filesystem;
 
-class LocalStorage implements IStorage
+class LocalAdapter implements IFilesystem
 {
     public function writeStream($prefix, $path, $resource)
     {

@@ -20,7 +20,7 @@ class FileMetadata
 
     private $uriPrefix;
 
-    private $storageType;
+    private $fsAdapter;
 
     private $namingStrategy;
 
@@ -39,7 +39,7 @@ class FileMetadata
         $fileInfoSetter,
         $filesystemPrefix,
         $uriPrefix,
-        $storageType,
+        $fsAdapter,
         $namingStrategy,
         $deleteOldFile,
         $deleteOnRemove,
@@ -53,7 +53,7 @@ class FileMetadata
         $this->fileInfoSetter = $fileInfoSetter;
         $this->filesystemPrefix = $filesystemPrefix;
         $this->uriPrefix = $uriPrefix;
-        $this->storageType = $storageType;
+        $this->fsAdapter = $fsAdapter;
         $this->namingStrategy = $namingStrategy;
         $this->deleteOldFile = $deleteOldFile;
         $this->deleteOnRemove = $deleteOnRemove;
@@ -112,9 +112,9 @@ class FileMetadata
     /**
      * @return string
      */
-    public function getStorageType()
+    public function getFsAdapter()
     {
-        return $this->storageType;
+        return $this->fsAdapter;
     }
 
     /**

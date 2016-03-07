@@ -12,7 +12,7 @@ class ObjectNotFoundException extends \Exception
 {
     public function __construct($id, $driver, $code = null, Exception $previous = null)
     {
-        $message = sprintf('Object with id "%s" is not found on storage "%s".', $id, $driver);
+        $message = sprintf('Object with id "%s" is not found on database layer "%s".', $id, $driver);
 
         parent::__construct($message, $code, $previous);
     }

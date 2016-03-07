@@ -3,9 +3,9 @@
  * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
-namespace spec\Atom\Uploader\Storage;
+namespace spec\Atom\Uploader\Filesystem;
 
-use Atom\Uploader\Storage\LocalStorage;
+use Atom\Uploader\Filesystem\LocalAdapter;
 use org\bovigo\vfs\vfsStream;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
@@ -13,9 +13,9 @@ use spec\Atom\Uploader\Util\FilesystemHelper;
 use PHPUnit_Framework_TestCase as Test;
 
 /**
- * @mixin LocalStorage
+ * @mixin LocalAdapter
  */
-class LocalStorageSpec extends ObjectBehavior
+class LocalAdapterSpec extends ObjectBehavior
 {
     use FilesystemHelper;
 

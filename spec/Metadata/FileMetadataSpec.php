@@ -20,7 +20,7 @@ class FileMetadataSpec extends ObjectBehavior
     const FILE_INFO_SETTER = 'fileInfo';
     const FS_PREFIX = 'fs_prefix';
     const URI_PREFIX = '/uploads';
-    const STORAGE_TYPE = 'my_storage';
+    const FS_ADAPTER = 'my_adapter';
     const NAMING_STRATEGY = 'my_namer';
     const DELETE_OLD_FILE = false;
     const DELETE_ON_REMOVE = true;
@@ -37,7 +37,7 @@ class FileMetadataSpec extends ObjectBehavior
             self::FILE_INFO_SETTER,
             self::FS_PREFIX,
             self::URI_PREFIX,
-            self::STORAGE_TYPE,
+            self::FS_ADAPTER,
             self::NAMING_STRATEGY,
             self::DELETE_OLD_FILE,
             self::DELETE_ON_REMOVE,
@@ -76,9 +76,9 @@ class FileMetadataSpec extends ObjectBehavior
         $this->getUriPrefix()->shouldBe(self::URI_PREFIX);
     }
 
-    function it_should_get_a_storage_type()
+    function it_should_get_a_fs_adapter()
     {
-        $this->getStorageType()->shouldBe(self::STORAGE_TYPE);
+        $this->getFsAdapter()->shouldBe(self::FS_ADAPTER);
     }
 
     function it_should_get_a_naming_strategy()

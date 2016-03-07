@@ -3,9 +3,9 @@
  * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
-namespace spec\Atom\Uploader\Storage;
+namespace spec\Atom\Uploader\Filesystem;
 
-use Atom\Uploader\Storage\FlysystemStorage;
+use Atom\Uploader\Filesystem\FlysystemAdapter;
 use Atom\Uploader\ThirdParty\FlysystemStreamWrapper;
 use League\Flysystem\Filesystem;
 use League\Flysystem\Handler;
@@ -14,9 +14,9 @@ use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 /**
- * @mixin FlysystemStorage
+ * @mixin FlysystemAdapter
  */
-class FlysystemStorageSpec extends ObjectBehavior
+class FlysystemAdapterSpec extends ObjectBehavior
 {
     const FS_PREFIX = 'fs_prefix';
     const PATH = 'path/to/file';

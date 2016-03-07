@@ -7,7 +7,7 @@ namespace Atom\Uploader\Handler;
 
 use Atom\Uploader\Event\IUploadEvent;
 use Atom\Uploader\Exception\FileCouldNotBeMovedException;
-use Atom\Uploader\LazyLoad\IStorageFactoryLazyLoader;
+use Atom\Uploader\LazyLoad\IFilesystemFactoryLazyLoader;
 use Atom\Uploader\Metadata\MetadataFactory;
 use Atom\Uploader\Metadata\FileMetadata;
 use Atom\Uploader\Naming\NamerFactory;
@@ -19,18 +19,18 @@ class UploadHandler
 
     private $propertyHandler;
 
-    private $storageFactory;
+    private $filesystemFactory;
 
     private $namerFactory;
 
     private $dispatcher;
 
-    private $storageFactoryLazyLoader;
+    private $filesystemFactoryLazyLoader;
 
     public function __construct(
         MetadataFactory $metadataFactory,
         IPropertyHandler $propertyHandler,
-        IStorageFactoryLazyLoader $storageFactoryLazyLoader,
+        IFilesystemFactoryLazyLoader $filesystemFactoryLazyLoader,
         NamerFactory $namerFactory,
         IEventDispatcher $dispatcher
     )
@@ -39,7 +39,7 @@ class UploadHandler
         $this->propertyHandler = $propertyHandler;
         $this->namerFactory = $namerFactory;
         $this->dispatcher = $dispatcher;
-        $this->storageFactoryLazyLoader = $storageFactoryLazyLoader;
+        $this->filesystemFactoryLazyLoader = $filesystemFactoryLazyLoader;
     }
 
     public function upload($fileReference)
@@ -136,8 +136,8 @@ class UploadHandler
             return;
         }
 
-        $storage = $this->getStorageFactory()->getStorage($metadata->getStorageType());
-        $fileInfo = $storage->resolveFileInfo($metadata->getFilesystemPrefix(), $path);
+        $filesystem = $this->getFilesystemFactory()->getFilesystem($metadata->getFsAdapter());
+        $fileInfo = $filesystem->resolveFileInfo($metadata->getFilesystemPrefix(), $path);
 
         if (null === $fileInfo) {
             return;
@@ -196,9 +196,9 @@ class UploadHandler
 
     private function moveUploadedFile(\SplFileInfo $file, $fileName, FileMetadata $metadata)
     {
-        $storage = $this->getStorageFactory()->getStorage($metadata->getStorageType());
+        $filesystem = $this->getFilesystemFactory()->getFilesystem($metadata->getFsAdapter());
         $stream = fopen((string)$file, 'r+');
-        $isMoved = $storage->writeStream($metadata->getFilesystemPrefix(), $fileName, $stream);
+        $isMoved = $filesystem->writeStream($metadata->getFilesystemPrefix(), $fileName, $stream);
 
         if (!$isMoved) {
             throw new FileCouldNotBeMovedException((string)$file, $fileName);
@@ -219,13 +219,13 @@ class UploadHandler
             return unlink((string)$file);
         }
 
-        $storage = $this->getStorageFactory()->getStorage($metadata->getStorageType());
+        $filesystem = $this->getFilesystemFactory()->getFilesystem($metadata->getFsAdapter());
 
-        return $storage->delete($metadata->getFilesystemPrefix(), $file);
+        return $filesystem->delete($metadata->getFilesystemPrefix(), $file);
     }
 
-    private function getStorageFactory()
+    private function getFilesystemFactory()
     {
-        return $this->storageFactory ?: $this->storageFactory = $this->storageFactoryLazyLoader->getStorageFactory();
+        return $this->filesystemFactory ?: $this->filesystemFactory = $this->filesystemFactoryLazyLoader->getFilesystemFactory();
     }
 }

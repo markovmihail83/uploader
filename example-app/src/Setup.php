@@ -8,7 +8,7 @@ namespace ExampleApp;
 
 use Atom\Uploader\Metadata\FileMetadata;
 use Atom\Uploader\Naming\BasenameNamer;
-use Atom\Uploader\Storage\LocalStorage;
+use Atom\Uploader\Filesystem\LocalAdapter;
 use ExampleApp\Command\ORM\GetCommand;
 use ExampleApp\Command\ORM\RemoveCommand;
 use ExampleApp\Command\ORM\UpdateCommand;
@@ -26,8 +26,8 @@ use Atom\Uploader\Listener\ORMEmbeddable\ORMEmbeddableListener;
 use Atom\Uploader\Metadata\MetadataFactory;
 use Atom\Uploader\Naming\NamerFactory;
 use Atom\Uploader\Naming\UniqueNamer;
-use Atom\Uploader\Storage\FlysystemStorage;
-use Atom\Uploader\Storage\StorageFactory;
+use Atom\Uploader\Filesystem\FlysystemAdapter;
+use Atom\Uploader\Filesystem\FilesystemFactory;
 use Atom\Uploader\ThirdParty\FlysystemStreamWrapper;
 use Doctrine\ORM\Events;
 use League\Flysystem\Adapter\Local;
@@ -39,36 +39,11 @@ use Symfony\Component\Yaml\Yaml;
 
 class Setup
 {
-    const DOCTRINE_EVENTS = [
-        Events::prePersist,
-        Events::postPersist,
-        Events::preUpdate,
-        Events::postUpdate,
-        Events::postLoad,
-        Events::postRemove,
-        Events::postFlush,
-    ];
-
-    const DEFAULT_MAPPING = [
-        'file_setter' => 'file',
-        'file_getter' => 'file',
-        'uri_setter' => 'uri',
-        'file_info_setter' => 'fileInfo',
-        'filesystem_prefix' => __DIR__ . '/Resources/public/uploads',
-        'uri_prefix' => '/uploads/%s',
-        'storage_type' => 'local',
-        'naming_strategy' => 'unique_id',
-        'delete_old_file' => true,
-        'delete_on_remove' => true,
-        'inject_uri_on_load' => true,
-        'inject_file_info_on_load' => true,
-    ];
-
     public static function setup(Application $app)
     {
         $container = new AppContainer();
-        $storageFactory = self::createStorageFactory();
-        $container->setStorageFactory($storageFactory);
+        $filesystemFactory = self::createFilesystemFactory();
+        $container->setFilesystemFactory($filesystemFactory);
         $namerFactory = self::createNamerFactory();
         $propertyHandler = new PropertyHandler();
         $dispatcher = new EventDispatcher();
@@ -99,6 +74,37 @@ class Setup
         self::registerCommands($container, $app);
 
         return $container;
+    }
+
+    private static function getDoctrineEvents()
+    {
+        return [
+            Events::prePersist,
+            Events::postPersist,
+            Events::preUpdate,
+            Events::postUpdate,
+            Events::postLoad,
+            Events::postRemove,
+            Events::postFlush,
+        ];
+    }
+
+    private static function getDefaultMapping()
+    {
+        return [
+            'file_setter' => 'file',
+            'file_getter' => 'file',
+            'uri_setter' => 'uri',
+            'file_info_setter' => 'fileInfo',
+            'fs_prefix' => __DIR__ . '/Resources/public/uploads',
+            'uri_prefix' => '/uploads/%s',
+            'fs_adapter' => 'local',
+            'naming_strategy' => 'unique_id',
+            'delete_old_file' => true,
+            'delete_on_remove' => true,
+            'inject_uri_on_load' => true,
+            'inject_file_info_on_load' => true,
+        ];
     }
 
     private static function getExtraMappings()
@@ -140,22 +146,22 @@ class Setup
         );
     }
 
-    private static function createStorageFactory()
+    private static function createFilesystemFactory()
     {
         $localAdapter = new Local(__DIR__ . '/Resources/public/uploads');
         $localFilesystem = new Filesystem($localAdapter);
         $mountManager = new MountManager();
         $mountManager->mountFilesystem('embeddableFs', $localFilesystem);
 
-        $flysystemStorage = new FlysystemStorage($mountManager, new FlysystemStreamWrapper());
-        $localStorage = new LocalStorage();
+        $flysystemAdapter = new FlysystemAdapter($mountManager, new FlysystemStreamWrapper());
+        $localAdapter = new LocalAdapter();
 
-        $storageFactory = new StorageFactory([
-            'flysystem' => $flysystemStorage,
-            'local' => $localStorage
+        $filesystemFactory = new FilesystemFactory([
+            'flysystem' => $flysystemAdapter,
+            'local' => $localAdapter
         ]);
 
-        return $storageFactory;
+        return $filesystemFactory;
     }
 
     private static function createNamerFactory()
@@ -177,7 +183,7 @@ class Setup
 
         foreach (func_get_args() as $argument) {
             foreach ($argument as $fileReferenceClass => $mapping) {
-                $defaults = self::DEFAULT_MAPPING;
+                $defaults = self::getDefaultMapping();
 
                 if (isset($fileReferenceClasses[$fileReferenceClass])) {
                     $defaults = $metadataMap[$fileReferenceClasses[$fileReferenceClass]];
@@ -206,9 +212,9 @@ class Setup
                 $metadata['file_getter'],
                 $metadata['uri_setter'],
                 $metadata['file_info_setter'],
-                $metadata['filesystem_prefix'],
+                $metadata['fs_prefix'],
                 $metadata['uri_prefix'],
-                $metadata['storage_type'],
+                $metadata['fs_adapter'],
                 $metadata['naming_strategy'],
                 $metadata['delete_old_file'],
                 $metadata['delete_on_remove'],
@@ -226,7 +232,7 @@ class Setup
             UploadableEntity::class => UploadableEntity::class
         ];
 
-        return new ORMListener($handler, $fileReferenceEntities, self::DOCTRINE_EVENTS);
+        return new ORMListener($handler, $fileReferenceEntities, self::getDoctrineEvents());
     }
 
     private static function createOrmEmbeddableListener(EventHandler $handler)
@@ -237,7 +243,7 @@ class Setup
             ]
         ];
 
-        return new ORMEmbeddableListener($handler, $fileReferenceProperties, self::DOCTRINE_EVENTS);
+        return new ORMEmbeddableListener($handler, $fileReferenceProperties, self::getDoctrineEvents());
     }
 
     final private function __construct()
