@@ -32,7 +32,7 @@ class MetadataFactorySpec extends ObjectBehavior
         $metadata->isInjectableUri()->willReturn(true);
         $metadata->isInjectableFileInfo()->willReturn(true);
 
-        $fileReferenceClasses = [
+        $classNamesForMetadata = [
             FileReference::class => 0
         ];
 
@@ -40,7 +40,7 @@ class MetadataFactorySpec extends ObjectBehavior
             0 => $metadata
         ];
 
-        $this->beConstructedWith($fileReferenceClasses, $metadataMap);
+        $this->beConstructedWith($classNamesForMetadata, $metadataMap);
     }
 
     function it_should_check_existence_of_metadata($nonExistentMetadata)

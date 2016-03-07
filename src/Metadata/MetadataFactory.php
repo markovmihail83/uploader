@@ -12,15 +12,15 @@ class MetadataFactory
 {
     private $metadataMap;
 
-    private $fileReferenceClasses;
+    private $classNamesForMetadata;
 
     /**
-     * @param array $fileReferenceClasses
+     * @param array $classNamesForMetadata
      * @param FileMetadata[] $metadataMap
      */
-    public function __construct(array $fileReferenceClasses, array $metadataMap)
+    public function __construct(array $classNamesForMetadata, array $metadataMap)
     {
-        $this->fileReferenceClasses = $fileReferenceClasses;
+        $this->classNamesForMetadata = $classNamesForMetadata;
         $this->metadataMap = $metadataMap;
     }
 
@@ -30,11 +30,11 @@ class MetadataFactory
             $className = get_class($className);
         }
 
-        if (!isset($this->fileReferenceClasses[$className])) {
+        if (!isset($this->classNamesForMetadata[$className])) {
             throw new NoSuchMetadataException($className);
         }
 
-        $metadataName = $this->fileReferenceClasses[$className];
+        $metadataName = $this->classNamesForMetadata[$className];
 
         return $this->metadataMap[$metadataName];
     }
@@ -45,6 +45,6 @@ class MetadataFactory
             $className = get_class($className);
         }
 
-        return isset($this->fileReferenceClasses[$className]);
+        return isset($this->classNamesForMetadata[$className]);
     }
 }
