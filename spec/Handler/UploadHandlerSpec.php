@@ -334,8 +334,8 @@ class UploadHandlerSpec extends ObjectBehavior
 
     function it_should_check_whether_the_object_is_a_file_reference($fileReference, $metadataFactory)
     {
-        $metadataFactory->hasMetadata(Arg::type(FileReference::class))->shouldBeCalled();
-        $metadataFactory->hasMetadata(Arg::not(Arg::type(FileReference::class)))->shouldBeCalled();
+        $metadataFactory->hasMetadata(Arg::type(FileReference::class))->willReturn(true)->shouldBeCalled();
+        $metadataFactory->hasMetadata(Arg::not(Arg::type(FileReference::class)))->willReturn(false)->shouldBeCalled();
         $this->shouldBeFileReference($fileReference);
         $this->shouldNotBeFileReference('/it/is/not/a/file/reference');
     }
