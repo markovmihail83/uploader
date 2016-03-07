@@ -6,11 +6,11 @@
 namespace Atom\Uploader\Handler;
 
 
-use Atom\Uploader\DependencyInjection\IContainer;
+use Atom\Uploader\LazyLoad\IUploadHandlerLazyLoader;
 
-class ListenerHandler
+class EventHandler
 {
-    private $container;
+    private $uploadHandlerLazyLoader;
 
     private $uploadedFiles;
 
@@ -18,16 +18,11 @@ class ListenerHandler
 
     private $uploadHandler;
 
-    public function __construct(IContainer $container)
+    public function __construct(IUploadHandlerLazyLoader $uploadHandlerLazyLoader)
     {
-        $this->container = $container;
+        $this->uploadHandlerLazyLoader = $uploadHandlerLazyLoader;
         $this->uploadedFiles = [];
         $this->oldFiles = [];
-    }
-
-    private function getUploadHandler()
-    {
-        return $this->uploadHandler ?: $this->uploadHandler = $this->container->getUploadHandler();
     }
 
     public function prePersist($id, $fileReference)
@@ -69,7 +64,7 @@ class ListenerHandler
 
     public function postLoad($fileReference)
     {
-        if (!$fileReference) {
+        if (!$this->isFileReference($fileReference)) {
             return;
         }
 
@@ -81,7 +76,7 @@ class ListenerHandler
 
     public function postRemove($fileReference)
     {
-        if (!$fileReference) {
+        if (!$this->isFileReference($fileReference)) {
             return;
         }
 
@@ -118,7 +113,16 @@ class ListenerHandler
 
     private function hasUploadedFile($fileReference)
     {
-        return $fileReference && $this->getUploadHandler()->hasUploadedFile($fileReference);
+        return $this->isFileReference($fileReference) && $this->getUploadHandler()->hasUploadedFile($fileReference);
     }
 
+    private function isFileReference($fileReference)
+    {
+        return $fileReference && $this->getUploadHandler()->isFileReference($fileReference);
+    }
+
+    private function getUploadHandler()
+    {
+        return $this->uploadHandler ?: $this->uploadHandler = $this->uploadHandlerLazyLoader->getUploadHandler();
+    }
 }

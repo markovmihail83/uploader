@@ -7,12 +7,14 @@ namespace ExampleApp\DependencyInjection;
 
 
 use Atom\Uploader\Handler\UploadHandler;
+use Atom\Uploader\LazyLoad\IStorageFactoryLazyLoader;
+use Atom\Uploader\LazyLoad\IUploadHandlerLazyLoader;
 use Atom\Uploader\Listener\ORM\ORMListener;
 use Atom\Uploader\Listener\ORMEmbeddable\ORMEmbeddableListener;
 use Atom\Uploader\Storage\StorageFactory;
 use ExampleApp\Event\EventDispatcher;
 
-class AppContainer implements IAppContainer
+class AppContainer implements IAppContainer, IUploadHandlerLazyLoader, IStorageFactoryLazyLoader
 {
     private $storageFactory;
 

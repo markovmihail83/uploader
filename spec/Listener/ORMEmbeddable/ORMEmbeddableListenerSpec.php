@@ -6,7 +6,7 @@
 namespace spec\Atom\Uploader\Listener\ORMEmbeddable;
 
 
-use Atom\Uploader\Handler\ListenerHandler;
+use Atom\Uploader\Handler\EventHandler;
 use Atom\Uploader\Listener\ORMEmbeddable\ORMEmbeddableListener;
 use Atom\Uploader\Model\Embeddable\FileReference;
 use Doctrine\ORM\EntityManagerInterface;
@@ -26,7 +26,7 @@ class ORMEmbeddableListenerSpec extends ObjectBehavior
     const FILE_REFERENCE_PROPERTY = 'file_field';
 
     function let(
-        ListenerHandler $handler,
+        EventHandler $handler,
         PreUpdateEventArgs $event,
         FileReference $fileReference,
         FileReference $oldFileReference,
@@ -130,7 +130,7 @@ class ORMEmbeddableListenerSpec extends ObjectBehavior
     }
 
     function it_should_delegate_events_to_the_handler(
-        ListenerHandler $handler,
+        EventHandler $handler,
         $event,
         $fileReference,
         $oldFileReference

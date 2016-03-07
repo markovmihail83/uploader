@@ -5,9 +5,9 @@
 
 namespace Atom\Uploader\Handler;
 
-use Atom\Uploader\DependencyInjection\IContainer;
 use Atom\Uploader\Event\IUploadEvent;
 use Atom\Uploader\Exception\FileCouldNotBeMovedException;
+use Atom\Uploader\LazyLoad\IStorageFactoryLazyLoader;
 use Atom\Uploader\Metadata\MetadataFactory;
 use Atom\Uploader\Metadata\FileMetadata;
 use Atom\Uploader\Naming\NamerFactory;
@@ -25,12 +25,12 @@ class UploadHandler
 
     private $dispatcher;
 
-    private $container;
+    private $storageFactoryLazyLoader;
 
     public function __construct(
         MetadataFactory $metadataFactory,
         IPropertyHandler $propertyHandler,
-        IContainer $container,
+        IStorageFactoryLazyLoader $storageFactoryLazyLoader,
         NamerFactory $namerFactory,
         IEventDispatcher $dispatcher
     )
@@ -39,7 +39,7 @@ class UploadHandler
         $this->propertyHandler = $propertyHandler;
         $this->namerFactory = $namerFactory;
         $this->dispatcher = $dispatcher;
-        $this->container = $container;
+        $this->storageFactoryLazyLoader = $storageFactoryLazyLoader;
     }
 
     public function upload($fileReference)
@@ -153,6 +153,11 @@ class UploadHandler
         $this->dispatcher->dispatch(IUploadEvent::POST_INJECT_FILE_INFO, $fileReference, $metadata);
     }
 
+    public function isFileReference($fileReference)
+    {
+        return $this->metadataFactory->hasMetadata($fileReference);
+    }
+
     private function remove($fileReference, $metadata, $file, $preEventName, $postEventName)
     {
         $event = $this->dispatcher->dispatch($preEventName, $fileReference, $metadata);
@@ -221,6 +226,6 @@ class UploadHandler
 
     private function getStorageFactory()
     {
-        return $this->storageFactory ?: $this->storageFactory = $this->container->getStorageFactory();
+        return $this->storageFactory ?: $this->storageFactory = $this->storageFactoryLazyLoader->getStorageFactory();
     }
 }

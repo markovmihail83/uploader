@@ -19,7 +19,7 @@ use ExampleApp\Entity\ORM\UploadableEntity;
 use ExampleApp\Entity\ORMEmbeddable\EntityHasEmbeddedFile;
 use ExampleApp\Event\EventDispatcher;
 use ExampleApp\Handler\PropertyHandler;
-use Atom\Uploader\Handler\ListenerHandler;
+use Atom\Uploader\Handler\EventHandler;
 use Atom\Uploader\Handler\UploadHandler;
 use Atom\Uploader\Listener\ORM\ORMListener;
 use Atom\Uploader\Listener\ORMEmbeddable\ORMEmbeddableListener;
@@ -74,7 +74,7 @@ class Setup
         $dispatcher = new EventDispatcher();
         $container->setDispatcher($dispatcher);
 
-        $listenerHandler = new ListenerHandler($container);
+        $listenerHandler = new EventHandler($container);
 
         $ormListener = self::createOrmListener($listenerHandler);
         $container->setOrmListener($ormListener);
@@ -220,7 +220,7 @@ class Setup
         return new MetadataFactory($fileReferenceClasses, $metadataMap);
     }
 
-    private static function createOrmListener(ListenerHandler $handler)
+    private static function createOrmListener(EventHandler $handler)
     {
         $fileReferenceEntities = [
             UploadableEntity::class => UploadableEntity::class
@@ -229,7 +229,7 @@ class Setup
         return new ORMListener($handler, $fileReferenceEntities, self::DOCTRINE_EVENTS);
     }
 
-    private static function createOrmEmbeddableListener(ListenerHandler $handler)
+    private static function createOrmEmbeddableListener(EventHandler $handler)
     {
         $fileReferenceProperties = [
             EntityHasEmbeddedFile::class => [

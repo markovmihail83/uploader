@@ -14,6 +14,10 @@ class MetadataFactory
 
     private $fileReferenceClasses;
 
+    /**
+     * @param array $fileReferenceClasses
+     * @param FileMetadata[] $metadataMap
+     */
     public function __construct(array $fileReferenceClasses, array $metadataMap)
     {
         $this->fileReferenceClasses = $fileReferenceClasses;
@@ -30,10 +34,9 @@ class MetadataFactory
             throw new NoSuchMetadataException($className);
         }
 
-        $metadataIndex = $this->fileReferenceClasses[$className];
-        $metadata = $this->metadataMap[$metadataIndex];
+        $metadataName = $this->fileReferenceClasses[$className];
 
-        return $metadata;
+        return $this->metadataMap[$metadataName];
     }
 
     public function hasMetadata($className)

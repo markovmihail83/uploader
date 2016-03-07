@@ -6,27 +6,27 @@
 namespace spec\Atom\Uploader\Handler;
 
 
-use Atom\Uploader\DependencyInjection\IContainer;
-use Atom\Uploader\Handler\ListenerHandler;
+use Atom\Uploader\Handler\EventHandler;
 use Atom\Uploader\Handler\UploadHandler;
+use Atom\Uploader\LazyLoad\IUploadHandlerLazyLoader;
 use Atom\Uploader\Model\Embeddable\FileReference;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 /**
- * @mixin ListenerHandler
+ * @mixin EventHandler
  */
-class ListenerHandlerSpec extends ObjectBehavior
+class EventHandlerSpec extends ObjectBehavior
 {
     function let(
-        IContainer $container,
+        IUploadHandlerLazyLoader $uploadHandlerLazyLoader,
         UploadHandler $handler,
         FileReference $fileReference,
         FileReference $oldFileReference
     )
     {
-        $container->getUploadHandler()->willReturn($handler);
-        $this->beConstructedWith($container);
+        $uploadHandlerLazyLoader->getUploadHandler()->willReturn($handler);
+        $this->beConstructedWith($uploadHandlerLazyLoader);
 
         $handler->hasUploadedFile(Argument::type(FileReference::class))->willReturn(true);
         $handler->isFilesEqual($fileReference, $oldFileReference)->willReturn(false);
@@ -36,11 +36,13 @@ class ListenerHandlerSpec extends ObjectBehavior
         $handler->delete(Argument::type(FileReference::class))->willReturn(true);
         $handler->injectUri(Argument::type(FileReference::class))->willReturn(null);
         $handler->injectFileInfo(Argument::type(FileReference::class))->willReturn(null);
+        $handler->isFileReference(Argument::type(FileReference::class))->willReturn(true);
+        $handler->isFileReference(Argument::not(Argument::type(FileReference::class)))->willReturn(false);
     }
 
-    function it_should_do_nothing_if_a_file_reference_is_none($container, $oldFileReference)
+    function it_should_do_nothing_if_a_file_reference_is_none($uploadHandlerLazyLoader, $oldFileReference)
     {
-        $container->getUploadHandler()->shouldNotBeCalled();
+        $uploadHandlerLazyLoader->getUploadHandler()->shouldNotBeCalled();
         $id = uniqid();
 
         $this->prePersist($id, null);
@@ -50,6 +52,20 @@ class ListenerHandlerSpec extends ObjectBehavior
         $this->postUpdate($id);
         $this->postLoad(null);
         $this->postRemove(null);
+        $this->postFlush();
+    }
+
+    function it_should_do_nothing_if_an_object_is_not_a_file_reference($object, $oldFileReference)
+    {
+        $id = uniqid();
+
+        $this->prePersist($id, $object);
+        $this->postPersist($id);
+        $this->prePersist($id, $object);
+        $this->preUpdate($id, $object, $oldFileReference);
+        $this->postUpdate($id);
+        $this->postLoad($object);
+        $this->postRemove($object);
         $this->postFlush();
     }
 

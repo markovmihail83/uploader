@@ -6,7 +6,7 @@
 namespace Atom\Uploader\Listener\ORM;
 
 
-use Atom\Uploader\Handler\ListenerHandler;
+use Atom\Uploader\Handler\EventHandler;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -23,12 +23,12 @@ class ORMListener implements EventSubscriber
     /**
      * ORMEmbeddableListener constructor.
      *
-     * @param ListenerHandler $handler
+     * @param EventHandler $handler
      * @param array $fileReferenceEntities Map of entity classnames that is a file reference (which defined
      *                                               in the mappings).
      * @param array $events doctrine subscribed events
      */
-    public function __construct(ListenerHandler $handler, array $fileReferenceEntities, array $events)
+    public function __construct(EventHandler $handler, array $fileReferenceEntities, array $events)
     {
         $this->handler = $handler;
         $this->fileReferenceEntities = $fileReferenceEntities;

@@ -6,12 +6,12 @@
 namespace spec\Atom\Uploader\Handler;
 
 
-use Atom\Uploader\DependencyInjection\IContainer;
 use Atom\Uploader\Event\IEventDispatcher;
 use Atom\Uploader\Event\IUploadEvent;
 use Atom\Uploader\Exception\FileCouldNotBeMovedException;
 use Atom\Uploader\Handler\IPropertyHandler;
 use Atom\Uploader\Handler\UploadHandler;
+use Atom\Uploader\LazyLoad\IStorageFactoryLazyLoader;
 use Atom\Uploader\Metadata\FileMetadata;
 use Atom\Uploader\Metadata\MetadataFactory;
 use Atom\Uploader\Model\Embeddable\FileReference;
@@ -37,7 +37,7 @@ class UploadHandlerSpec extends ObjectBehavior
     function let(
         MetadataFactory $metadataFactory,
         IPropertyHandler $propertyHandler,
-        IContainer $container,
+        IStorageFactoryLazyLoader $storageFactoryLazyLoader,
         NamerFactory $namerFactory,
         IEventDispatcher $dispatcher,
         IUploadEvent $uploadEvent,
@@ -52,8 +52,8 @@ class UploadHandlerSpec extends ObjectBehavior
         $this->mount();
         $this->fsPrefix = vfsStream::url(uniqid());
 
-        $container->getStorageFactory()->willReturn($storageFactory);
-        $this->beConstructedWith($metadataFactory, $propertyHandler, $container, $namerFactory, $dispatcher);
+        $storageFactoryLazyLoader->getStorageFactory()->willReturn($storageFactory);
+        $this->beConstructedWith($metadataFactory, $propertyHandler, $storageFactoryLazyLoader, $namerFactory, $dispatcher);
 
         $dispatcher->dispatch(Arg::type('string'), $fileReference, $metadata)->willReturn($uploadEvent);
 
@@ -70,11 +70,15 @@ class UploadHandlerSpec extends ObjectBehavior
         $storageFactory->getStorage(Arg::type('string'))->willReturn($storage);
         $namerFactory->getNamer(Arg::type('string'))->willReturn($namer);
         $metadataFactory->getMetadata(Arg::any())->willReturn($metadata);
+        $metadataFactory->hasMetadata(Arg::type(FileReference::class))->willReturn(true);
+        $metadataFactory->hasMetadata(Arg::not(Arg::type(FileMetadata::class)))->willReturn(false);
 
         $filePath = self::joinPath($this->fsPrefix, uniqid());
         self::createFile($filePath);
         $fileInfo->__toString()->willReturn($filePath);
         $fileInfo->isWritable()->willReturn(true);
+
+        $fileReference->__toString()->willReturn($filePath);
 
         $propertyHandler
             ->getFile(Arg::type(FileReference::class), Arg::type(FileMetadata::class))
@@ -326,5 +330,13 @@ class UploadHandlerSpec extends ObjectBehavior
         $storage->writeStream($this->fsPrefix, Arg::type('string'), Arg::any())->shouldBeCalled();
         $propertyHandler->setFile($fileReference, Arg::any(), Arg::type('string'))->shouldBeCalled();
         $this->update($fileReference);
+    }
+
+    function it_should_check_whether_the_object_is_a_file_reference($fileReference, $metadataFactory)
+    {
+        $metadataFactory->hasMetadata(Arg::type(FileReference::class))->shouldBeCalled();
+        $metadataFactory->hasMetadata(Arg::not(Arg::type(FileReference::class)))->shouldBeCalled();
+        $this->shouldBeFileReference($fileReference);
+        $this->shouldNotBeFileReference('/it/is/not/a/file/reference');
     }
 }

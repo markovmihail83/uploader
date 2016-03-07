@@ -3,21 +3,15 @@
  * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
-namespace Atom\Uploader\DependencyInjection;
+namespace Atom\Uploader\LazyLoad;
 
 
 use Atom\Uploader\Handler\UploadHandler;
-use Atom\Uploader\Storage\StorageFactory;
 
-interface IContainer
+interface IUploadHandlerLazyLoader
 {
     /**
      * @return UploadHandler
      */
     public function getUploadHandler();
-
-    /**
-     * @return StorageFactory
-     */
-    public function getStorageFactory();
 }

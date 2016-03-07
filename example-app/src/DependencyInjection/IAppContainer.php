@@ -6,12 +6,11 @@
 namespace ExampleApp\DependencyInjection;
 
 
-use Atom\Uploader\DependencyInjection\IContainer;
 use Atom\Uploader\Listener\ORM\ORMListener;
 use Atom\Uploader\Listener\ORMEmbeddable\ORMEmbeddableListener;
 use ExampleApp\Event\EventDispatcher;
 
-interface IAppContainer extends IContainer
+interface IAppContainer
 {
     /**
      * @return ORMListener

@@ -18,7 +18,7 @@ class StorageFactorySpec extends ObjectBehavior
 {
     function let(IStorage $storage)
     {
-        $this->beConstructedWith(['my_storage', $storage]);
+        $this->beConstructedWith(['my_storage' => $storage]);
     }
 
     function it_should_get_storage($storage)

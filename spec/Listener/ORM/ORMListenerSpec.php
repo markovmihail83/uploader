@@ -6,7 +6,7 @@
 namespace spec\Atom\Uploader\Listener\ORM;
 
 
-use Atom\Uploader\Handler\ListenerHandler;
+use Atom\Uploader\Handler\EventHandler;
 use Atom\Uploader\Listener\ORM\ORMListener;
 use Atom\Uploader\Model\Embeddable\FileReference;
 use Doctrine\ORM\EntityManagerInterface;
@@ -24,7 +24,7 @@ class ORMListenerSpec extends ObjectBehavior
     private $events;
 
     function let(
-        ListenerHandler $handler,
+        EventHandler $handler,
         PreUpdateEventArgs $event,
         FileReference $fileReference,
         EntityManagerInterface $em,
@@ -90,7 +90,7 @@ class ORMListenerSpec extends ObjectBehavior
         $this->postRemove($event);
     }
 
-    function it_should_delegate_events_to_the_handler(ListenerHandler $handler, $event, $fileReference)
+    function it_should_delegate_events_to_the_handler(EventHandler $handler, $event, $fileReference)
     {
         $id = Argument::type('string');
 
