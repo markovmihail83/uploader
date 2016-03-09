@@ -12,7 +12,7 @@ before_script:
 - php example-app/bin/prepare.php
 script:
 - vendor/bin/phpspec -c=phpspec-ci.yml run
-- vendor/bin/behat
+- vendor/bin/behat -f progress
 after_script:
 - travis_retry vendor/bin/coveralls
 notifications:
