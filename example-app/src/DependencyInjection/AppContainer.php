@@ -7,16 +7,16 @@ namespace ExampleApp\DependencyInjection;
 
 
 use Atom\Uploader\Handler\UploadHandler;
-use Atom\Uploader\LazyLoad\IFilesystemFactoryLazyLoader;
+use Atom\Uploader\LazyLoad\IFilesystemAdapterRepoLazyLoader;
 use Atom\Uploader\LazyLoad\IUploadHandlerLazyLoader;
 use Atom\Uploader\Listener\ORM\ORMListener;
 use Atom\Uploader\Listener\ORMEmbeddable\ORMEmbeddableListener;
-use Atom\Uploader\Filesystem\FilesystemFactory;
+use Atom\Uploader\Filesystem\FilesystemAdapterRepo;
 use ExampleApp\Event\EventDispatcher;
 
-class AppContainer implements IAppContainer, IUploadHandlerLazyLoader, IFilesystemFactoryLazyLoader
+class AppContainer implements IAppContainer, IUploadHandlerLazyLoader, IFilesystemAdapterRepoLazyLoader
 {
-    private $filesystemFactory;
+    private $filesystemAdapterRepo;
 
     private $handler;
 
@@ -27,11 +27,11 @@ class AppContainer implements IAppContainer, IUploadHandlerLazyLoader, IFilesyst
     private $dispatcher;
 
     /**
-     * @param FilesystemFactory $filesystemFactory
+     * @param FilesystemAdapterRepo $filesystemAdapterRepo
      */
-    public function setFilesystemFactory(FilesystemFactory $filesystemFactory)
+    public function setFilesystemAdapterRepo(FilesystemAdapterRepo $filesystemAdapterRepo)
     {
-        $this->filesystemFactory = $filesystemFactory;
+        $this->filesystemAdapterRepo = $filesystemAdapterRepo;
     }
 
     /**
@@ -83,11 +83,11 @@ class AppContainer implements IAppContainer, IUploadHandlerLazyLoader, IFilesyst
     }
 
     /**
-     * @return FilesystemFactory
+     * @return FilesystemAdapterRepo
      */
-    public function getFilesystemFactory()
+    public function getFilesystemAdapterRepo()
     {
-        return $this->filesystemFactory;
+        return $this->filesystemAdapterRepo;
     }
 
     /**

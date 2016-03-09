@@ -7,14 +7,14 @@ namespace spec\Atom\Uploader\Naming;
 
 use Atom\Uploader\Exception\NoSuchNamingException;
 use Atom\Uploader\Naming\INamer;
-use Atom\Uploader\Naming\NamerFactory;
+use Atom\Uploader\Naming\NamerRepo;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 /**
- * @mixin NamerFactory
+ * @mixin NamerRepo
  */
-class NamerFactorySpec extends ObjectBehavior
+class NamerRepoSpec extends ObjectBehavior
 {
     function let(INamer $namer)
     {

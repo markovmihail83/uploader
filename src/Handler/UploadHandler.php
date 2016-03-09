@@ -7,10 +7,10 @@ namespace Atom\Uploader\Handler;
 
 use Atom\Uploader\Event\IUploadEvent;
 use Atom\Uploader\Exception\FileCouldNotBeMovedException;
-use Atom\Uploader\LazyLoad\IFilesystemFactoryLazyLoader;
+use Atom\Uploader\LazyLoad\IFilesystemAdapterRepoLazyLoader;
 use Atom\Uploader\Metadata\MetadataRepo;
 use Atom\Uploader\Metadata\FileMetadata;
-use Atom\Uploader\Naming\NamerFactory;
+use Atom\Uploader\Naming\NamerRepo;
 use Atom\Uploader\Event\IEventDispatcher;
 
 class UploadHandler
@@ -19,27 +19,27 @@ class UploadHandler
 
     private $propertyHandler;
 
-    private $filesystemFactory;
+    private $filesystemAdapterRepo;
 
-    private $namerFactory;
+    private $namerRepo;
 
     private $dispatcher;
 
-    private $filesystemFactoryLazyLoader;
+    private $filesystemAdapterRepoLazyLoader;
 
     public function __construct(
         MetadataRepo $metadataRepo,
         IPropertyHandler $propertyHandler,
-        IFilesystemFactoryLazyLoader $filesystemFactoryLazyLoader,
-        NamerFactory $namerFactory,
+        IFilesystemAdapterRepoLazyLoader $filesystemAdapterRepoLazyLoader,
+        NamerRepo $namerRepo,
         IEventDispatcher $dispatcher
     )
     {
         $this->metadataRepo = $metadataRepo;
         $this->propertyHandler = $propertyHandler;
-        $this->namerFactory = $namerFactory;
+        $this->namerRepo = $namerRepo;
         $this->dispatcher = $dispatcher;
-        $this->filesystemFactoryLazyLoader = $filesystemFactoryLazyLoader;
+        $this->filesystemAdapterRepoLazyLoader = $filesystemAdapterRepoLazyLoader;
     }
 
     public function upload($fileReference)
@@ -136,7 +136,7 @@ class UploadHandler
             return;
         }
 
-        $filesystem = $this->getFilesystemFactory()->getFilesystem($metadata->getFsAdapter());
+        $filesystem = $this->getFilesystemAdapterRepo()->getFilesystem($metadata->getFsAdapter());
         $fileInfo = $filesystem->resolveFileInfo($metadata->getFilesystemPrefix(), $path);
 
         if (null === $fileInfo) {
@@ -180,7 +180,7 @@ class UploadHandler
     {
         $metadata = $this->metadataRepo->getMetadata($fileReference);
         $file = $this->propertyHandler->getFile($fileReference, $metadata);
-        $fileName = $this->namerFactory->getNamer($metadata->getNamingStrategy())->name($file);
+        $fileName = $this->namerRepo->getNamer($metadata->getNamingStrategy())->name($file);
         $event = $this->dispatcher->dispatch($preEventName, $fileReference, $metadata);
 
         if ($event->isActionStopped()) {
@@ -196,7 +196,7 @@ class UploadHandler
 
     private function moveUploadedFile(\SplFileInfo $file, $fileName, FileMetadata $metadata)
     {
-        $filesystem = $this->getFilesystemFactory()->getFilesystem($metadata->getFsAdapter());
+        $filesystem = $this->getFilesystemAdapterRepo()->getFilesystem($metadata->getFsAdapter());
         $stream = fopen((string)$file, 'r+');
         $isMoved = $filesystem->writeStream($metadata->getFilesystemPrefix(), $fileName, $stream);
 
@@ -219,13 +219,13 @@ class UploadHandler
             return unlink((string)$file);
         }
 
-        $filesystem = $this->getFilesystemFactory()->getFilesystem($metadata->getFsAdapter());
+        $filesystem = $this->getFilesystemAdapterRepo()->getFilesystem($metadata->getFsAdapter());
 
         return $filesystem->delete($metadata->getFilesystemPrefix(), $file);
     }
 
-    private function getFilesystemFactory()
+    private function getFilesystemAdapterRepo()
     {
-        return $this->filesystemFactory ?: $this->filesystemFactory = $this->filesystemFactoryLazyLoader->getFilesystemFactory();
+        return $this->filesystemAdapterRepo ?: $this->filesystemAdapterRepo = $this->filesystemAdapterRepoLazyLoader->getFilesystemAdapterRepo();
     }
 }

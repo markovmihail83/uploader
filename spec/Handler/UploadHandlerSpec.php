@@ -11,14 +11,14 @@ use Atom\Uploader\Event\IUploadEvent;
 use Atom\Uploader\Exception\FileCouldNotBeMovedException;
 use Atom\Uploader\Handler\IPropertyHandler;
 use Atom\Uploader\Handler\UploadHandler;
-use Atom\Uploader\LazyLoad\IFilesystemFactoryLazyLoader;
+use Atom\Uploader\LazyLoad\IFilesystemAdapterRepoLazyLoader;
 use Atom\Uploader\Metadata\FileMetadata;
 use Atom\Uploader\Metadata\MetadataRepo;
 use Atom\Uploader\Model\Embeddable\FileReference;
 use Atom\Uploader\Naming\INamer;
-use Atom\Uploader\Naming\NamerFactory;
-use Atom\Uploader\Filesystem\IFilesystem;
-use Atom\Uploader\Filesystem\FilesystemFactory;
+use Atom\Uploader\Naming\NamerRepo;
+use Atom\Uploader\Filesystem\IFilesystemAdapter;
+use Atom\Uploader\Filesystem\FilesystemAdapterRepo;
 use org\bovigo\vfs\vfsStream;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument as Arg;
@@ -37,13 +37,13 @@ class UploadHandlerSpec extends ObjectBehavior
     function let(
         MetadataRepo $metadataRepo,
         IPropertyHandler $propertyHandler,
-        IFilesystemFactoryLazyLoader $filesystemFactoryLazyLoader,
-        NamerFactory $namerFactory,
+        IFilesystemAdapterRepoLazyLoader $filesystemAdapterRepoLazyLoader,
+        NamerRepo $namerRepo,
         IEventDispatcher $dispatcher,
         IUploadEvent $uploadEvent,
         FileReference $fileReference,
-        FilesystemFactory $filesystemFactory,
-        IFilesystem $filesystem,
+        FilesystemAdapterRepo $filesystemAdapterRepo,
+        IFilesystemAdapter $filesystem,
         \SplFileInfo $fileInfo,
         FileMetadata $metadata,
         INamer $namer
@@ -52,8 +52,8 @@ class UploadHandlerSpec extends ObjectBehavior
         $this->mount();
         $this->fsPrefix = vfsStream::url(uniqid());
 
-        $filesystemFactoryLazyLoader->getFilesystemFactory()->willReturn($filesystemFactory);
-        $this->beConstructedWith($metadataRepo, $propertyHandler, $filesystemFactoryLazyLoader, $namerFactory, $dispatcher);
+        $filesystemAdapterRepoLazyLoader->getFilesystemAdapterRepo()->willReturn($filesystemAdapterRepo);
+        $this->beConstructedWith($metadataRepo, $propertyHandler, $filesystemAdapterRepoLazyLoader, $namerRepo, $dispatcher);
 
         $dispatcher->dispatch(Arg::type('string'), $fileReference, $metadata)->willReturn($uploadEvent);
 
@@ -67,8 +67,8 @@ class UploadHandlerSpec extends ObjectBehavior
         $metadata->isInjectableUri()->willReturn(true);
         $metadata->isInjectableFileInfo()->willReturn(true);
 
-        $filesystemFactory->getFilesystem(Arg::type('string'))->willReturn($filesystem);
-        $namerFactory->getNamer(Arg::type('string'))->willReturn($namer);
+        $filesystemAdapterRepo->getFilesystem(Arg::type('string'))->willReturn($filesystem);
+        $namerRepo->getNamer(Arg::type('string'))->willReturn($namer);
         $metadataRepo->getMetadata(Arg::any())->willReturn($metadata);
         $metadataRepo->hasMetadata(Arg::type(FileReference::class))->willReturn(true);
         $metadataRepo->hasMetadata(Arg::not(Arg::type(FileMetadata::class)))->willReturn(false);

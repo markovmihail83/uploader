@@ -24,10 +24,10 @@ use Atom\Uploader\Handler\UploadHandler;
 use Atom\Uploader\Listener\ORM\ORMListener;
 use Atom\Uploader\Listener\ORMEmbeddable\ORMEmbeddableListener;
 use Atom\Uploader\Metadata\MetadataRepo;
-use Atom\Uploader\Naming\NamerFactory;
+use Atom\Uploader\Naming\NamerRepo;
 use Atom\Uploader\Naming\UniqueNamer;
 use Atom\Uploader\Filesystem\FlysystemAdapter;
-use Atom\Uploader\Filesystem\FilesystemFactory;
+use Atom\Uploader\Filesystem\FilesystemAdapterRepo;
 use Atom\Uploader\ThirdParty\FlysystemStreamWrapper;
 use Doctrine\ORM\Events;
 use League\Flysystem\Adapter\Local;
@@ -42,9 +42,9 @@ class Setup
     public static function setup(Application $app)
     {
         $container = new AppContainer();
-        $filesystemFactory = self::createFilesystemFactory();
-        $container->setFilesystemFactory($filesystemFactory);
-        $namerFactory = self::createNamerFactory();
+        $filesystemAdapterRepo = self::createFilesystemAdapterRepo();
+        $container->setFilesystemAdapterRepo($filesystemAdapterRepo);
+        $namerRepo = self::createNamer();
         $propertyHandler = new PropertyHandler();
         $dispatcher = new EventDispatcher();
         $container->setDispatcher($dispatcher);
@@ -65,7 +65,7 @@ class Setup
             $metadataRepo,
             $propertyHandler,
             $container,
-            $namerFactory,
+            $namerRepo,
             $dispatcher
         );
 
@@ -146,7 +146,7 @@ class Setup
         );
     }
 
-    private static function createFilesystemFactory()
+    private static function createFilesystemAdapterRepo()
     {
         $localAdapter = new Local(__DIR__ . '/Resources/public/uploads');
         $localFilesystem = new Filesystem($localAdapter);
@@ -156,24 +156,24 @@ class Setup
         $flysystemAdapter = new FlysystemAdapter($mountManager, new FlysystemStreamWrapper());
         $localAdapter = new LocalAdapter();
 
-        $filesystemFactory = new FilesystemFactory([
+        $filesystemAdapterRepo = new FilesystemAdapterRepo([
             'flysystem' => $flysystemAdapter,
             'local' => $localAdapter
         ]);
 
-        return $filesystemFactory;
+        return $filesystemAdapterRepo;
     }
 
-    private static function createNamerFactory()
+    private static function createNamer()
     {
         $uniqueNamer = new UniqueNamer();
         $basenameNamer = new BasenameNamer();
-        $namerFactory = new NamerFactory([
+        $namerRepo = new NamerRepo([
             'unique_id' => $uniqueNamer,
             'basename' => $basenameNamer,
         ]);
 
-        return $namerFactory;
+        return $namerRepo;
     }
 
     private static function createMetadataRepo()

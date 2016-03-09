@@ -8,7 +8,7 @@ namespace Atom\Uploader\Naming;
 
 use Atom\Uploader\Exception\NoSuchNamingException;
 
-class NamerFactory
+class NamerRepo
 {
     private $namingMap;
 

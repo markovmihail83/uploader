@@ -5,7 +5,7 @@
 
 namespace Atom\Uploader\Filesystem;
 
-interface IFilesystem
+interface IFilesystemAdapter
 {
     /**
      * @param string $prefix

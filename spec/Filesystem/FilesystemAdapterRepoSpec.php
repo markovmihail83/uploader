@@ -6,17 +6,17 @@
 namespace spec\Atom\Uploader\Filesystem;
 
 use Atom\Uploader\Exception\NoSuchFilesystemException;
-use Atom\Uploader\Filesystem\IFilesystem;
-use Atom\Uploader\Filesystem\FilesystemFactory;
+use Atom\Uploader\Filesystem\IFilesystemAdapter;
+use Atom\Uploader\Filesystem\FilesystemAdapterRepo;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 /**
- * @mixin FilesystemFactory
+ * @mixin FilesystemAdapterRepo
  */
-class FilesystemFactorySpec extends ObjectBehavior
+class FilesystemAdapterRepoSpec extends ObjectBehavior
 {
-    function let(IFilesystem $filesystem)
+    function let(IFilesystemAdapter $filesystem)
     {
         $this->beConstructedWith(['my_filesystem' => $filesystem]);
     }

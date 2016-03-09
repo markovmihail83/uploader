@@ -5,7 +5,7 @@
 
 namespace Atom\Uploader\Filesystem;
 
-class LocalAdapter implements IFilesystem
+class LocalAdapter implements IFilesystemAdapter
 {
     public function writeStream($prefix, $path, $resource)
     {

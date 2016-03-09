@@ -9,7 +9,7 @@ use Atom\Uploader\ThirdParty\FlysystemStreamWrapper;
 use League\Flysystem\FilesystemInterface;
 use League\Flysystem\MountManager;
 
-class FlysystemAdapter implements IFilesystem
+class FlysystemAdapter implements IFilesystemAdapter
 {
     private $manager;
 

@@ -8,12 +8,12 @@ namespace Atom\Uploader\Filesystem;
 
 use Atom\Uploader\Exception\NoSuchFilesystemException;
 
-class FilesystemFactory
+class FilesystemAdapterRepo
 {
     private $filesystemMap;
 
     /**
-     * @param IFilesystem[] $filesystemMap
+     * @param IFilesystemAdapter[] $filesystemMap
      */
     public function __construct(array $filesystemMap)
     {
@@ -24,7 +24,7 @@ class FilesystemFactory
      * @param $filesystemName string
      *
      * @throws NoSuchFilesystemException
-     * @return IFilesystem
+     * @return IFilesystemAdapter
      */
     public function getFilesystem($filesystemName)
     {
