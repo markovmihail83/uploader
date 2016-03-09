@@ -8,19 +8,19 @@ namespace Atom\Uploader\Metadata;
 
 use Atom\Uploader\Exception\NoSuchMetadataException;
 
-class MetadataFactory
+class MetadataRepo
 {
     private $metadataMap;
 
-    private $classNamesForMetadata;
+    private $fileReferenceClasses;
 
     /**
-     * @param array $classNamesForMetadata
+     * @param array $fileReferenceClasses
      * @param FileMetadata[] $metadataMap
      */
-    public function __construct(array $classNamesForMetadata, array $metadataMap)
+    public function __construct(array $fileReferenceClasses, array $metadataMap)
     {
-        $this->classNamesForMetadata = $classNamesForMetadata;
+        $this->fileReferenceClasses = $fileReferenceClasses;
         $this->metadataMap = $metadataMap;
     }
 
@@ -30,11 +30,11 @@ class MetadataFactory
             $className = get_class($className);
         }
 
-        if (!isset($this->classNamesForMetadata[$className])) {
+        if (!isset($this->fileReferenceClasses[$className])) {
             throw new NoSuchMetadataException($className);
         }
 
-        $metadataName = $this->classNamesForMetadata[$className];
+        $metadataName = $this->fileReferenceClasses[$className];
 
         return $this->metadataMap[$metadataName];
     }
@@ -45,6 +45,6 @@ class MetadataFactory
             $className = get_class($className);
         }
 
-        return isset($this->classNamesForMetadata[$className]);
+        return isset($this->fileReferenceClasses[$className]);
     }
 }

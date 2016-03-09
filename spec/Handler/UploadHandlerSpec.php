@@ -13,7 +13,7 @@ use Atom\Uploader\Handler\IPropertyHandler;
 use Atom\Uploader\Handler\UploadHandler;
 use Atom\Uploader\LazyLoad\IFilesystemFactoryLazyLoader;
 use Atom\Uploader\Metadata\FileMetadata;
-use Atom\Uploader\Metadata\MetadataFactory;
+use Atom\Uploader\Metadata\MetadataRepo;
 use Atom\Uploader\Model\Embeddable\FileReference;
 use Atom\Uploader\Naming\INamer;
 use Atom\Uploader\Naming\NamerFactory;
@@ -35,7 +35,7 @@ class UploadHandlerSpec extends ObjectBehavior
     private $fsPrefix;
 
     function let(
-        MetadataFactory $metadataFactory,
+        MetadataRepo $metadataRepo,
         IPropertyHandler $propertyHandler,
         IFilesystemFactoryLazyLoader $filesystemFactoryLazyLoader,
         NamerFactory $namerFactory,
@@ -53,7 +53,7 @@ class UploadHandlerSpec extends ObjectBehavior
         $this->fsPrefix = vfsStream::url(uniqid());
 
         $filesystemFactoryLazyLoader->getFilesystemFactory()->willReturn($filesystemFactory);
-        $this->beConstructedWith($metadataFactory, $propertyHandler, $filesystemFactoryLazyLoader, $namerFactory, $dispatcher);
+        $this->beConstructedWith($metadataRepo, $propertyHandler, $filesystemFactoryLazyLoader, $namerFactory, $dispatcher);
 
         $dispatcher->dispatch(Arg::type('string'), $fileReference, $metadata)->willReturn($uploadEvent);
 
@@ -69,9 +69,9 @@ class UploadHandlerSpec extends ObjectBehavior
 
         $filesystemFactory->getFilesystem(Arg::type('string'))->willReturn($filesystem);
         $namerFactory->getNamer(Arg::type('string'))->willReturn($namer);
-        $metadataFactory->getMetadata(Arg::any())->willReturn($metadata);
-        $metadataFactory->hasMetadata(Arg::type(FileReference::class))->willReturn(true);
-        $metadataFactory->hasMetadata(Arg::not(Arg::type(FileMetadata::class)))->willReturn(false);
+        $metadataRepo->getMetadata(Arg::any())->willReturn($metadata);
+        $metadataRepo->hasMetadata(Arg::type(FileReference::class))->willReturn(true);
+        $metadataRepo->hasMetadata(Arg::not(Arg::type(FileMetadata::class)))->willReturn(false);
 
         $filePath = self::joinPath($this->fsPrefix, uniqid());
         self::createFile($filePath);
@@ -332,10 +332,10 @@ class UploadHandlerSpec extends ObjectBehavior
         $this->update($fileReference);
     }
 
-    function it_should_check_whether_the_object_is_a_file_reference($fileReference, $metadataFactory)
+    function it_should_check_whether_the_object_is_a_file_reference($fileReference, $metadataRepo)
     {
-        $metadataFactory->hasMetadata(Arg::type(FileReference::class))->willReturn(true)->shouldBeCalled();
-        $metadataFactory->hasMetadata(Arg::not(Arg::type(FileReference::class)))->willReturn(false)->shouldBeCalled();
+        $metadataRepo->hasMetadata(Arg::type(FileReference::class))->willReturn(true)->shouldBeCalled();
+        $metadataRepo->hasMetadata(Arg::not(Arg::type(FileReference::class)))->willReturn(false)->shouldBeCalled();
         $this->shouldBeFileReference($fileReference);
         $this->shouldNotBeFileReference('/it/is/not/a/file/reference');
     }

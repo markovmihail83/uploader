@@ -7,15 +7,15 @@ namespace spec\Atom\Uploader\Metadata;
 
 use Atom\Uploader\Exception\NoSuchMetadataException;
 use Atom\Uploader\Metadata\FileMetadata;
-use Atom\Uploader\Metadata\MetadataFactory;
+use Atom\Uploader\Metadata\MetadataRepo;
 use Atom\Uploader\Model\Embeddable\FileReference;
 use PhpSpec\ObjectBehavior;
 use Prophecy\Argument;
 
 /**
- * @mixin MetadataFactory
+ * @mixin MetadataRepo
  */
-class MetadataFactorySpec extends ObjectBehavior
+class MetadataRepoSpec extends ObjectBehavior
 {
     function let(FileMetadata $metadata)
     {
@@ -32,7 +32,7 @@ class MetadataFactorySpec extends ObjectBehavior
         $metadata->isInjectableUri()->willReturn(true);
         $metadata->isInjectableFileInfo()->willReturn(true);
 
-        $classNamesForMetadata = [
+        $fileReferenceClasses = [
             FileReference::class => 0
         ];
 
@@ -40,7 +40,7 @@ class MetadataFactorySpec extends ObjectBehavior
             0 => $metadata
         ];
 
-        $this->beConstructedWith($classNamesForMetadata, $metadataMap);
+        $this->beConstructedWith($fileReferenceClasses, $metadataMap);
     }
 
     function it_should_check_existence_of_metadata($nonExistentMetadata)

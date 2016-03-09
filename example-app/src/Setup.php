@@ -23,7 +23,7 @@ use Atom\Uploader\Handler\EventHandler;
 use Atom\Uploader\Handler\UploadHandler;
 use Atom\Uploader\Listener\ORM\ORMListener;
 use Atom\Uploader\Listener\ORMEmbeddable\ORMEmbeddableListener;
-use Atom\Uploader\Metadata\MetadataFactory;
+use Atom\Uploader\Metadata\MetadataRepo;
 use Atom\Uploader\Naming\NamerFactory;
 use Atom\Uploader\Naming\UniqueNamer;
 use Atom\Uploader\Filesystem\FlysystemAdapter;
@@ -59,10 +59,10 @@ class Setup
 
         $mappings = self::getMappingsFromConfig();
         $extraMappings = self::getExtraMappings();
-        $metadataFactory = self::createMetadataFactory($mappings, $extraMappings);
+        $metadataRepo = self::createMetadataRepo($mappings, $extraMappings);
 
         $uploadHandler = new UploadHandler(
-            $metadataFactory,
+            $metadataRepo,
             $propertyHandler,
             $container,
             $namerFactory,
@@ -176,7 +176,7 @@ class Setup
         return $namerFactory;
     }
 
-    private static function createMetadataFactory()
+    private static function createMetadataRepo()
     {
         $fileReferenceClasses = [];
         $metadataMap = [];
@@ -223,7 +223,7 @@ class Setup
             );
         }
 
-        return new MetadataFactory($fileReferenceClasses, $metadataMap);
+        return new MetadataRepo($fileReferenceClasses, $metadataMap);
     }
 
     private static function createOrmListener(EventHandler $handler)

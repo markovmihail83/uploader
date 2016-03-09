@@ -8,14 +8,14 @@ namespace Atom\Uploader\Handler;
 use Atom\Uploader\Event\IUploadEvent;
 use Atom\Uploader\Exception\FileCouldNotBeMovedException;
 use Atom\Uploader\LazyLoad\IFilesystemFactoryLazyLoader;
-use Atom\Uploader\Metadata\MetadataFactory;
+use Atom\Uploader\Metadata\MetadataRepo;
 use Atom\Uploader\Metadata\FileMetadata;
 use Atom\Uploader\Naming\NamerFactory;
 use Atom\Uploader\Event\IEventDispatcher;
 
 class UploadHandler
 {
-    private $metadataFactory;
+    private $metadataRepo;
 
     private $propertyHandler;
 
@@ -28,14 +28,14 @@ class UploadHandler
     private $filesystemFactoryLazyLoader;
 
     public function __construct(
-        MetadataFactory $metadataFactory,
+        MetadataRepo $metadataRepo,
         IPropertyHandler $propertyHandler,
         IFilesystemFactoryLazyLoader $filesystemFactoryLazyLoader,
         NamerFactory $namerFactory,
         IEventDispatcher $dispatcher
     )
     {
-        $this->metadataFactory = $metadataFactory;
+        $this->metadataRepo = $metadataRepo;
         $this->propertyHandler = $propertyHandler;
         $this->namerFactory = $namerFactory;
         $this->dispatcher = $dispatcher;
@@ -54,7 +54,7 @@ class UploadHandler
 
     public function deleteOldFile($fileReference)
     {
-        $metadata = $this->metadataFactory->getMetadata($fileReference);
+        $metadata = $this->metadataRepo->getMetadata($fileReference);
         $file = $this->propertyHandler->getFile($fileReference, $metadata);
 
         if (empty($file) || !$metadata->isOldFileDeletable()) {
@@ -72,7 +72,7 @@ class UploadHandler
 
     public function delete($fileReference)
     {
-        $metadata = $this->metadataFactory->getMetadata($fileReference);
+        $metadata = $this->metadataRepo->getMetadata($fileReference);
         $file = $this->propertyHandler->getFile($fileReference, $metadata);
 
         if (empty($file) || !$metadata->isDeletable()) {
@@ -84,7 +84,7 @@ class UploadHandler
 
     public function isFilesEqual($fileReference1, $fileReference2)
     {
-        $metadata = $this->metadataFactory->getMetadata($fileReference1);
+        $metadata = $this->metadataRepo->getMetadata($fileReference1);
         $filePath1 = (string)$this->propertyHandler->getFile($fileReference1, $metadata);
         $filePath2 = (string)$this->propertyHandler->getFile($fileReference2, $metadata);
 
@@ -93,7 +93,7 @@ class UploadHandler
 
     public function hasUploadedFile($fileReference)
     {
-        $metadata = $this->metadataFactory->getMetadata($fileReference);
+        $metadata = $this->metadataRepo->getMetadata($fileReference);
         $file = $this->propertyHandler->getFile($fileReference, $metadata);
 
         return $file instanceof \SplFileInfo;
@@ -101,7 +101,7 @@ class UploadHandler
 
     public function injectUri($fileReference)
     {
-        $metadata = $this->metadataFactory->getMetadata($fileReference);
+        $metadata = $this->metadataRepo->getMetadata($fileReference);
 
         if (!$metadata->isInjectableUri() || false === $metadata->getUriSetter()) {
             return;
@@ -129,7 +129,7 @@ class UploadHandler
 
     public function injectFileInfo($fileReference)
     {
-        $metadata = $this->metadataFactory->getMetadata($fileReference);
+        $metadata = $this->metadataRepo->getMetadata($fileReference);
         $path = (string)$this->propertyHandler->getFile($fileReference, $metadata);
 
         if (!$metadata->isInjectableFileInfo() || empty($path)) {
@@ -155,7 +155,7 @@ class UploadHandler
 
     public function isFileReference($fileReference)
     {
-        return $this->metadataFactory->hasMetadata($fileReference);
+        return $this->metadataRepo->hasMetadata($fileReference);
     }
 
     private function remove($fileReference, $metadata, $file, $preEventName, $postEventName)
@@ -178,7 +178,7 @@ class UploadHandler
 
     private function move($fileReference, $preEventName, $postEventName)
     {
-        $metadata = $this->metadataFactory->getMetadata($fileReference);
+        $metadata = $this->metadataRepo->getMetadata($fileReference);
         $file = $this->propertyHandler->getFile($fileReference, $metadata);
         $fileName = $this->namerFactory->getNamer($metadata->getNamingStrategy())->name($file);
         $event = $this->dispatcher->dispatch($preEventName, $fileReference, $metadata);
