@@ -23,7 +23,7 @@ class MetadataRepoSpec extends ObjectBehavior
         $metadata->getFileSetter()->willReturn('file');
         $metadata->getUriSetter()->willReturn('uri');
         $metadata->getFileInfoSetter()->willReturn('fileInfo');
-        $metadata->getFilesystemPrefix()->willReturn('fs_prefix');
+        $metadata->getFsPrefix()->willReturn('fs_prefix');
         $metadata->getUriPrefix()->willReturn('/uploads/%s');
         $metadata->getFsAdapter()->willReturn('my_filesystem');
         $metadata->getNamingStrategy()->willReturn('my_namer');

@@ -16,7 +16,7 @@ class FileMetadata
 
     private $fileInfoSetter;
 
-    private $filesystemPrefix;
+    private $fsPrefix;
 
     private $uriPrefix;
 
@@ -37,7 +37,7 @@ class FileMetadata
         $fileGetter,
         $uriSetter,
         $fileInfoSetter,
-        $filesystemPrefix,
+        $fsPrefix,
         $uriPrefix,
         $fsAdapter,
         $namingStrategy,
@@ -51,7 +51,7 @@ class FileMetadata
         $this->fileGetter = $fileGetter;
         $this->uriSetter = $uriSetter;
         $this->fileInfoSetter = $fileInfoSetter;
-        $this->filesystemPrefix = $filesystemPrefix;
+        $this->fsPrefix = $fsPrefix;
         $this->uriPrefix = $uriPrefix;
         $this->fsAdapter = $fsAdapter;
         $this->namingStrategy = $namingStrategy;
@@ -96,9 +96,9 @@ class FileMetadata
     /**
      * @return string
      */
-    public function getFilesystemPrefix()
+    public function getFsPrefix()
     {
-        return $this->filesystemPrefix;
+        return $this->fsPrefix;
     }
 
     /**

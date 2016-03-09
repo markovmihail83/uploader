@@ -68,7 +68,7 @@ class FileMetadataSpec extends ObjectBehavior
 
     function it_should_get_a_fs_prefix_prop()
     {
-        $this->getFilesystemPrefix()->shouldBe(self::FS_PREFIX);
+        $this->getFsPrefix()->shouldBe(self::FS_PREFIX);
     }
 
     function it_should_get_an_uri_format()

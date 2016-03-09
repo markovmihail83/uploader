@@ -62,7 +62,7 @@ class UploadHandlerSpec extends ObjectBehavior
         $metadata->isOldFileDeletable()->willReturn(true);
         $metadata->getUriPrefix()->willReturn('/uploads/%s');
         $metadata->getFsAdapter()->willReturn('my_filesystem');
-        $metadata->getFilesystemPrefix()->willReturn($this->fsPrefix);
+        $metadata->getFsPrefix()->willReturn($this->fsPrefix);
         $metadata->getUriSetter()->willReturn('uri');
         $metadata->isInjectableUri()->willReturn(true);
         $metadata->isInjectableFileInfo()->willReturn(true);

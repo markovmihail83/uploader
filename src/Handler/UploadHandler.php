@@ -137,7 +137,7 @@ class UploadHandler
         }
 
         $filesystem = $this->getFilesystemAdapterRepo()->getFilesystem($metadata->getFsAdapter());
-        $fileInfo = $filesystem->resolveFileInfo($metadata->getFilesystemPrefix(), $path);
+        $fileInfo = $filesystem->resolveFileInfo($metadata->getFsPrefix(), $path);
 
         if (null === $fileInfo) {
             return;
@@ -198,7 +198,7 @@ class UploadHandler
     {
         $filesystem = $this->getFilesystemAdapterRepo()->getFilesystem($metadata->getFsAdapter());
         $stream = fopen((string)$file, 'r+');
-        $isMoved = $filesystem->writeStream($metadata->getFilesystemPrefix(), $fileName, $stream);
+        $isMoved = $filesystem->writeStream($metadata->getFsPrefix(), $fileName, $stream);
 
         if (!$isMoved) {
             throw new FileCouldNotBeMovedException((string)$file, $fileName);
@@ -221,7 +221,7 @@ class UploadHandler
 
         $filesystem = $this->getFilesystemAdapterRepo()->getFilesystem($metadata->getFsAdapter());
 
-        return $filesystem->delete($metadata->getFilesystemPrefix(), $file);
+        return $filesystem->delete($metadata->getFsPrefix(), $file);
     }
 
     private function getFilesystemAdapterRepo()

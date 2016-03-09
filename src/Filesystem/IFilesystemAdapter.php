@@ -13,8 +13,6 @@ interface IFilesystemAdapter
      * @param resource $resource
      *
      * @throws \Exception
-     *
-     * @return bool
      */
     public function writeStream($prefix, $path, $resource);
 
