@@ -1,0 +1,11 @@
+/devops         export-ignore
+/docs           export-ignore
+/example-app    export-ignore
+/features       export-ignore
+/spec           export-ignore
+.coveralls.yml  export-ignore
+.travis.yml     export-ignore
+phpspec-ci.yml  export-ignore
+phpspec.yml     export-ignore
+Vagrantfile     export-ignore
+*.php           eol=lf
