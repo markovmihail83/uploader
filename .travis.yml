@@ -1,20 +1,28 @@
 language: php
 sudo: false
+
 php:
-- 5.6
-- 7.0
+  - 5.5
+  - 5.6
+  - 7.0
+
 cache:
   directories:
   - "$HOME/.composer/cache"
+
 install:
-- composer install --prefer-dist --no-interaction --dev
+  - composer install --prefer-dist --no-interaction --dev
+
 before_script:
-- php example-app/bin/prepare.php
+  - php example-app/bin/prepare.php
+
 script:
-- vendor/bin/phpspec -c=phpspec-ci.yml run
-- vendor/bin/behat -f progress
+  - vendor/bin/phpspec -c=phpspec-ci.yml run
+  - vendor/bin/behat -f progress
+
 after_script:
-- travis_retry vendor/bin/coveralls
+  - travis_retry vendor/bin/coveralls
+
 notifications:
   webhooks: https://webhooks.gitter.im/e/a083ae222d5812ae9f01
   slack:
