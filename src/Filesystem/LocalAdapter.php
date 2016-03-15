@@ -62,6 +62,6 @@ class LocalAdapter implements IFilesystemAdapter
             return null;
         }
 
-        return new \SplFileInfo($location);
+        return new \SplFileInfo(realpath($location));
     }
 }
