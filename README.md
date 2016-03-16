@@ -10,6 +10,7 @@ This is a simple yet flexible PHP library for file uploads via ORM embeddable ob
 [![Total Downloads](https://poser.pugx.org/atom-azimov/uploader/downloads)](https://packagist.org/packages/atom-azimov/uploader)
 [![Coverage Status](https://coveralls.io/repos/github/atom-azimov/uploader/badge.svg?branch=master)](https://coveralls.io/github/atom-azimov/uploader?branch=master)
 [![Code Climate](https://codeclimate.com/github/atom-azimov/uploader/badges/gpa.svg)](https://codeclimate.com/github/atom-azimov/uploader)
+[![Issue Count](https://codeclimate.com/github/atom-azimov/uploader/badges/issue_count.svg)](https://codeclimate.com/github/atom-azimov/uploader)
 
 ---
 
