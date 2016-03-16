@@ -8,6 +8,13 @@ engines:
     enabled: true
   phpmd:
     enabled: true
+    exclude_fingerprints:
+      - 603082a4f5d8e3aa94070f6fb8b8af15
+      - 0a4ab604fa00317e00c7d2d5dbab4462
+      - 5770c0297e899bc7e780acd0e4cf9107
+      - 5222dbe54885e6e80cc0c7a2fcdf7e62
+      - 9e3d169b5fe72046c84ed0114a5deb6b
+      - 8adc09ac38037c1e07726af89c0a8b71
 ratings:
   paths:
     - "**.php"
