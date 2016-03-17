@@ -41,9 +41,9 @@
         "fabpot/php-cs-fixer": "^1.11"
     },
     "suggest": {
-        "doctrine/orm": "You can use doctrine orm as a persistance layer for your business objects.",
-        "league/flysystem": "You can use flysystem as a filesystem adapter instead the local filesyytem adapter.",
-        "twistor/flysystem-stream-wrapper": "Use it if you use flsystem and want mount a filesystem at a file info resolution."
+        "doctrine/orm": "You can use doctrine orm as a persistence layer for your business objects.",
+        "league/flysystem": "You can use flysystem as a filesystem adapter instead the local filesystem adapter.",
+        "twistor/flysystem-stream-wrapper": "Use it if you use flysystem and want mount a filesystem at a file info resolution."
     },
     "extra": {
         "branch-alias": {
