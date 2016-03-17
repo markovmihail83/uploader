@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace ExampleApp\Entity\ORM;
@@ -67,14 +67,14 @@ class UploadableEntity
     public function toArray()
     {
         return [
-            'file' => $this->fileField ? (string) $this->fileField : null,
-            'uri' => $this->uriField ? (string) $this->uriField : null,
-            'fileInfo' => $this->fileInfoField ? (string) $this->fileInfoField : null,
+            'file' => $this->fileField ? (string)$this->fileField : null,
+            'uri' => $this->uriField ? (string)$this->uriField : null,
+            'fileInfo' => $this->fileInfoField ? (string)$this->fileInfoField : null,
         ];
     }
 
     public function __toString()
     {
-        return (string) $this->fileField;
+        return (string)$this->fileField;
     }
 }

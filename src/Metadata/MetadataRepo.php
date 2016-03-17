@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace Atom\Uploader\Metadata;
@@ -14,7 +14,7 @@ class MetadataRepo
     private $fileReferenceClasses;
 
     /**
-     * @param array          $fileReferenceClasses
+     * @param array $fileReferenceClasses
      * @param FileMetadata[] $metadataMap
      */
     public function __construct(array $fileReferenceClasses, array $metadataMap)

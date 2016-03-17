@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace ExampleApp\Event;
@@ -53,8 +53,8 @@ class EventDispatcher implements IEventDispatcher
     }
 
     /**
-     * @param string       $eventName
-     * @param object       $fileReference
+     * @param string $eventName
+     * @param object $fileReference
      * @param FileMetadata $metadata
      *
      * @return IUploadEvent

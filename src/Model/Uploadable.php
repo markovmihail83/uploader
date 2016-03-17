@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace Atom\Uploader\Model;
@@ -60,14 +60,14 @@ trait Uploadable
     public function toArray()
     {
         return [
-            'file' => $this->file ? (string) $this->file : null,
-            'uri' => $this->uri ? (string) $this->uri : null,
-            'fileInfo' => $this->fileInfo ? (string) $this->fileInfo : null,
+            'file' => $this->file ? (string)$this->file : null,
+            'uri' => $this->uri ? (string)$this->uri : null,
+            'fileInfo' => $this->fileInfo ? (string)$this->fileInfo : null,
         ];
     }
 
     public function __toString()
     {
-        return (string) $this->file;
+        return (string)$this->file;
     }
 }

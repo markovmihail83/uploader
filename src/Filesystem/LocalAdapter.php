@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace Atom\Uploader\Filesystem;
@@ -28,7 +28,7 @@ class LocalAdapter implements IFilesystemAdapter
         $prefix = rtrim($prefix, '\\/');
 
         if ($prefix) {
-            $path = $prefix.'/'.$path;
+            $path = $prefix . '/' . $path;
         }
 
         $path = str_replace('/', DIRECTORY_SEPARATOR, $path);
@@ -53,13 +53,13 @@ class LocalAdapter implements IFilesystemAdapter
     public function resolveFileInfo($prefix, $path)
     {
         if (empty($path)) {
-            return;
+            return null;
         }
 
         $location = $this->applyPathPrefix($prefix, $path);
 
         if (!file_exists($location)) {
-            return;
+            return null;
         }
 
         return new \SplFileInfo(realpath($location));

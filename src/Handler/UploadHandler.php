@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace Atom\Uploader\Handler;
@@ -67,11 +67,11 @@ class UploadHandler
     private function moveUploadedFile(\SplFileInfo $file, $fileName, FileMetadata $metadata)
     {
         $filesystem = $this->getFilesystemAdapterRepo()->getFilesystem($metadata->getFsAdapter());
-        $stream = fopen((string) $file, 'r+');
+        $stream = fopen((string)$file, 'r+');
         $isMoved = $filesystem->writeStream($metadata->getFsPrefix(), $fileName, $stream);
 
         if (!$isMoved) {
-            throw new FileCouldNotBeMovedException((string) $file, $fileName);
+            throw new FileCouldNotBeMovedException((string)$file, $fileName);
         }
 
         if (is_resource($stream)) {
@@ -79,7 +79,7 @@ class UploadHandler
         }
 
         if ($file->isWritable()) {
-            unlink((string) $file);
+            unlink((string)$file);
         }
     }
 
@@ -96,9 +96,9 @@ class UploadHandler
             return;
         }
 
-        $path = (string) $this->propertyHandler->getFile($fileReference, $metadata);
+        $path = (string)$this->propertyHandler->getFile($fileReference, $metadata);
         $path = ltrim($path, '\\/');
-        $uriPrefix = (string) $metadata->getUriPrefix();
+        $uriPrefix = (string)$metadata->getUriPrefix();
 
         if (empty($path) || false === strpos($uriPrefix, '%s')) {
             return;
@@ -119,7 +119,7 @@ class UploadHandler
     public function injectFileInfo($fileReference)
     {
         $metadata = $this->metadataRepo->getMetadata($fileReference);
-        $path = (string) $this->propertyHandler->getFile($fileReference, $metadata);
+        $path = (string)$this->propertyHandler->getFile($fileReference, $metadata);
 
         if (!$metadata->isInjectableFileInfo() || empty($path)) {
             return;
@@ -186,7 +186,7 @@ class UploadHandler
     private function deleteFile(FileMetadata $metadata, $file)
     {
         if ($file instanceof \SplFileInfo) {
-            return unlink((string) $file);
+            return unlink((string)$file);
         }
 
         $filesystem = $this->getFilesystemAdapterRepo()->getFilesystem($metadata->getFsAdapter());
@@ -209,8 +209,8 @@ class UploadHandler
     public function isFilesEqual($fileReference1, $fileReference2)
     {
         $metadata = $this->metadataRepo->getMetadata($fileReference1);
-        $filePath1 = (string) $this->propertyHandler->getFile($fileReference1, $metadata);
-        $filePath2 = (string) $this->propertyHandler->getFile($fileReference2, $metadata);
+        $filePath1 = (string)$this->propertyHandler->getFile($fileReference1, $metadata);
+        $filePath2 = (string)$this->propertyHandler->getFile($fileReference2, $metadata);
 
         return $filePath1 === $filePath2;
     }

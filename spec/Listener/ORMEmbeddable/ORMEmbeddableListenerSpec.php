@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace spec\Atom\Uploader\Listener\ORMEmbeddable;
@@ -68,7 +68,7 @@ class ORMEmbeddableListenerSpec extends ObjectBehavior
 
         $event->getEntityChangeSet()->willReturn([]);
 
-        $metadata->getFieldMapping(self::FILE_REFERENCE_PROPERTY.'.file')->willReturn([
+        $metadata->getFieldMapping(self::FILE_REFERENCE_PROPERTY . '.file')->willReturn([
             'originalClass' => FileReference::class,
             'originalField' => 'file',
         ]);
@@ -93,7 +93,7 @@ class ORMEmbeddableListenerSpec extends ObjectBehavior
         $oldFileReference
     ) {
         $event->getEntityChangeSet()->willReturn([
-            self::FILE_REFERENCE_PROPERTY.'.file' => ['old-file', 'new-file'],
+            self::FILE_REFERENCE_PROPERTY . '.file' => ['old-file', 'new-file'],
             'another-field' => ['old-value', 'new-value'],
         ]);
 
@@ -107,8 +107,11 @@ class ORMEmbeddableListenerSpec extends ObjectBehavior
         $this->preUpdate($event);
     }
 
-    public function it_should_do_nothing_if_the_entity_is_not_a_file_reference($handler, $event, $notFileReferenceEntity)
-    {
+    public function it_should_do_nothing_if_the_entity_is_not_a_file_reference(
+        $handler,
+        $event,
+        $notFileReferenceEntity
+    ) {
         $event->getEntity()->willReturn($notFileReferenceEntity);
         $handler->prePersist(Argument::any(), Argument::any())->shouldNotBeCalled();
         $handler->postPersist(Argument::any())->shouldNotBeCalled();

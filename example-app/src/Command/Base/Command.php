@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace ExampleApp\Command\Base;
@@ -52,7 +52,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
             return;
         }
 
-        $subscribers = (array) $this->input->getOption('with-subscriber');
+        $subscribers = (array)$this->input->getOption('with-subscriber');
         $dispatcher = $this->container->getDispatcher();
 
         foreach ($subscribers as $subscriberClass) {
@@ -87,7 +87,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
 
     protected function getId()
     {
-        return (int) $this->input->getArgument('id');
+        return (int)$this->input->getArgument('id');
     }
 
     protected function getFile()
@@ -103,7 +103,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
 
     /**
      * @param int|null $id
-     * @param array    $fileReference
+     * @param array $fileReference
      */
     protected function view($id = null, array $fileReference = null)
     {

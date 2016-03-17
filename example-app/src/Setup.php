@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace ExampleApp;
@@ -81,7 +81,7 @@ class Setup
 
     private static function createFilesystemAdapterRepo()
     {
-        $localAdapter = new Local(__DIR__.'/Resources/public/uploads');
+        $localAdapter = new Local(__DIR__ . '/Resources/public/uploads');
         $localFilesystem = new Filesystem($localAdapter);
         $mountManager = new MountManager();
         $mountManager->mountFilesystem('embeddableFs', $localFilesystem);
@@ -144,7 +144,7 @@ class Setup
 
     private static function getMappingsFromConfig()
     {
-        $mappingsPath = __DIR__.'/Resources/config/mappings.yml';
+        $mappingsPath = __DIR__ . '/Resources/config/mappings.yml';
 
         if (!file_exists($mappingsPath)) {
             return [];
@@ -155,7 +155,7 @@ class Setup
 
     private static function getExtraMappings()
     {
-        $path = getenv('EXTRA_MAPPINGS') ?: __DIR__.'/../var/tmp/extra-mappings.yml';
+        $path = getenv('EXTRA_MAPPINGS') ?: __DIR__ . '/../var/tmp/extra-mappings.yml';
 
         if (!$path || !file_exists($path)) {
             return [];
@@ -221,7 +221,7 @@ class Setup
             'file_getter' => 'file',
             'uri_setter' => 'uri',
             'file_info_setter' => 'fileInfo',
-            'fs_prefix' => __DIR__.'/Resources/public/uploads',
+            'fs_prefix' => __DIR__ . '/Resources/public/uploads',
             'uri_prefix' => '/uploads/%s',
             'fs_adapter' => 'local',
             'naming_strategy' => 'unique_id',

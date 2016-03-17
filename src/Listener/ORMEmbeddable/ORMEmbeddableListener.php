@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace Atom\Uploader\Listener\ORMEmbeddable;
@@ -26,12 +26,12 @@ class ORMEmbeddableListener implements EventSubscriber
      * ORMEmbeddableListener constructor.
      *
      * @param EventHandler $handler
-     * @param array        $fileReferenceProperties Map of properties that is a file reference.
+     * @param array $fileReferenceProperties Map of properties that is a file reference.
      *                                              e.g.: [entityClassName => [property1, property2, ...]]
      *                                              note:
      *                                              the "property1, property2, ..." must be property's name that is
      *                                              a file reference(which defined in the mappings).
-     * @param array        $events                  doctrine subscribed events
+     * @param array $events doctrine subscribed events
      */
     public function __construct(EventHandler $handler, array $fileReferenceProperties, array $events)
     {
@@ -61,7 +61,7 @@ class ORMEmbeddableListener implements EventSubscriber
 
     private function getFileId($entity, $field)
     {
-        return spl_object_hash($entity).'#'.$field;
+        return spl_object_hash($entity) . '#' . $field;
     }
 
     private function getFieldValue(LifecycleEventArgs $event, $field)

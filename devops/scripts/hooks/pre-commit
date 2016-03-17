@@ -7,7 +7,7 @@ do
   echo $file
   if [[ $file = *.php ]];
   then
-    php vendor/fabpot/php-cs-fixer/php-cs-fixer fix "$file"
+    php vendor/fabpot/php-cs-fixer/php-cs-fixer --config-file .php_cs fix "$file"
     git add "$file"
   fi
 done < <(git diff --cached --name-status --diff-filter=ACM)

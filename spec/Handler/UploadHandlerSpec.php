@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace spec\Atom\Uploader\Handler;
@@ -136,15 +136,21 @@ class UploadHandlerSpec extends ObjectBehavior
         $propertyHandler->setUri(Arg::any(), Arg::any())->shouldNotBeenCalled();
     }
 
-    public function it_should_not_inject_an_uri_if_a_prefix_is_not_configured($fileReference, $propertyHandler, $metadata)
-    {
+    public function it_should_not_inject_an_uri_if_a_prefix_is_not_configured(
+        $fileReference,
+        $propertyHandler,
+        $metadata
+    ) {
         $metadata->getUriPrefix()->willReturn('');
         $propertyHandler->setUri(Arg::any(), Arg::any())->shouldNotBeCalled();
         $this->injectUri($fileReference);
     }
 
-    public function it_should_not_inject_an_uri_if_an_uri_setter_is_disabled($fileReference, $propertyHandler, $metadata)
-    {
+    public function it_should_not_inject_an_uri_if_an_uri_setter_is_disabled(
+        $fileReference,
+        $propertyHandler,
+        $metadata
+    ) {
         $metadata->getUriSetter()->willReturn(false);
         $propertyHandler->setUri(Arg::any(), Arg::any())->shouldNotBeCalled();
         $this->injectUri($fileReference);
@@ -289,7 +295,7 @@ class UploadHandlerSpec extends ObjectBehavior
     public function it_should_delete_a_file_if_file_is_an_instance_of_splFileInfo($fileReference, $fileInfo)
     {
         $this->delete($fileReference)->shouldBe(true);
-        Test::assertFalse(file_exists((string) $fileInfo->getWrappedObject()));
+        Test::assertFalse(file_exists((string)$fileInfo->getWrappedObject()));
     }
 
     public function it_should_not_have_an_uploaded_file_if_a_file_is_not_an_instance_of_splFileInfo(
@@ -309,14 +315,14 @@ class UploadHandlerSpec extends ObjectBehavior
     {
         $filesystem->writeStream($this->fsPrefix, Arg::type('string'), Arg::type('resource'))->willReturn(false);
         $this->shouldThrow(FileCouldNotBeMovedException::class)->duringUpload($fileReference);
-        Test::assertTrue(file_exists((string) $fileInfo->getWrappedObject()));
+        Test::assertTrue(file_exists((string)$fileInfo->getWrappedObject()));
     }
 
     public function it_should_throw_exception_on_update($fileReference, $filesystem, $fileInfo)
     {
         $filesystem->writeStream($this->fsPrefix, Arg::type('string'), Arg::type('resource'))->willReturn(false);
         $this->shouldThrow(FileCouldNotBeMovedException::class)->duringUpdate($fileReference);
-        Test::assertTrue(file_exists((string) $fileInfo->getWrappedObject()));
+        Test::assertTrue(file_exists((string)$fileInfo->getWrappedObject()));
     }
 
     public function it_should_upload_a_file($fileReference, $propertyHandler, $filesystem)

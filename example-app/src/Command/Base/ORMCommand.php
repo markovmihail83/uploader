@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace ExampleApp\Command\Base;
@@ -18,7 +18,7 @@ abstract class ORMCommand extends Command
 
     protected function registerDriver()
     {
-        $this->em = require __DIR__.'/../../Resources/config/orm/bootstrap.php';
+        $this->em = require __DIR__ . '/../../Resources/config/orm/bootstrap.php';
         $this->em->getEventManager()->addEventSubscriber($this->container->getOrmListener());
     }
 

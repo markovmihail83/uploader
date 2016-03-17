@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace Atom\Uploader\Filesystem;
@@ -45,7 +45,7 @@ class FlysystemAdapter implements IFilesystemAdapter
         $fs = $this->manager->getFilesystem($prefix);
 
         if (empty($path) || !$fs->get($path)->isFile()) {
-            return;
+            return null;
         }
 
         $this->tryRegisterFilesystemWrapper($prefix, $fs);

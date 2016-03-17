@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace Context;
@@ -40,12 +40,12 @@ class ExampleAppContext implements Context, SnippetAcceptingContext
 
     public function __construct()
     {
-        $projectRoot = realpath(__DIR__.'/../../example-app');
+        $projectRoot = realpath(__DIR__ . '/../../example-app');
         $this->setVar('project root', $projectRoot);
-        $this->setVar('upload path', $projectRoot.'/src/Resources/public/uploads');
-        $this->setVar('tmp', $projectRoot.'/var/tmp');
-        $this->setVar('log', $projectRoot.'/var/log');
-        $this->setVar('extra mappings path', $projectRoot.'/var/tmp/extra-mappings.yml');
+        $this->setVar('upload path', $projectRoot . '/src/Resources/public/uploads');
+        $this->setVar('tmp', $projectRoot . '/var/tmp');
+        $this->setVar('log', $projectRoot . '/var/log');
+        $this->setVar('extra mappings path', $projectRoot . '/var/tmp/extra-mappings.yml');
 
         $this->app = new Application();
         $this->app->setAutoExit(false);
@@ -72,7 +72,7 @@ class ExampleAppContext implements Context, SnippetAcceptingContext
     public function amountOfFilesInUploadPathIs($count)
     {
         $files = $this->scanDirWithoutDotFiles($this->getVar('upload path'));
-        Test::assertCount((int) $count, $files);
+        Test::assertCount((int)$count, $files);
     }
 
     private function scanDirWithoutDotFiles($directory)
@@ -280,17 +280,17 @@ class ExampleAppContext implements Context, SnippetAcceptingContext
         $this->cleanORMDatabase();
         $this->cleanORMEmbeddableDatabase();
 
-        require __DIR__.'/../../example-app/bin/prepare.php';
+        require __DIR__ . '/../../example-app/bin/prepare.php';
     }
 
     private function cleanORMDatabase()
     {
-        @unlink($this->getVar('project root').'/src/Resources/data/orm.sqlite');
+        @unlink($this->getVar('project root') . '/src/Resources/data/orm.sqlite');
     }
 
     private function cleanORMEmbeddableDatabase()
     {
-        @unlink($this->getVar('project root').'/src/Resources/data/orm_embeddable.sqlite');
+        @unlink($this->getVar('project root') . '/src/Resources/data/orm_embeddable.sqlite');
     }
 
     /**

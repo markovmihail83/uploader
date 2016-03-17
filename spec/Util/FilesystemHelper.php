@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace spec\Atom\Uploader\Util;
@@ -24,7 +24,7 @@ trait FilesystemHelper
                     return rtrim($item, '\\/');
                 }
 
-                return $carry.'/'.trim($item, '\\/');
+                return $carry . '/' . trim($item, '\\/');
             }
         );
 

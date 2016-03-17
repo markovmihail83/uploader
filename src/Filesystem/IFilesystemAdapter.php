@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace Atom\Uploader\Filesystem;
@@ -8,8 +8,8 @@ namespace Atom\Uploader\Filesystem;
 interface IFilesystemAdapter
 {
     /**
-     * @param string   $prefix
-     * @param string   $path
+     * @param string $prefix
+     * @param string $path
      * @param resource $resource
      *
      * @throws \Exception

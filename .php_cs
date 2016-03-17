@@ -5,10 +5,8 @@
 
 return Symfony\CS\Config\Config::create()
     ->setUsingCache(true)
+    ->level(\Symfony\CS\FixerInterface::PSR2_LEVEL)
     ->fixers([
-        '-empty_return',
-        '-phpdoc_no_empty_return',
-        '-spaces_cast',
         'short_array_syntax',
         'ordered_use',
     ])

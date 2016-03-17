@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace Atom\Uploader\Listener\ORM;
@@ -26,9 +26,9 @@ class ORMListener implements EventSubscriber
      * ORMEmbeddableListener constructor.
      *
      * @param EventHandler $handler
-     * @param array        $fileReferenceEntities Map of entity classnames that is a file reference (which defined
+     * @param array $fileReferenceEntities Map of entity classnames that is a file reference (which defined
      *                                            in the mappings).
-     * @param array        $events                doctrine subscribed events
+     * @param array $events doctrine subscribed events
      */
     public function __construct(EventHandler $handler, array $fileReferenceEntities, array $events)
     {

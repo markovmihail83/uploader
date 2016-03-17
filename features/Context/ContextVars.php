@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
  */
 
 namespace Context;
@@ -11,7 +11,7 @@ trait ContextVars
 
     /**
      * @param string $name
-     * @param mixed  $value
+     * @param mixed $value
      */
     protected function setVar($name, $value)
     {
@@ -69,12 +69,11 @@ trait ContextVars
             case 'false':
                 return false;
             case 'null';
-
-                return;
+                return null;
         }
 
         if (is_numeric($string)) {
-            return (int) $string;
+            return (int)$string;
         }
 
         return $string;
