@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace Atom\Uploader\Filesystem;
@@ -22,11 +22,18 @@ class LocalAdapter implements IFilesystemAdapter
         return fclose($writeStream);
     }
 
-    public function delete($prefix, $path)
+    private function applyPathPrefix($prefix, $path)
     {
-        $location = $this->applyPathPrefix($prefix, $path);
+        $path = ltrim($path, '\\/');
+        $prefix = rtrim($prefix, '\\/');
 
-        return is_file($location) && @unlink($location);
+        if ($prefix) {
+            $path = $prefix.'/'.$path;
+        }
+
+        $path = str_replace('/', DIRECTORY_SEPARATOR, $path);
+
+        return str_replace(':\\\\', '://', $path);
     }
 
     private function ensureDirectory($dir)
@@ -36,30 +43,23 @@ class LocalAdapter implements IFilesystemAdapter
         }
     }
 
-    private function applyPathPrefix($prefix, $path)
+    public function delete($prefix, $path)
     {
-        $path = ltrim($path, '\\/');
-        $prefix = rtrim($prefix, '\\/');
+        $location = $this->applyPathPrefix($prefix, $path);
 
-        if ($prefix) {
-            $path = $prefix . '/' . $path;
-        }
-
-        $path = str_replace('/', DIRECTORY_SEPARATOR, $path);
-
-        return str_replace(':\\\\', '://', $path);
+        return is_file($location) && @unlink($location);
     }
 
     public function resolveFileInfo($prefix, $path)
     {
         if (empty($path)) {
-            return null;
+            return;
         }
 
         $location = $this->applyPathPrefix($prefix, $path);
 
         if (!file_exists($location)) {
-            return null;
+            return;
         }
 
         return new \SplFileInfo(realpath($location));

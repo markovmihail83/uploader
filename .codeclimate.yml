@@ -8,21 +8,7 @@ engines:
     enabled: true
   phpmd:
     enabled: true
-    exclude_fingerprints:
-      - 603082a4f5d8e3aa94070f6fb8b8af15
-      - 0a4ab604fa00317e00c7d2d5dbab4462
-      - 5770c0297e899bc7e780acd0e4cf9107
-      - 5222dbe54885e6e80cc0c7a2fcdf7e62
-      - 9e3d169b5fe72046c84ed0114a5deb6b
-      - 8adc09ac38037c1e07726af89c0a8b71
-      - 9c6f9abf422d0727cc1d5324b698bca4
-      - 984f4ee351d2740e1ee8675039368ad0
-      - 22dba0e73e9d7deb3ea7afe78b54eda1
-      - 5899637b1f86936302ad2f56b071dc5b
-      - b9c5ab8e2793a40dcad47ab18d78aad9
-      - 3eaec8e59fb137bd11076080154c5c87
-      - 7e2b4ebf8d7f62076dd0389a54aa62ad
-      - b7783651f3bea452b9e2f5f0187cfcc0
+
 ratings:
   paths:
     - "**.php"

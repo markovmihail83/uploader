@@ -1,10 +1,9 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace ExampleApp\Event;
-
 
 use Atom\Uploader\Event\IEventDispatcher;
 use Atom\Uploader\Event\IUploadEvent;
@@ -13,7 +12,6 @@ use ExampleApp\Subscriber\ISubscriber;
 
 class EventDispatcher implements IEventDispatcher
 {
-
     /**
      * @var string[callable[]]
      */
@@ -55,9 +53,8 @@ class EventDispatcher implements IEventDispatcher
     }
 
     /**
-     * @param string $eventName
-     *
-     * @param object $fileReference
+     * @param string       $eventName
+     * @param object       $fileReference
      * @param FileMetadata $metadata
      *
      * @return IUploadEvent

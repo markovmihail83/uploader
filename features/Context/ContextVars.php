@@ -1,10 +1,9 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace Context;
-
 
 trait ContextVars
 {
@@ -12,22 +11,21 @@ trait ContextVars
 
     /**
      * @param string $name
-     * @param mixed $value
+     * @param mixed  $value
      */
     protected function setVar($name, $value)
     {
-
         $this->vars[$this->prepareVarName($name)] = $value;
-    }
-
-    protected function getVar($name)
-    {
-        return isset($this->vars[$this->prepareVarName($name)]) ? $this->vars[$this->prepareVarName($name)] : null;
     }
 
     private function prepareVarName($name)
     {
         return strtolower(str_replace(' ', '_', str_replace('  ', ' ', $name)));
+    }
+
+    protected function getVar($name)
+    {
+        return isset($this->vars[$this->prepareVarName($name)]) ? $this->vars[$this->prepareVarName($name)] : null;
     }
 
     /**
@@ -71,11 +69,12 @@ trait ContextVars
             case 'false':
                 return false;
             case 'null';
-                return null;
+
+                return;
         }
 
         if (is_numeric($string)) {
-            return (int)$string;
+            return (int) $string;
         }
 
         return $string;

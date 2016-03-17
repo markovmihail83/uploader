@@ -36,11 +36,36 @@
         "behat/behat": "^3.@dev",
         "symfony/console": "^3.0",
         "symfony/yaml": "^3.0",
-        "symfony/property-access": "^3.0"
+        "symfony/property-access": "^3.0",
+        "phpmd/phpmd": "^2.4",
+        "fabpot/php-cs-fixer": "^1.11"
+    },
+    "suggest": {
+        "doctrine/orm": "You can use doctrine orm as a persistance layer for your business objects.",
+        "league/flysystem": "You can use flysystem as a filesystem adapter instead the local filesyytem adapter.",
+        "twistor/flysystem-stream-wrapper": "Use it if you use flsystem and want mount a filesystem at a file info resolution."
     },
     "extra": {
         "branch-alias": {
             "dev-master": "1.2.x-dev"
         }
+    },
+    "config": {
+        "bin-dir": "bin"
+    },
+    "scripts": {
+        "post-install-cmd": "@install-hooks",
+        "post-update-cmd": "@install-hooks",
+        "install-hooks": "php devops/scripts/install_hooks.php",
+        "test": [
+            "phpspec run",
+            "behat -f progress"
+        ],
+        "test-with-coverage": [
+            "phpspec run -c=phpspec-ci.yml",
+            "behat -f progress"
+        ],
+        "phpmd": "phpmd src xml cleancode,codesize,controversial,design,naming,unusedcode",
+        "cs-fix": "php-cs-fixer fix"
     }
 }

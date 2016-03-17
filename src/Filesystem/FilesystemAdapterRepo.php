@@ -1,10 +1,9 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace Atom\Uploader\Filesystem;
-
 
 use Atom\Uploader\Exception\NoSuchFilesystemException;
 
@@ -24,6 +23,7 @@ class FilesystemAdapterRepo
      * @param $filesystemName string
      *
      * @throws NoSuchFilesystemException
+     *
      * @return IFilesystemAdapter
      */
     public function getFilesystem($filesystemName)

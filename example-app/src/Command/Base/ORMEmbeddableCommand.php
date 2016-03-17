@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace ExampleApp\Command\Base;
@@ -11,7 +11,7 @@ abstract class ORMEmbeddableCommand extends ORMCommand
 {
     final protected function registerDriver()
     {
-        $this->em = require __DIR__ . '/../../Resources/config/orm_embeddable/bootstrap.php';
+        $this->em = require __DIR__.'/../../Resources/config/orm_embeddable/bootstrap.php';
         $this->em->getEventManager()->addEventSubscriber($this->container->getOrmEmbeddableListener());
     }
 
@@ -20,6 +20,7 @@ abstract class ORMEmbeddableCommand extends ORMCommand
      * @param string $driver
      *
      * @return EntityHasEmbeddedFile|object
+     *
      * @throws \ExampleApp\Exception\ObjectNotFoundException
      */
     protected function getEntity($entityClass = EntityHasEmbeddedFile::class, $driver = 'orm_embeddable')

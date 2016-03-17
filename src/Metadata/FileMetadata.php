@@ -1,11 +1,13 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace Atom\Uploader\Metadata;
 
-
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+ */
 class FileMetadata
 {
     private $fileSetter;
@@ -45,8 +47,7 @@ class FileMetadata
         $deleteOnRemove,
         $injectUriOnLoad,
         $injectFileInfoOnLoad
-    )
-    {
+    ) {
         $this->fileSetter = $fileSetter;
         $this->fileGetter = $fileGetter;
         $this->uriSetter = $uriSetter;

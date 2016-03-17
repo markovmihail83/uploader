@@ -1,32 +1,28 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace ExampleApp\Entity\ORM;
 
-
 class UploadableEntity
 {
-    /**
-     * @var int
-     */
-    private $id;
-
     /**
      * @var \SplFileInfo|string|null
      */
     protected $fileField;
-
     /**
      * @var string|null
      */
     protected $uriField;
-
     /**
      * @var \SplFileInfo|null
      */
     protected $fileInfoField;
+    /**
+     * @var int
+     */
+    private $id;
 
     public function __construct(\SplFileInfo $file)
     {
@@ -71,14 +67,14 @@ class UploadableEntity
     public function toArray()
     {
         return [
-            'file' => $this->fileField ? (string)$this->fileField : null,
-            'uri' => $this->uriField ? (string)$this->uriField : null,
-            'fileInfo' => $this->fileInfoField ? (string)$this->fileInfoField : null,
+            'file' => $this->fileField ? (string) $this->fileField : null,
+            'uri' => $this->uriField ? (string) $this->uriField : null,
+            'fileInfo' => $this->fileInfoField ? (string) $this->fileInfoField : null,
         ];
     }
 
     public function __toString()
     {
-        return (string)$this->fileField;
+        return (string) $this->fileField;
     }
 }

@@ -1,16 +1,14 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace ExampleApp\Command\ORMEmbeddable;
-
 
 use ExampleApp\Command\Base\ORMEmbeddableCommand;
 
 class GetCommand extends ORMEmbeddableCommand
 {
-
     protected function doConfigure()
     {
         $this->addIdArgument();

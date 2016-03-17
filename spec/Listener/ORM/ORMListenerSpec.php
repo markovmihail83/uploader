@@ -1,10 +1,9 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace spec\Atom\Uploader\Listener\ORM;
-
 
 use Atom\Uploader\Handler\EventHandler;
 use Atom\Uploader\Listener\ORM\ORMListener;
@@ -23,14 +22,13 @@ class ORMListenerSpec extends ObjectBehavior
 {
     private $events;
 
-    function let(
+    public function let(
         EventHandler $handler,
         PreUpdateEventArgs $event,
         FileReference $fileReference,
         EntityManagerInterface $em,
         ClassMetadata $metadata
-    )
-    {
+    ) {
         $this->events = [
             Events::prePersist,
             Events::postPersist,
@@ -42,7 +40,7 @@ class ORMListenerSpec extends ObjectBehavior
         ];
 
         $fileReferenceEntities = [
-            get_class($fileReference->getWrappedObject()) => $fileReference
+            get_class($fileReference->getWrappedObject()) => $fileReference,
         ];
 
         $this->beConstructedWith($handler, $fileReferenceEntities, $this->events);
@@ -67,12 +65,12 @@ class ORMListenerSpec extends ObjectBehavior
         $metadata->setFieldValue(Argument::any(), Argument::type('string'), Argument::any())->willReturn(null);
     }
 
-    function it_should_get_events()
+    public function it_should_get_events()
     {
         $this->getSubscribedEvents()->shouldEqual($this->events);
     }
 
-    function it_should_do_nothing_if_the_entity_is_not_a_file_reference($handler, $event, $notFileReference)
+    public function it_should_do_nothing_if_the_entity_is_not_a_file_reference($handler, $event, $notFileReference)
     {
         $event->getEntity()->willReturn($notFileReference);
         $handler->prePersist(Argument::any(), Argument::any())->shouldNotBeCalled();
@@ -90,7 +88,7 @@ class ORMListenerSpec extends ObjectBehavior
         $this->postRemove($event);
     }
 
-    function it_should_delegate_events_to_the_handler(EventHandler $handler, $event, $fileReference)
+    public function it_should_delegate_events_to_the_handler(EventHandler $handler, $event, $fileReference)
     {
         $id = Argument::type('string');
 

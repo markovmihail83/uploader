@@ -1,6 +1,6 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace spec\Atom\Uploader\Util;
@@ -9,21 +9,6 @@ use org\bovigo\vfs\vfsStreamWrapper;
 
 trait FilesystemHelper
 {
-
-    public function mount()
-    {
-        if (!in_array('vfs', stream_get_wrappers())) {
-            vfsStreamWrapper::register();
-        }
-    }
-
-    public function unMount()
-    {
-        if (in_array('vfs', stream_get_wrappers())) {
-            vfsStreamWrapper::unregister();
-        }
-    }
-
     public static function createFile($path, $contents = '', $directoryPerm = 0777)
     {
         @mkdir(dirname($path), $directoryPerm, true);
@@ -39,10 +24,24 @@ trait FilesystemHelper
                     return rtrim($item, '\\/');
                 }
 
-                return $carry . '/' . trim($item, '\\/');
+                return $carry.'/'.trim($item, '\\/');
             }
         );
 
         return $path;
+    }
+
+    public function mount()
+    {
+        if (!in_array('vfs', stream_get_wrappers())) {
+            vfsStreamWrapper::register();
+        }
+    }
+
+    public function unMount()
+    {
+        if (in_array('vfs', stream_get_wrappers())) {
+            vfsStreamWrapper::unregister();
+        }
     }
 }

@@ -1,10 +1,9 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace ExampleApp\Handler;
-
 
 use Atom\Uploader\Handler\IPropertyHandler;
 use Atom\Uploader\Metadata\FileMetadata;
@@ -22,7 +21,7 @@ class PropertyHandler implements IPropertyHandler
 
     /**
      * @param object|FileReference $fileReference
-     * @param FileMetadata $metadata
+     * @param FileMetadata         $metadata
      *
      * @return \SplFileInfo|string|null
      */
@@ -33,8 +32,8 @@ class PropertyHandler implements IPropertyHandler
 
     /**
      * @param object|FileReference $fileReference
-     * @param FileMetadata $metadata
-     * @param string|null $value
+     * @param FileMetadata         $metadata
+     * @param string|null          $value
      */
     public function setFile($fileReference, FileMetadata $metadata, $value)
     {
@@ -43,8 +42,8 @@ class PropertyHandler implements IPropertyHandler
 
     /**
      * @param object|FileReference $fileReference
-     * @param FileMetadata $metadata
-     * @param \SplFileInfo|null $value
+     * @param FileMetadata         $metadata
+     * @param \SplFileInfo|null    $value
      */
     public function setFileInfo($fileReference, FileMetadata $metadata, $value)
     {
@@ -53,8 +52,8 @@ class PropertyHandler implements IPropertyHandler
 
     /**
      * @param object|FileReference $fileReference
-     * @param FileMetadata $metadata
-     * @param string|null $value
+     * @param FileMetadata         $metadata
+     * @param string|null          $value
      */
     public function setUri($fileReference, FileMetadata $metadata, $value)
     {

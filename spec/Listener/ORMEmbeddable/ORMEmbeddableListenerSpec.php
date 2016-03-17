@@ -1,10 +1,9 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace spec\Atom\Uploader\Listener\ORMEmbeddable;
-
 
 use Atom\Uploader\Handler\EventHandler;
 use Atom\Uploader\Listener\ORMEmbeddable\ORMEmbeddableListener;
@@ -21,11 +20,10 @@ use Prophecy\Argument;
  */
 class ORMEmbeddableListenerSpec extends ObjectBehavior
 {
+    const FILE_REFERENCE_PROPERTY = 'file_field';
     private $events;
 
-    const FILE_REFERENCE_PROPERTY = 'file_field';
-
-    function let(
+    public function let(
         EventHandler $handler,
         PreUpdateEventArgs $event,
         FileReference $fileReference,
@@ -36,8 +34,7 @@ class ORMEmbeddableListenerSpec extends ObjectBehavior
         ClassMetadata $metadata,
         ClassMetadata $embeddedMetadata,
         \ReflectionClass $embeddedReflection
-    )
-    {
+    ) {
         $this->events = [
             Events::prePersist,
             Events::postPersist,
@@ -51,8 +48,8 @@ class ORMEmbeddableListenerSpec extends ObjectBehavior
         $entityClass = get_class($entity->getWrappedObject());
         $fileReferenceProperties = [
             $entityClass => [
-                self::FILE_REFERENCE_PROPERTY
-            ]
+                self::FILE_REFERENCE_PROPERTY,
+            ],
         ];
 
         $this->beConstructedWith($handler, $fileReferenceProperties, $this->events);
@@ -71,9 +68,9 @@ class ORMEmbeddableListenerSpec extends ObjectBehavior
 
         $event->getEntityChangeSet()->willReturn([]);
 
-        $metadata->getFieldMapping(self::FILE_REFERENCE_PROPERTY . '.file')->willReturn([
+        $metadata->getFieldMapping(self::FILE_REFERENCE_PROPERTY.'.file')->willReturn([
             'originalClass' => FileReference::class,
-            'originalField' => 'file'
+            'originalField' => 'file',
         ]);
 
         $metadata->getFieldValue($entity, self::FILE_REFERENCE_PROPERTY)->willReturn($fileReference);
@@ -83,21 +80,20 @@ class ORMEmbeddableListenerSpec extends ObjectBehavior
             ->willReturn($notFileReferenceEntity);
     }
 
-    function it_should_get_events()
+    public function it_should_get_events()
     {
         $this->getSubscribedEvents()->shouldEqual($this->events);
     }
 
-    function it_should_get_an_embedded_file_reference_from_old_values_if_that_has_been_updated_but_not_replaced(
+    public function it_should_get_an_embedded_file_reference_from_old_values_if_that_has_been_updated_but_not_replaced(
         $event,
         $handler,
         $fileReference,
         $embeddedMetadata,
         $oldFileReference
-    )
-    {
+    ) {
         $event->getEntityChangeSet()->willReturn([
-            self::FILE_REFERENCE_PROPERTY . '.file' => ['old-file', 'new-file'],
+            self::FILE_REFERENCE_PROPERTY.'.file' => ['old-file', 'new-file'],
             'another-field' => ['old-value', 'new-value'],
         ]);
 
@@ -111,7 +107,7 @@ class ORMEmbeddableListenerSpec extends ObjectBehavior
         $this->preUpdate($event);
     }
 
-    function it_should_do_nothing_if_the_entity_is_not_a_file_reference($handler, $event, $notFileReferenceEntity)
+    public function it_should_do_nothing_if_the_entity_is_not_a_file_reference($handler, $event, $notFileReferenceEntity)
     {
         $event->getEntity()->willReturn($notFileReferenceEntity);
         $handler->prePersist(Argument::any(), Argument::any())->shouldNotBeCalled();
@@ -129,13 +125,12 @@ class ORMEmbeddableListenerSpec extends ObjectBehavior
         $this->postRemove($event);
     }
 
-    function it_should_delegate_events_to_the_handler(
+    public function it_should_delegate_events_to_the_handler(
         EventHandler $handler,
         $event,
         $fileReference,
         $oldFileReference
-    )
-    {
+    ) {
         $id = Argument::type('string');
 
         $handler->prePersist($id, $fileReference)->shouldBeCalled();

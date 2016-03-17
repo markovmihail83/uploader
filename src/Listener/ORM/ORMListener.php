@@ -1,10 +1,9 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace Atom\Uploader\Listener\ORM;
-
 
 use Atom\Uploader\Handler\EventHandler;
 use Doctrine\Common\EventSubscriber;
@@ -12,6 +11,9 @@ use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
+/**
+ * @SuppressWarnings(PHPMD.StaticAccess, PHPMD.LongVariable)
+ */
 class ORMListener implements EventSubscriber
 {
     private $handler;
@@ -24,9 +26,9 @@ class ORMListener implements EventSubscriber
      * ORMEmbeddableListener constructor.
      *
      * @param EventHandler $handler
-     * @param array $fileReferenceEntities Map of entity classnames that is a file reference (which defined
-     *                                               in the mappings).
-     * @param array $events doctrine subscribed events
+     * @param array        $fileReferenceEntities Map of entity classnames that is a file reference (which defined
+     *                                            in the mappings).
+     * @param array        $events                doctrine subscribed events
      */
     public function __construct(EventHandler $handler, array $fileReferenceEntities, array $events)
     {
@@ -44,6 +46,16 @@ class ORMListener implements EventSubscriber
         }
 
         $this->handler->prePersist($this->getFileId($entity), $entity);
+    }
+
+    private function isFileReference($entity)
+    {
+        return isset($this->fileReferenceEntities[ClassUtils::getClass($entity)]);
+    }
+
+    private function getFileId($entity)
+    {
+        return spl_object_hash($entity);
     }
 
     public function postPersist(LifecycleEventArgs $event)
@@ -66,6 +78,23 @@ class ORMListener implements EventSubscriber
         }
 
         $this->handler->preUpdate($this->getFileId($entity), $entity, $this->getOldEntity($event, $entity));
+    }
+
+    private function getOldEntity(PreUpdateEventArgs $event, $entity)
+    {
+        $oldEntity = clone $entity;
+
+        $metadata = $event->getEntityManager()->getClassMetadata(ClassUtils::getClass($entity));
+
+        foreach ($event->getEntityChangeSet() as $name => $field) {
+            if (false !== strpos($name, '.')) {
+                continue;
+            }
+
+            $metadata->setFieldValue($oldEntity, $name, $field[0]);
+        }
+
+        return $oldEntity;
     }
 
     public function postUpdate(LifecycleEventArgs $event)
@@ -104,33 +133,6 @@ class ORMListener implements EventSubscriber
     public function postFlush()
     {
         $this->handler->postFlush();
-    }
-
-    private function getFileId($entity)
-    {
-        return spl_object_hash($entity);
-    }
-
-    private function getOldEntity(PreUpdateEventArgs $event, $entity)
-    {
-        $oldEntity = clone $entity;
-
-        $metadata = $event->getEntityManager()->getClassMetadata(ClassUtils::getClass($entity));
-
-        foreach ($event->getEntityChangeSet() as $name => $field) {
-            if (false !== strpos($name, '.')) {
-                continue;
-            }
-
-            $metadata->setFieldValue($oldEntity, $name, $field[0]);
-        }
-
-        return $oldEntity;
-    }
-
-    private function isFileReference($entity)
-    {
-        return isset($this->fileReferenceEntities[ClassUtils::getClass($entity)]);
     }
 
     public function getSubscribedEvents()

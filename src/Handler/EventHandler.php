@@ -1,16 +1,18 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace Atom\Uploader\Handler;
 
-
 use Atom\Uploader\LazyLoad\IUploadHandlerLazyLoader;
 
+/**
+ * @SuppressWarnings(PHPMD.ShortVariable)
+ */
 class EventHandler
 {
-    private $uploadHandlerLazyLoader;
+    private $uploadHandlerLoader;
 
     private $uploadedFiles;
 
@@ -18,9 +20,9 @@ class EventHandler
 
     private $uploadHandler;
 
-    public function __construct(IUploadHandlerLazyLoader $uploadHandlerLazyLoader)
+    public function __construct(IUploadHandlerLazyLoader $uploadHandlerLoader)
     {
-        $this->uploadHandlerLazyLoader = $uploadHandlerLazyLoader;
+        $this->uploadHandlerLoader = $uploadHandlerLoader;
         $this->uploadedFiles = [];
         $this->oldFiles = [];
     }
@@ -35,9 +37,31 @@ class EventHandler
         $this->uploadedFiles[$id] = $fileReference;
     }
 
+    private function hasUploadedFile($fileReference)
+    {
+        return $this->isFileReference($fileReference) && $this->getUploadHandler()->hasUploadedFile($fileReference);
+    }
+
+    private function isFileReference($fileReference)
+    {
+        return $fileReference && $this->getUploadHandler()->isFileReference($fileReference);
+    }
+
+    private function getUploadHandler()
+    {
+        return $this->uploadHandler ?: $this->uploadHandler = $this->uploadHandlerLoader->getUploadHandler();
+    }
+
     public function postPersist($id)
     {
         $this->detachUploadedFile($id);
+    }
+
+    private function detachUploadedFile($id)
+    {
+        if (isset($this->uploadedFiles[$id])) {
+            unset($this->uploadedFiles[$id]);
+        }
     }
 
     public function preUpdate($id, $newFileReference, $oldFileReference)
@@ -60,6 +84,14 @@ class EventHandler
     {
         $this->detachUploadedFile($id);
         $this->deleteOldFile($id);
+    }
+
+    private function deleteOldFile($id)
+    {
+        if (isset($this->oldFiles[$id])) {
+            $this->getUploadHandler()->deleteOldFile($this->oldFiles[$id]);
+            unset($this->oldFiles[$id]);
+        }
     }
 
     public function postLoad($fileReference)
@@ -94,35 +126,5 @@ class EventHandler
         foreach ($this->uploadedFiles as $fileReference) {
             $uploadHandler->delete($fileReference);
         }
-    }
-
-    private function deleteOldFile($id)
-    {
-        if (isset($this->oldFiles[$id])) {
-            $this->getUploadHandler()->deleteOldFile($this->oldFiles[$id]);
-            unset($this->oldFiles[$id]);
-        }
-    }
-
-    private function detachUploadedFile($id)
-    {
-        if (isset($this->uploadedFiles[$id])) {
-            unset($this->uploadedFiles[$id]);
-        }
-    }
-
-    private function hasUploadedFile($fileReference)
-    {
-        return $this->isFileReference($fileReference) && $this->getUploadHandler()->hasUploadedFile($fileReference);
-    }
-
-    private function isFileReference($fileReference)
-    {
-        return $fileReference && $this->getUploadHandler()->isFileReference($fileReference);
-    }
-
-    private function getUploadHandler()
-    {
-        return $this->uploadHandler ?: $this->uploadHandler = $this->uploadHandlerLazyLoader->getUploadHandler();
     }
 }

@@ -1,4 +1,7 @@
 <?php
+/**
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
+ */
 
 namespace Context;
 
@@ -37,12 +40,12 @@ class ExampleAppContext implements Context, SnippetAcceptingContext
 
     public function __construct()
     {
-        $projectRoot = realpath(__DIR__ . '/../../example-app');
+        $projectRoot = realpath(__DIR__.'/../../example-app');
         $this->setVar('project root', $projectRoot);
-        $this->setVar('upload path', $projectRoot . '/src/Resources/public/uploads');
-        $this->setVar('tmp', $projectRoot . '/var/tmp');
-        $this->setVar('log', $projectRoot . '/var/log');
-        $this->setVar('extra mappings path', $projectRoot . '/var/tmp/extra-mappings.yml');
+        $this->setVar('upload path', $projectRoot.'/src/Resources/public/uploads');
+        $this->setVar('tmp', $projectRoot.'/var/tmp');
+        $this->setVar('log', $projectRoot.'/var/log');
+        $this->setVar('extra mappings path', $projectRoot.'/var/tmp/extra-mappings.yml');
 
         $this->app = new Application();
         $this->app->setAutoExit(false);
@@ -64,11 +67,34 @@ class ExampleAppContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Then I should get a success status
+     * @Given amount of files in upload path is :count
      */
-    public function iShouldGetASuccessStatus()
+    public function amountOfFilesInUploadPathIs($count)
     {
-        Test::assertEquals(0, $this->statusCode, $this->getLasErrorMessage());
+        $files = $this->scanDirWithoutDotFiles($this->getVar('upload path'));
+        Test::assertCount((int) $count, $files);
+    }
+
+    private function scanDirWithoutDotFiles($directory)
+    {
+        $files = new \FilesystemIterator($directory, \FilesystemIterator::SKIP_DOTS);
+
+        return array_filter(
+            iterator_to_array($files),
+            function (\SplFileInfo $val) {
+                return 0 !== strpos($val->getFilename(), '.');
+            }
+        );
+    }
+
+    /**
+     * @Given I have got an uploaded file named :filename
+     */
+    public function iHaveAnUploadedFileNamed($filename)
+    {
+        $this->iHaveAFileNamed($filename);
+        $this->iUploadTheFileVia($filename);
+        $this->iShouldGetASuccessStatus();
     }
 
     /**
@@ -81,9 +107,7 @@ class ExampleAppContext implements Context, SnippetAcceptingContext
         $filePath = $this->injectVars($filename);
         $this->fs->dumpFile($filePath, $data);
         Test::assertTrue(file_exists($filePath));
-
     }
-
 
     /**
      * @When I upload the file :filename
@@ -95,22 +119,83 @@ class ExampleAppContext implements Context, SnippetAcceptingContext
     }
 
     /**
-     * @Given amount of files in upload path is :count
+     * @return ArrayInput
      */
-    public function amountOfFilesInUploadPathIs($count)
+    private function buildInput($action, $id = null, $file = null)
     {
-        $files = $this->scanDirWithoutDotFiles($this->getVar('upload path'));
-        Test::assertCount((int)$count, $files);
+        $id = $this->injectVars($id);
+        $file = $this->injectVars($file);
+
+        $input = [
+            'command' => sprintf('%s:%s', $this->driver, $action),
+            '--with-subscriber' => $this->subscribers,
+        ];
+
+        if ($id) {
+            $input['id'] = $id;
+        }
+
+        if ($file) {
+            $input['file'] = $file;
+        }
+
+        return new ArrayInput($input);
+    }
+
+    private function run(ArrayInput $input, $varsTemplate)
+    {
+        $this->appContainer = Setup::setup($this->app);
+        $this->statusCode = $this->app->run($input, $this->output);
+        $this->outputData = [];
+
+        if (0 !== $this->statusCode) {
+            return;
+        }
+
+        $outputData = json_decode($this->output->fetch(), true);
+
+        if (null !== $outputData) {
+            $this->outputData = $outputData;
+            $this->refreshVars($varsTemplate);
+        }
+    }
+
+    private function refreshVars($template)
+    {
+        if (isset($this->outputData['id'])) {
+            $this->setVar(sprintf($template, 'object id'), $this->outputData['id']);
+        }
+
+        if (!isset($this->outputData['fileReference'])) {
+            return;
+        }
+
+        $fileReference = $this->outputData['fileReference'];
+
+        if (isset($fileReference['file'])) {
+            $this->setVar(sprintf($template, 'filename'), $fileReference['file']);
+        }
+
+        if (isset($fileReference['uri'])) {
+            $this->setVar(sprintf($template, 'uri'), $fileReference['uri']);
+        }
+
+        if (isset($fileReference['fileInfo'])) {
+            $this->setVar(sprintf($template, 'file info'), $fileReference['fileInfo']);
+        }
     }
 
     /**
-     * @Given I have got an uploaded file named :filename
+     * @Then I should get a success status
      */
-    public function iHaveAnUploadedFileNamed($filename)
+    public function iShouldGetASuccessStatus()
     {
-        $this->iHaveAFileNamed($filename);
-        $this->iUploadTheFileVia($filename);
-        $this->iShouldGetASuccessStatus();
+        Test::assertEquals(0, $this->statusCode, $this->getLasErrorMessage());
+    }
+
+    private function getLasErrorMessage()
+    {
+        return sprintf('Error occurred at last command. Error message: %s%s', PHP_EOL, $this->output->fetch());
     }
 
     /**
@@ -161,6 +246,15 @@ class ExampleAppContext implements Context, SnippetAcceptingContext
         Test::assertEquals($expected, $actual);
     }
 
+    private function normalizePath($path)
+    {
+        if (false !== strpos($path, '://')) {
+            return str_replace('\\', '/', $path);
+        }
+
+        return str_replace('/', DIRECTORY_SEPARATOR, $path);
+    }
+
     /**
      * @Given I register a subscriber :subscriberClass
      */
@@ -186,7 +280,17 @@ class ExampleAppContext implements Context, SnippetAcceptingContext
         $this->cleanORMDatabase();
         $this->cleanORMEmbeddableDatabase();
 
-        require __DIR__ . '/../../example-app/bin/prepare.php';
+        require __DIR__.'/../../example-app/bin/prepare.php';
+    }
+
+    private function cleanORMDatabase()
+    {
+        @unlink($this->getVar('project root').'/src/Resources/data/orm.sqlite');
+    }
+
+    private function cleanORMEmbeddableDatabase()
+    {
+        @unlink($this->getVar('project root').'/src/Resources/data/orm_embeddable.sqlite');
     }
 
     /**
@@ -196,6 +300,13 @@ class ExampleAppContext implements Context, SnippetAcceptingContext
     public function aCleanUploadPath()
     {
         $this->cleanDirectory($this->getVar('upload path'));
+    }
+
+    private function cleanDirectory($directory)
+    {
+        $files = $this->scanDirWithoutDotFiles($directory);
+
+        $this->fs->remove($files);
     }
 
     /**
@@ -214,115 +325,5 @@ class ExampleAppContext implements Context, SnippetAcceptingContext
     public function aCleanLogPath()
     {
         $this->cleanDirectory($this->getVar('log'));
-    }
-
-    private function run(ArrayInput $input, $varsTemplate)
-    {
-        $this->appContainer = Setup::setup($this->app);
-        $this->statusCode = $this->app->run($input, $this->output);
-        $this->outputData = [];
-
-        if (0 !== $this->statusCode) {
-            return;
-        }
-
-        $outputData = json_decode($this->output->fetch(), true);
-
-        if (null !== $outputData) {
-            $this->outputData = $outputData;
-            $this->refreshVars($varsTemplate);
-        }
-    }
-
-    /**
-     * @return ArrayInput
-     */
-    private function buildInput($action, $id = null, $file = null)
-    {
-        $id = $this->injectVars($id);
-        $file = $this->injectVars($file);
-
-        $input = [
-            'command' => sprintf('%s:%s', $this->driver, $action),
-            '--with-subscriber' => $this->subscribers
-        ];
-
-        if ($id) {
-            $input['id'] = $id;
-        }
-
-        if ($file) {
-            $input['file'] = $file;
-        }
-
-        return new ArrayInput($input);
-    }
-
-    private function refreshVars($template)
-    {
-        if (isset($this->outputData['id'])) {
-            $this->setVar(sprintf($template, 'object id'), $this->outputData['id']);
-        }
-
-        if (!isset($this->outputData['fileReference'])) {
-            return;
-        }
-
-        $fileReference = $this->outputData['fileReference'];
-
-        if (isset($fileReference['file'])) {
-            $this->setVar(sprintf($template, 'filename'), $fileReference['file']);
-        }
-
-        if (isset($fileReference['uri'])) {
-            $this->setVar(sprintf($template, 'uri'), $fileReference['uri']);
-        }
-
-        if (isset($fileReference['fileInfo'])) {
-            $this->setVar(sprintf($template, 'file info'), $fileReference['fileInfo']);
-        }
-    }
-
-    private function getLasErrorMessage()
-    {
-        return sprintf('Error occurred at last command. Error message: %s%s', PHP_EOL, $this->output->fetch());
-    }
-
-    private function cleanDirectory($directory)
-    {
-        $files = $this->scanDirWithoutDotFiles($directory);
-
-        $this->fs->remove($files);
-    }
-
-    private function scanDirWithoutDotFiles($directory)
-    {
-        $files = new \FilesystemIterator($directory, \FilesystemIterator::SKIP_DOTS);
-
-        return array_filter(
-            iterator_to_array($files),
-            function (\SplFileInfo $val) {
-                return 0 !== strpos($val->getFilename(), '.');
-            }
-        );
-    }
-
-    private function cleanORMDatabase()
-    {
-        @unlink($this->getVar('project root') . '/src/Resources/data/orm.sqlite');
-    }
-
-    private function cleanORMEmbeddableDatabase()
-    {
-        @unlink($this->getVar('project root') . '/src/Resources/data/orm_embeddable.sqlite');
-    }
-
-    private function normalizePath($path)
-    {
-        if (false !== strpos($path, '://')) {
-            return str_replace('\\', '/', $path);
-        }
-
-        return str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
 }

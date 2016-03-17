@@ -1,10 +1,9 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace ExampleApp\Command\Base;
-
 
 use ExampleApp\DependencyInjection\IAppContainer;
 use ExampleApp\Exception\FileNotFoundException;
@@ -14,7 +13,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 abstract class Command extends \Symfony\Component\Console\Command\Command
 {
-
     /**
      * @var IAppContainer
      */
@@ -37,12 +35,6 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
         $this->container = $container;
     }
 
-    abstract protected function registerDriver();
-
-    abstract protected function doConfigure();
-
-    abstract protected function doExecute();
-
     final protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->input = $input;
@@ -52,11 +44,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
         $this->doExecute();
     }
 
-    final protected function configure()
-    {
-        $this->addOption('with-subscriber', 's', InputArgument::IS_ARRAY, null, []);
-        $this->doConfigure();
-    }
+    abstract protected function registerDriver();
 
     private function registerSubscribers()
     {
@@ -64,7 +52,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
             return;
         }
 
-        $subscribers = (array)$this->input->getOption('with-subscriber');
+        $subscribers = (array) $this->input->getOption('with-subscriber');
         $dispatcher = $this->container->getDispatcher();
 
         foreach ($subscribers as $subscriberClass) {
@@ -72,6 +60,16 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
             $dispatcher->registerSubscriber($subscriber);
         }
     }
+
+    abstract protected function doExecute();
+
+    final protected function configure()
+    {
+        $this->addOption('with-subscriber', 's', InputArgument::IS_ARRAY, null, []);
+        $this->doConfigure();
+    }
+
+    abstract protected function doConfigure();
 
     protected function addFileArgument()
     {
@@ -89,7 +87,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
 
     protected function getId()
     {
-        return (int)$this->input->getArgument('id');
+        return (int) $this->input->getArgument('id');
     }
 
     protected function getFile()
@@ -105,7 +103,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
 
     /**
      * @param int|null $id
-     * @param array $fileReference
+     * @param array    $fileReference
      */
     protected function view($id = null, array $fileReference = null)
     {

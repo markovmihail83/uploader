@@ -1,10 +1,9 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace Atom\Uploader\Naming;
-
 
 use Atom\Uploader\Exception\NoSuchNamingException;
 
@@ -24,6 +23,7 @@ class NamerRepo
      * @param $strategy string
      *
      * @throws NoSuchNamingException
+     *
      * @return INamer
      */
     public function getNamer($strategy)

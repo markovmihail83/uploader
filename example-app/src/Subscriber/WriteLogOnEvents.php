@@ -1,10 +1,9 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace ExampleApp\Subscriber;
-
 
 use Atom\Uploader\Event\IUploadEvent;
 
@@ -31,6 +30,14 @@ class WriteLogOnEvents implements ISubscriber
         $this->log('postUpload.log');
     }
 
+    private function log($filename, $message = '')
+    {
+        $path = sprintf('%s/../../var/log/%s', __DIR__, $filename);
+        $stream = fopen($path, 'a');
+        fwrite($stream, $message);
+        fclose($stream);
+    }
+
     public function postUpdate()
     {
         $this->log('postUpdate.log');
@@ -54,13 +61,5 @@ class WriteLogOnEvents implements ISubscriber
     public function postInjectFileInfo()
     {
         $this->log('postInjectFileInfo.log');
-    }
-
-    private function log($filename, $message = '')
-    {
-        $path = sprintf('%s/../../var/log/%s', __DIR__, $filename);
-        $stream = fopen($path, 'a');
-        fwrite($stream, $message);
-        fclose($stream);
     }
 }

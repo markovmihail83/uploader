@@ -1,17 +1,16 @@
 <?php
 /**
- * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>
+ * Copyright © 2016 Elbek Azimov. Contacts: <atom.azimov@gmail.com>.
  */
 
 namespace ExampleApp\DependencyInjection;
 
-
+use Atom\Uploader\Filesystem\FilesystemAdapterRepo;
 use Atom\Uploader\Handler\UploadHandler;
 use Atom\Uploader\LazyLoad\IFilesystemAdapterRepoLazyLoader;
 use Atom\Uploader\LazyLoad\IUploadHandlerLazyLoader;
 use Atom\Uploader\Listener\ORM\ORMListener;
 use Atom\Uploader\Listener\ORMEmbeddable\ORMEmbeddableListener;
-use Atom\Uploader\Filesystem\FilesystemAdapterRepo;
 use ExampleApp\Event\EventDispatcher;
 
 class AppContainer implements IAppContainer, IUploadHandlerLazyLoader, IFilesystemAdapterRepoLazyLoader
@@ -25,14 +24,6 @@ class AppContainer implements IAppContainer, IUploadHandlerLazyLoader, IFilesyst
     private $ormEmbeddableListener;
 
     private $dispatcher;
-
-    /**
-     * @param FilesystemAdapterRepo $filesystemAdapterRepo
-     */
-    public function setFilesystemAdapterRepo(FilesystemAdapterRepo $filesystemAdapterRepo)
-    {
-        $this->filesystemAdapterRepo = $filesystemAdapterRepo;
-    }
 
     /**
      * @return ORMListener
@@ -88,6 +79,14 @@ class AppContainer implements IAppContainer, IUploadHandlerLazyLoader, IFilesyst
     public function getFilesystemAdapterRepo()
     {
         return $this->filesystemAdapterRepo;
+    }
+
+    /**
+     * @param FilesystemAdapterRepo $filesystemAdapterRepo
+     */
+    public function setFilesystemAdapterRepo(FilesystemAdapterRepo $filesystemAdapterRepo)
+    {
+        $this->filesystemAdapterRepo = $filesystemAdapterRepo;
     }
 
     /**

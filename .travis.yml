@@ -10,14 +10,11 @@ cache:
   - "$HOME/.composer/cache"
 
 install:
-  - composer install --prefer-dist --no-interaction --dev
-
-before_script:
-  - php example-app/bin/prepare.php
+  - composer selfupdate
+  - composer install --prefer-dist --no-interaction
 
 script:
-  - vendor/bin/phpspec -c=phpspec-ci.yml run
-  - vendor/bin/behat -f progress
+  - composer run-script test-with-coverage
 
 after_script:
   - travis_retry vendor/bin/coveralls
