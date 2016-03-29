@@ -16,6 +16,6 @@ class BasenameNamer implements INamer
      */
     public function name(\SplFileInfo $file)
     {
-        return $this->escape($file->getBasename());
+        return $this->escape($file->getFilename());
     }
 }
