@@ -23,7 +23,7 @@ class BasenameNamerSpec extends ObjectBehavior
     function it_should_generate_a_filename_from_basename(\SplFileInfo $file)
     {
         $basename = 'some-filename.ext';
-        $file->getBasename()->willReturn($basename);
+        $file->getFilename()->willReturn($basename);
         $this->name($file)->shouldBe($basename);
     }
 
