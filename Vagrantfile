@@ -39,7 +39,7 @@ Vagrant.configure(2) do |config|
     dev.vm.synced_folder '.', '/vagrant', type: 'virtualbox'
 
     unless is_windows
-      dev.vm.synced_folder '.', '/srv', type: 'nfs', mount_options: %w(rw vers=3 tcp fsc actimeo=2)
+      dev.vm.synced_folder '.', '/srv', type: 'nfs', mount_options: %w(rw tcp fsc actimeo=2)
     end
 
     dev.vm.provision :shell, inline: 'chown vagrant:vagrant /srv'

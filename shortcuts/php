@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+docker-compose run --rm \
+    --user $(id -u) \
+    php php -dxdebug.remote_autostart=1 "$@"

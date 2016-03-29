@@ -1,0 +1,11 @@
+version: '2'
+services:
+  php:
+    env_file: devops/env/dev.env
+    build:
+      context: .
+      dockerfile: devops/php/Dockerfile
+    working_dir: '$PWD'
+    volumes:
+      - '.:$PWD'
+      - '~/.composer:/.composer'

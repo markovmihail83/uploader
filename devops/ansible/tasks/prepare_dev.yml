@@ -1,8 +1,0 @@
----
-- name: Prepare application.
-  command: "{{item}}"
-  args:
-    chdir: /vagrant
-  with_items:
-    - composer install -n --optimize-autoloader --prefer-dist
-    - php example-app/bin/prepare.php
