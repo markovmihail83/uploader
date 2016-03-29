@@ -1,11 +1,21 @@
 version: '2'
 services:
-  php:
+  php5:
     env_file: devops/env/dev.env
     build:
       context: .
-      dockerfile: devops/php/Dockerfile
+      dockerfile: devops/php5/Dockerfile
     working_dir: '$PWD'
     volumes:
       - '.:$PWD'
       - '~/.composer:/.composer'
+
+  php7:
+      env_file: devops/env/dev.env
+      build:
+        context: .
+        dockerfile: devops/php7/Dockerfile
+      working_dir: '$PWD'
+      volumes:
+        - '.:$PWD'
+        - '~/.composer:/.composer'

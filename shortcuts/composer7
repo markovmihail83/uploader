@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 
 PROJECT_ROOT=$(realpath `dirname "$0"`/../)
-php=$PROJECT_ROOT/shortcuts/php
-php="$php -dxdebug.remote_enable=0"
+php7=$PROJECT_ROOT/shortcuts/php7
+php7="$php7 -dxdebug.remote_enable=0"
 COMPOSER="$PROJECT_ROOT/composer.phar"
 
 if [[ ! -f "$COMPOSER" ]]; then
     COMPOSER_SETUP="$PROJECT_ROOT/composer-setup.php"
-    $php -r "readfile('https://getcomposer.org/installer');" > $COMPOSER_SETUP
-    $php $COMPOSER_SETUP
+    $php7 -r "readfile('https://getcomposer.org/installer');" > $COMPOSER_SETUP
+    $php7 $COMPOSER_SETUP
     rm $COMPOSER_SETUP
 fi
 
-$php $COMPOSER "$@"
+$php7 $COMPOSER "$@"

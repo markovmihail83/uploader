@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-php=$(dirname "$0")/php
-
-$php vendor/behat/behat/bin/behat "$@"

@@ -2,4 +2,4 @@
 
 docker-compose run --rm \
     --user $(id -u) \
-    php php -dxdebug.remote_autostart=1 "$@"
+    php7 php -dxdebug.remote_autostart=1 "$@"

@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+PROJECT_ROOT=$(realpath `dirname "$0"`/../)
+php5=$PROJECT_ROOT/shortcuts/php5
+php5="$php5 -dxdebug.remote_enable=0"
+COMPOSER="$PROJECT_ROOT/composer.phar"
+
+if [[ ! -f "$COMPOSER" ]]; then
+    COMPOSER_SETUP="$PROJECT_ROOT/composer-setup.php"
+    $php5 -r "readfile('https://getcomposer.org/installer');" > $COMPOSER_SETUP
+    $php5 $COMPOSER_SETUP
+    rm $COMPOSER_SETUP
+fi
+
+$php5 $COMPOSER "$@"

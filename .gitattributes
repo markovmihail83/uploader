@@ -14,5 +14,6 @@
 /.gitattributes     export-ignore
 /.editorconfig      export-ignore
 /.php_cs            export-ignore
+/.gitignore         export-ignore
 
 *.php               eol=lf
