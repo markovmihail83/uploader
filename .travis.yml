@@ -1,25 +1,36 @@
-language: php
-sudo: false
+sudo: required
 
-php:
-  - 5.6
-  - 7.0
+env:
+  - PHP_VERSION=5
+    DOCKER_COMPOSE_VERSION=1.6.2
+  - PHP_VERSION=7
+    DOCKER_COMPOSE_VERSION=1.6.2
+
+services:
+  - docker
 
 cache:
   directories:
-  - "$HOME/.composer/cache"
+    - "$HOME/.composer/cache"
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
+  - docker-compose build php$PHP_VERSION
 
 install:
-  - composer selfupdate
-  - composer install --prefer-dist --no-interaction
+  - shortcuts/composer$PHP_VERSION install --prefer-dist --no-interaction
 
 script:
-  - composer run-script test-with-coverage
+  - shortcuts/composer$PHP_VERSION test-with-coverage
 
 after_script:
-  - travis_retry composer run-script coveralls
+  - travis_retry shortcuts/composer$PHP_VERSION coveralls
 
 notifications:
-  webhooks: https://webhooks.gitter.im/e/a083ae222d5812ae9f01
   slack:
     secure: f18G4l6YYwmMqYM/Kd78HAhj9t0FA3vRyNUDryjcwWh3D7CqPvTexMD3MW2fwYaElfe8TDVvR1r0hUPBfMz1pclPs0csA0N4809E/iCU3jrCAS3JQXsP6glnOI7PAhCEyVGxbDX03F5bpZBQ+CJqjmI59xcvTZzb9POdDF8mbWQf8+R5cx9cPsGJnekOzVd0H8xZzApaTXIFWAdUKIPFfqnVzQDDmBa/+B64XpBTAcWNNgIRxFRg8ZY7xzhb65RMW4o1NKDngcyeEXY+0eDsyY0dmfgab2mo4IGOCuQXrgu5p7H4laTCR3VyYZaCK6Stgl2Tw1mCYaVOYZQ0r34dUlweJYoepmDEtG7NnQOTMVX0bapfwr8zxxnp6oSxvbXYUrA80Fzco/00QxKu+9aLYb5RY9FzQTyUf9JsNWQFHf6v0XoB99m5PXDuCNnZhpSpOitjoMl2h0yVm4tbFAdAIPSHb8Mlq/LACCyNlWqdiCzSLe8TzPPlfsBbcWK9NLI+64uP9PJ4pRkJNFj61bhDZtzMskRMB/HcvCIv2/xdUNTon+AY1O+L1M+3w0SXMZKayUG9RoaWaS7bul8VkkRdtjPO0+R86nUntQU4q58ktW6BeukpOVsAYcS11TeVQYtvH4Mp//dbptTJmqEYnsOZpAMzHc0MZGfjC4apF46071E=
