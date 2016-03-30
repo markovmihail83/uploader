@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-PROJECT_ROOT=$(realpath `dirname "$0"`/../)
+PROJECT_ROOT="$(dirname "$0")/../"
 php7=$PROJECT_ROOT/shortcuts/php7
 php7="$php7 -dxdebug.remote_enable=0"
 COMPOSER="$PROJECT_ROOT/composer.phar"
@@ -12,4 +12,4 @@ if [[ ! -f "$COMPOSER" ]]; then
     rm $COMPOSER_SETUP
 fi
 
-$php7 $COMPOSER "$@"
+$php7 -dmemory_limit=-1 $COMPOSER "$@"
