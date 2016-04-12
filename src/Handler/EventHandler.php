@@ -66,16 +66,12 @@ class EventHandler
 
     public function preUpdate($id, $newFileReference, $oldFileReference)
     {
-        if (!$this->hasUploadedFile($newFileReference)) {
-            return;
+        if ($this->hasUploadedFile($newFileReference)) {
+            $this->getUploadHandler()->update($newFileReference);
+            $this->uploadedFiles[$id] = $newFileReference;
         }
 
-        $uploadHandler = $this->getUploadHandler();
-
-        $uploadHandler->update($newFileReference);
-        $this->uploadedFiles[$id] = $newFileReference;
-
-        if ($oldFileReference && !$uploadHandler->isFilesEqual($newFileReference, $oldFileReference)) {
+        if ($oldFileReference && (!$newFileReference || !$this->getUploadHandler()->isFilesEqual($newFileReference, $oldFileReference))) {
             $this->oldFiles[$id] = $oldFileReference;
         }
     }

@@ -38,7 +38,7 @@ class EventHandlerSpec extends ObjectBehavior
         $handler->isFileReference(Argument::not(Argument::type(FileReference::class)))->willReturn(false);
     }
 
-    public function it_should_do_nothing_if_a_file_reference_is_none($uploadHandlerLazyLoader, $oldFileReference)
+    public function it_should_do_nothing_if_a_file_reference_is_none($uploadHandlerLazyLoader)
     {
         $uploadHandlerLazyLoader->getUploadHandler()->shouldNotBeCalled();
         $id = uniqid();
@@ -46,21 +46,20 @@ class EventHandlerSpec extends ObjectBehavior
         $this->prePersist($id, null);
         $this->postPersist($id);
         $this->preUpdate($id, null, null);
-        $this->preUpdate($id, null, $oldFileReference);
         $this->postUpdate($id);
         $this->postLoad(null);
         $this->postRemove(null);
         $this->postFlush();
     }
 
-    public function it_should_do_nothing_if_an_object_is_not_a_file_reference($object, $oldFileReference)
+    public function it_should_do_nothing_if_an_object_is_not_a_file_reference($object)
     {
         $id = uniqid();
 
         $this->prePersist($id, $object);
         $this->postPersist($id);
         $this->prePersist($id, $object);
-        $this->preUpdate($id, $object, $oldFileReference);
+        $this->preUpdate($id, $object, null);
         $this->postUpdate($id);
         $this->postLoad($object);
         $this->postRemove($object);
