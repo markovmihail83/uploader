@@ -40,7 +40,7 @@ interface IUploadEvent
     /**
      * @return object
      */
-    public function getFileReference();
+    public function &getFileReference();
 
     /**
      * @return FileMetadata

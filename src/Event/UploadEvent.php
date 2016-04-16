@@ -32,7 +32,7 @@ trait UploadEvent
         return $this->actionStopped;
     }
 
-    public function getFileReference()
+    public function &getFileReference()
     {
         return $this->fileReference;
     }
