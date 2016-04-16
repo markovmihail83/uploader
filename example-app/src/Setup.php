@@ -8,7 +8,8 @@ namespace ExampleApp;
 use Atom\Uploader\Filesystem\FilesystemAdapterRepo;
 use Atom\Uploader\Filesystem\FlysystemAdapter;
 use Atom\Uploader\Filesystem\LocalAdapter;
-use Atom\Uploader\Handler\EventHandler;
+use Atom\Uploader\Handler\PropertyHandler;
+use Atom\Uploader\Handler\Uploader;
 use Atom\Uploader\Handler\UploadHandler;
 use Atom\Uploader\Listener\ORM\ORMListener;
 use Atom\Uploader\Listener\ORMEmbeddable\ORMEmbeddableListener;
@@ -24,12 +25,11 @@ use ExampleApp\Command\ORM\RemoveCommand;
 use ExampleApp\Command\ORM\UpdateCommand;
 use ExampleApp\Command\ORM\UploadCommand;
 use ExampleApp\Command\ORMEmbeddable;
+use ExampleApp\Command\DBAL;
 use ExampleApp\DependencyInjection\AppContainer;
-use ExampleApp\DependencyInjection\IAppContainer;
 use ExampleApp\Entity\ORM\UploadableEntity;
 use ExampleApp\Entity\ORMEmbeddable\EntityHasEmbeddedFile;
 use ExampleApp\Event\EventDispatcher;
-use ExampleApp\Handler\PropertyHandler;
 use League\Flysystem\Adapter\Local;
 use League\Flysystem\Filesystem;
 use League\Flysystem\MountManager;
@@ -52,12 +52,14 @@ class Setup
         $dispatcher = new EventDispatcher();
         $container->setDispatcher($dispatcher);
 
-        $listenerHandler = new EventHandler($container);
+        $uploader = new Uploader($container);
 
-        $ormListener = self::createOrmListener($listenerHandler);
+        $container->setUploader($uploader);
+
+        $ormListener = self::createOrmListener($uploader);
         $container->setOrmListener($ormListener);
 
-        $ormEmbeddableListener = self::createOrmEmbeddableListener($listenerHandler);
+        $ormEmbeddableListener = self::createOrmEmbeddableListener($uploader);
         $container->setOrmEmbeddableListener($ormEmbeddableListener);
 
         $mappings = self::getMappingsFromConfig();
@@ -109,7 +111,7 @@ class Setup
         return $namerRepo;
     }
 
-    private static function createOrmListener(EventHandler $handler)
+    private static function createOrmListener(Uploader $handler)
     {
         $fileReferenceEntities = [
             UploadableEntity::class => UploadableEntity::class,
@@ -131,7 +133,7 @@ class Setup
         ];
     }
 
-    private static function createOrmEmbeddableListener(EventHandler $handler)
+    private static function createOrmEmbeddableListener(Uploader $handler)
     {
         $fileReferenceProperties = [
             EntityHasEmbeddedFile::class => [
@@ -232,7 +234,7 @@ class Setup
         ];
     }
 
-    private static function registerCommands(IAppContainer $container, Application $app)
+    private static function registerCommands(AppContainer $container, Application $app)
     {
         $app->addCommands(
             [
@@ -245,6 +247,11 @@ class Setup
                 new ORMEmbeddable\RemoveCommand('orm_embeddable:remove', $container),
                 new ORMEmbeddable\UpdateCommand('orm_embeddable:update', $container),
                 new ORMEmbeddable\GetCommand('orm_embeddable:get', $container),
+
+                new DBAL\UploadCommand('dbal:upload', $container),
+                new DBAL\GetCommand('dbal:get', $container),
+                new DBAL\RemoveCommand('dbal:remove', $container),
+                new DBAL\UpdateCommand('dbal:update', $container),
             ]
         );
     }

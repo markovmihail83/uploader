@@ -8,6 +8,8 @@ Feature: Stop action via config.
       delete_on_remove: false
     ExampleApp\Entity\ORM\UploadableEntity:
       delete_on_remove: false
+    dbal_uploadable:
+      delete_on_remove: false
     """
     And I have selected driver <driver>
     And I have got an uploaded file named "{tmp}/some-file"
@@ -16,6 +18,7 @@ Feature: Stop action via config.
 
     Examples:
       | driver         |
+      | dbal           |
       | orm            |
       | orm_embeddable |
 
@@ -26,6 +29,8 @@ Feature: Stop action via config.
       delete_old_file: false
     ExampleApp\Entity\ORM\UploadableEntity:
       delete_old_file: false
+    dbal_uploadable:
+      delete_old_file: false
     """
     And I have selected driver <driver>
     And I have got an uploaded file named "{tmp}/some-file"
@@ -35,6 +40,7 @@ Feature: Stop action via config.
 
     Examples:
       | driver         |
+      | dbal           |
       | orm            |
       | orm_embeddable |
 
@@ -47,6 +53,9 @@ Feature: Stop action via config.
     ExampleApp\Entity\ORM\UploadableEntity:
       inject_uri_on_load: false
       inject_file_info_on_load: false
+    dbal_uploadable:
+      inject_uri_on_load: false
+      inject_file_info_on_load: false
     """
     And I have selected driver <driver>
     And I have got an uploaded file named "{tmp}/some-file"
@@ -56,5 +65,6 @@ Feature: Stop action via config.
 
     Examples:
       | driver         |
+      | dbal           |
       | orm            |
       | orm_embeddable |

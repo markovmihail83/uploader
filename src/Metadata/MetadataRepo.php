@@ -11,39 +11,39 @@ class MetadataRepo
 {
     private $metadataMap;
 
-    private $fileReferenceClasses;
+    private $metadataNames;
 
     /**
-     * @param array $fileReferenceClasses
+     * @param array $metadataNames
      * @param FileMetadata[] $metadataMap
      */
-    public function __construct(array $fileReferenceClasses, array $metadataMap)
+    public function __construct(array $metadataNames, array $metadataMap)
     {
-        $this->fileReferenceClasses = $fileReferenceClasses;
+        $this->metadataNames = $metadataNames;
         $this->metadataMap = $metadataMap;
     }
 
-    public function getMetadata($className)
+    public function getMetadata($name)
     {
-        if (is_object($className)) {
-            $className = get_class($className);
+        if (is_object($name)) {
+            $name = get_class($name);
         }
 
-        if (!isset($this->fileReferenceClasses[$className])) {
-            throw new NoSuchMetadataException($className);
+        if (!isset($this->metadataNames[$name])) {
+            throw new NoSuchMetadataException($name);
         }
 
-        $metadataName = $this->fileReferenceClasses[$className];
+        $metadataName = $this->metadataNames[$name];
 
         return $this->metadataMap[$metadataName];
     }
 
-    public function hasMetadata($className)
+    public function hasMetadata($name)
     {
-        if (is_object($className)) {
-            $className = get_class($className);
+        if (is_object($name)) {
+            $name = get_class($name);
         }
 
-        return isset($this->fileReferenceClasses[$className]);
+        return isset($this->metadataNames[$name]);
     }
 }

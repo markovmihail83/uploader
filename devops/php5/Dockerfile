@@ -47,7 +47,7 @@ RUN yes | pecl install xdebug-beta && \
     echo "xdebug.remote_mode=req" >> $XDEBUG_CONFIG &&\
     echo "xdebug.remote_port=9000" >> $XDEBUG_CONFIG &&\
     echo "xdebug.idekey=PHPSTORM" >> $XDEBUG_CONFIG &&\
-    echo "xdebug.remote_host=172.18.0.1" >> $XDEBUG_CONFIG
+    echo "xdebug.remote_host=$(ip route|awk '/default/ { print $3 }')" >> $XDEBUG_CONFIG
 
 RUN apt-get upgrade -y &&\
     apt-get autoremove -y &&\

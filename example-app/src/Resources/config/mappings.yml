@@ -8,3 +8,5 @@ ExampleApp\Entity\ORM\UploadableEntity:
   file_info_setter: fileInfoField
   file_setter: fileField
   file_getter: fileField
+
+dbal_uploadable: []

@@ -28,9 +28,7 @@
         "doctrine/orm": "^2.5",
         "phpspec/phpspec": "^2.4",
         "phpunit/phpunit": "^5.1",
-        "henrikbjorn/phpspec-code-coverage": "^2.0.2",
         "league/flysystem": "^1.0",
-        "satooshi/php-coveralls": "^1.0",
         "mikey179/vfsStream": "^1.6",
         "twistor/flysystem-stream-wrapper": "^1.0",
         "behat/behat": "^3.@dev",
@@ -38,7 +36,8 @@
         "symfony/yaml": "^3.0",
         "symfony/property-access": "^3.0",
         "phpmd/phpmd": "^2.4",
-        "fabpot/php-cs-fixer": "^1.11"
+        "fabpot/php-cs-fixer": "^1.11",
+        "doctrine/dbal": "^2.5"
     },
     "suggest": {
         "doctrine/orm": "You can use doctrine orm as a persistence layer for your business objects.",
@@ -47,7 +46,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.4.x-dev"
+            "dev-master": "1.5.x-dev"
         }
     },
     "config": {
@@ -57,14 +56,9 @@
     "scripts": {
         "test": [
             "phpspec run",
-            "behat -f progress"
-        ],
-        "test-with-coverage": [
-            "phpspec run -c=phpspec-ci.yml",
-            "behat -f progress"
+            "behat"
         ],
         "phpmd": "phpmd src xml cleancode,codesize,controversial,design,naming,unusedcode",
-        "cs-fix": "php-cs-fixer fix",
-        "coveralls": "coveralls"
+        "cs-fix": "php-cs-fixer fix"
     }
 }

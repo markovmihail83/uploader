@@ -2,9 +2,7 @@ sudo: required
 
 env:
   - PHP_VERSION=5
-    DOCKER_COMPOSE_VERSION=1.6.2
   - PHP_VERSION=7
-    DOCKER_COMPOSE_VERSION=1.6.2
 
 services:
   - docker
@@ -17,19 +15,17 @@ before_install:
   - sudo apt-get update
   - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
   - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/1.6.2/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
   - docker-compose build php$PHP_VERSION
 
 install:
-  - shortcuts/composer$PHP_VERSION install --prefer-dist --no-interaction
+  - shortcuts/composer$PHP_VERSION install --no-interaction
 
 script:
-  - shortcuts/composer$PHP_VERSION test-with-coverage
-
-after_script:
-  - travis_retry shortcuts/composer$PHP_VERSION coveralls
+  - shortcuts/composer$PHP_VERSION test
+  - bash shortcuts/composer$PHP_VERSION phpmd
 
 notifications:
   slack:

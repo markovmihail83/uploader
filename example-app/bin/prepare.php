@@ -17,3 +17,12 @@ chdir($configDir . '/orm_embeddable');
 exec($doctrineUpdateCommand);
 
 chdir($cwd);
+
+$conn = require __DIR__ . '/../src/Resources/config/dbal/bootstrap.php';
+
+$createScheme = 'CREATE TABLE IF NOT EXISTS uploadable (
+  id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+  file VARCHAR(255)
+)';
+
+$conn->exec($createScheme);

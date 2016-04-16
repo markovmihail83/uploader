@@ -11,3 +11,4 @@ Feature: Upload files and attach to objects.
       | driver         |
       | orm            |
       | orm_embeddable |
+      | dbal           |

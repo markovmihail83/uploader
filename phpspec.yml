@@ -1,4 +1,6 @@
 code_generation: false
+formatter.name: pretty
+stop_on_failure: true
 suites:
   default:
     namespace: 'Atom\Uploader'

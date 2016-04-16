@@ -29,11 +29,12 @@ class UploadHandler
 
     public function __construct(
         MetadataRepo $metadataRepo,
-        IPropertyHandler $propertyHandler,
+        PropertyHandler $propertyHandler,
         IFilesystemAdapterRepoLazyLoader $fsAdapterLoader,
         NamerRepo $namerRepo,
         IEventDispatcher $dispatcher
-    ) {
+    )
+    {
         $this->metadataRepo = $metadataRepo;
         $this->propertyHandler = $propertyHandler;
         $this->namerRepo = $namerRepo;
@@ -41,56 +42,14 @@ class UploadHandler
         $this->fsAdapterLoader = $fsAdapterLoader;
     }
 
-    public function upload($fileReference)
+    public function upload(&$fileReference, $metadataName = null)
     {
-        $this->move($fileReference, IUploadEvent::PRE_UPLOAD, IUploadEvent::POST_UPLOAD);
+        $this->move($fileReference, $metadataName, IUploadEvent::PRE_UPLOAD, IUploadEvent::POST_UPLOAD);
     }
 
-    private function move($fileReference, $preEventName, $postEventName)
+    public function injectUri(&$fileReference, $metadataName = null)
     {
-        $metadata = $this->metadataRepo->getMetadata($fileReference);
-        $file = $this->propertyHandler->getFile($fileReference, $metadata);
-        $fileName = $this->namerRepo->getNamer($metadata->getNamingStrategy())->name($file);
-        $event = $this->dispatcher->dispatch($preEventName, $fileReference, $metadata);
-
-        if ($event->isActionStopped()) {
-            return;
-        }
-
-        $this->moveUploadedFile($file, $fileName, $metadata);
-        $this->propertyHandler->setFile($fileReference, $metadata, $fileName);
-        $this->injectUri($fileReference);
-        $this->injectFileInfo($fileReference);
-        $this->dispatcher->dispatch($postEventName, $fileReference, $metadata);
-    }
-
-    private function moveUploadedFile(\SplFileInfo $file, $fileName, FileMetadata $metadata)
-    {
-        $filesystem = $this->getFilesystemAdapterRepo()->getFilesystem($metadata->getFsAdapter());
-        $stream = fopen((string)$file, 'r+');
-        $isMoved = $filesystem->writeStream($metadata->getFsPrefix(), $fileName, $stream);
-
-        if (!$isMoved) {
-            throw new FileCouldNotBeMovedException((string)$file, $fileName);
-        }
-
-        if (is_resource($stream)) {
-            fclose($stream);
-        }
-
-        if ($file->isWritable()) {
-            unlink((string)$file);
-        }
-    }
-
-    private function getFilesystemAdapterRepo()
-    {
-        return $this->fsAdapterRepo ?: $this->fsAdapterRepo = $this->fsAdapterLoader->getFilesystemAdapterRepo();
-    }
-
-    public function injectUri($fileReference)
-    {
-        $metadata = $this->metadataRepo->getMetadata($fileReference);
+        $metadata = $this->metadataRepo->getMetadata($metadataName ?: $fileReference);
 
         if (!$metadata->isInjectableUri() || false === $metadata->getUriSetter()) {
             return;
@@ -116,9 +75,9 @@ class UploadHandler
         $this->dispatcher->dispatch(IUploadEvent::POST_INJECT_URI, $fileReference, $metadata);
     }
 
-    public function injectFileInfo($fileReference)
+    public function injectFileInfo(&$fileReference, $metadataName = null)
     {
-        $metadata = $this->metadataRepo->getMetadata($fileReference);
+        $metadata = $this->metadataRepo->getMetadata($metadataName ?: $fileReference);
         $path = (string)$this->propertyHandler->getFile($fileReference, $metadata);
 
         if (!$metadata->isInjectableFileInfo() || empty($path)) {
@@ -142,14 +101,14 @@ class UploadHandler
         $this->dispatcher->dispatch(IUploadEvent::POST_INJECT_FILE_INFO, $fileReference, $metadata);
     }
 
-    public function update($fileReference)
+    public function update(&$fileReference, $metadataName = null)
     {
-        $this->move($fileReference, IUploadEvent::PRE_UPDATE, IUploadEvent::POST_UPDATE);
+        $this->move($fileReference, $metadataName, IUploadEvent::PRE_UPDATE, IUploadEvent::POST_UPDATE);
     }
 
-    public function deleteOldFile($fileReference)
+    public function deleteOldFile(&$fileReference, $metadataName = null)
     {
-        $metadata = $this->metadataRepo->getMetadata($fileReference);
+        $metadata = $this->metadataRepo->getMetadata($metadataName ?: $fileReference);
         $file = $this->propertyHandler->getFile($fileReference, $metadata);
 
         if (empty($file) || !$metadata->isOldFileDeletable()) {
@@ -165,7 +124,71 @@ class UploadHandler
         );
     }
 
-    private function remove($fileReference, $metadata, $file, $preEventName, $postEventName)
+    public function delete(&$fileReference, $metadataName = null)
+    {
+        $metadata = $this->metadataRepo->getMetadata($metadataName ?: $fileReference);
+        $file = $this->propertyHandler->getFile($fileReference, $metadata);
+
+        if (empty($file) || !$metadata->isDeletable()) {
+            return false;
+        }
+
+        return $this->remove($fileReference, $metadata, $file, IUploadEvent::PRE_REMOVE, IUploadEvent::POST_REMOVE);
+    }
+
+    public function isFilesEqual($fileReference1, $fileReference2, $metadataName = null)
+    {
+        $metadata = $this->metadataRepo->getMetadata($metadataName ?: $fileReference1);
+        $filePath1 = (string)$this->propertyHandler->getFile($fileReference1, $metadata);
+        $filePath2 = (string)$this->propertyHandler->getFile($fileReference2, $metadata);
+
+        return $filePath1 === $filePath2;
+    }
+
+    public function hasUploadedFile($fileReference, $metadataName = null)
+    {
+        $metadata = $this->metadataRepo->getMetadata($metadataName ?: $fileReference);
+        $file = $this->propertyHandler->getFile($fileReference, $metadata);
+
+        return $file instanceof \SplFileInfo;
+    }
+
+    public function isFileReference($fileReference, $metadataName = null)
+    {
+        return $this->metadataRepo->hasMetadata($metadataName ?: $fileReference);
+    }
+
+    private function moveUploadedFile(\SplFileInfo $file, $fileName, FileMetadata $metadata)
+    {
+        $filesystem = $this->getFilesystemAdapterRepo()->getFilesystem($metadata->getFsAdapter());
+        $stream = fopen((string)$file, 'r+');
+        $isMoved = $filesystem->writeStream($metadata->getFsPrefix(), $fileName, $stream);
+
+        if (!$isMoved) {
+            throw new FileCouldNotBeMovedException((string)$file, $fileName);
+        }
+
+        if (is_resource($stream)) {
+            fclose($stream);
+        }
+
+        if ($file->isWritable()) {
+            unlink((string)$file);
+        }
+    }
+
+    private function deleteFile(FileMetadata $metadata, $file)
+    {
+        if ($file instanceof \SplFileInfo) {
+            return unlink((string)$file);
+        }
+
+        $filesystem = $this->getFilesystemAdapterRepo()->getFilesystem($metadata->getFsAdapter());
+
+        return $filesystem->delete($metadata->getFsPrefix(), $file);
+    }
+
+    private function remove(&$fileReference, $metadata, $file, $preEventName, $postEventName)
     {
         $event = $this->dispatcher->dispatch($preEventName, $fileReference, $metadata);
 
@@ -183,48 +206,26 @@ class UploadHandler
         return $isDeleted;
     }
 
-    private function deleteFile(FileMetadata $metadata, $file)
+    private function move(&$fileReference, $metadataName, $preEventName, $postEventName)
     {
-        if ($file instanceof \SplFileInfo) {
-            return unlink((string)$file);
+        $metadata = $this->metadataRepo->getMetadata($metadataName ?: $fileReference);
+        $file = $this->propertyHandler->getFile($fileReference, $metadata);
+        $fileName = $this->namerRepo->getNamer($metadata->getNamingStrategy())->name($file);
+        $event = $this->dispatcher->dispatch($preEventName, $fileReference, $metadata);
+
+        if ($event->isActionStopped()) {
+            return;
         }
 
-        $filesystem = $this->getFilesystemAdapterRepo()->getFilesystem($metadata->getFsAdapter());
-
-        return $filesystem->delete($metadata->getFsPrefix(), $file);
+        $this->moveUploadedFile($file, $fileName, $metadata);
+        $this->propertyHandler->setFile($fileReference, $metadata, $fileName);
+        $this->injectUri($fileReference, $metadataName);
+        $this->injectFileInfo($fileReference, $metadataName);
+        $this->dispatcher->dispatch($postEventName, $fileReference, $metadata);
     }
 
-    public function delete($fileReference)
+    private function getFilesystemAdapterRepo()
     {
-        $metadata = $this->metadataRepo->getMetadata($fileReference);
-        $file = $this->propertyHandler->getFile($fileReference, $metadata);
-
-        if (empty($file) || !$metadata->isDeletable()) {
-            return false;
-        }
-
-        return $this->remove($fileReference, $metadata, $file, IUploadEvent::PRE_REMOVE, IUploadEvent::POST_REMOVE);
-    }
-
-    public function isFilesEqual($fileReference1, $fileReference2)
-    {
-        $metadata = $this->metadataRepo->getMetadata($fileReference1);
-        $filePath1 = (string)$this->propertyHandler->getFile($fileReference1, $metadata);
-        $filePath2 = (string)$this->propertyHandler->getFile($fileReference2, $metadata);
-
-        return $filePath1 === $filePath2;
-    }
-
-    public function hasUploadedFile($fileReference)
-    {
-        $metadata = $this->metadataRepo->getMetadata($fileReference);
-        $file = $this->propertyHandler->getFile($fileReference, $metadata);
-
-        return $file instanceof \SplFileInfo;
-    }
-
-    public function isFileReference($fileReference)
-    {
-        return $this->metadataRepo->hasMetadata($fileReference);
+        return $this->fsAdapterRepo ?: $this->fsAdapterRepo = $this->fsAdapterLoader->getFilesystemAdapterRepo();
     }
 }

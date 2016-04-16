@@ -6,6 +6,7 @@
 namespace ExampleApp\DependencyInjection;
 
 use Atom\Uploader\Filesystem\FilesystemAdapterRepo;
+use Atom\Uploader\Handler\Uploader;
 use Atom\Uploader\Handler\UploadHandler;
 use Atom\Uploader\LazyLoad\IFilesystemAdapterRepoLazyLoader;
 use Atom\Uploader\LazyLoad\IUploadHandlerLazyLoader;
@@ -24,6 +25,21 @@ class AppContainer implements IAppContainer, IUploadHandlerLazyLoader, IFilesyst
     private $ormEmbeddableListener;
 
     private $dispatcher;
+
+    private $uploader;
+
+    public function setUploader(Uploader $uploader)
+    {
+        $this->uploader = $uploader;
+    }
+
+    /**
+     * @return Uploader
+     */
+    public function getUploader()
+    {
+        return $this->uploader;
+    }
 
     /**
      * @return ORMListener

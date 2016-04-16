@@ -10,5 +10,6 @@ Feature: Delete attached to objects files.
 
     Examples:
       | driver         |
+      | dbal           |
       | orm            |
       | orm_embeddable |

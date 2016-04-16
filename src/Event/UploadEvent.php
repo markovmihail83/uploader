@@ -15,7 +15,7 @@ trait UploadEvent
 
     private $actionStopped;
 
-    public function __construct($fileReference, FileMetadata $metadata)
+    public function __construct(&$fileReference, FileMetadata $metadata)
     {
         $this->fileReference = $fileReference;
         $this->metadata = $metadata;

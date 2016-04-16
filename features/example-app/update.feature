@@ -11,5 +11,6 @@ Feature: Update attached to objects files.
 
     Examples:
       | driver         |
+      | dbal           |
       | orm            |
       | orm_embeddable |

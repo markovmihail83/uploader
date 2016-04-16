@@ -5,7 +5,7 @@
 
 namespace Atom\Uploader\Listener\ORMEmbeddable;
 
-use Atom\Uploader\Handler\EventHandler;
+use Atom\Uploader\Handler\Uploader;
 use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\LifecycleEventArgs;
@@ -25,7 +25,7 @@ class ORMEmbeddableListener implements EventSubscriber
     /**
      * ORMEmbeddableListener constructor.
      *
-     * @param EventHandler $handler
+     * @param Uploader $handler
      * @param array $fileReferenceProperties Map of properties that is a file reference.
      *                                              e.g.: [entityClassName => [property1, property2, ...]]
      *                                              note:
@@ -33,7 +33,7 @@ class ORMEmbeddableListener implements EventSubscriber
      *                                              a file reference(which defined in the mappings).
      * @param array $events doctrine subscribed events
      */
-    public function __construct(EventHandler $handler, array $fileReferenceProperties, array $events)
+    public function __construct(Uploader $handler, array $fileReferenceProperties, array $events)
     {
         $this->handler = $handler;
         $this->fileReferenceProperties = $fileReferenceProperties;
@@ -48,7 +48,7 @@ class ORMEmbeddableListener implements EventSubscriber
             $id = $this->getFileId($entity, $field);
             $fileReference = $this->getFieldValue($event, $field);
 
-            $this->handler->prePersist($id, $fileReference);
+            $this->handler->persist($id, $fileReference);
         }
     }
 
@@ -77,7 +77,7 @@ class ORMEmbeddableListener implements EventSubscriber
         $entity = $event->getEntity();
 
         foreach ($this->getFileReferenceFields($entity) as $field) {
-            $this->handler->postPersist($this->getFileId($entity, $field));
+            $this->handler->saved($this->getFileId($entity, $field));
         }
     }
 
@@ -95,7 +95,7 @@ class ORMEmbeddableListener implements EventSubscriber
             }
 
             $id = $this->getFileId($entity, $field);
-            $this->handler->preUpdate($id, $newFileReference, $oldFileReference);
+            $this->handler->update($id, $newFileReference, $oldFileReference);
         }
     }
 
@@ -132,7 +132,7 @@ class ORMEmbeddableListener implements EventSubscriber
         $entity = $event->getEntity();
 
         foreach ($this->getFileReferenceFields($entity) as $field) {
-            $this->handler->postUpdate($this->getFileId($entity, $field));
+            $this->handler->updated($this->getFileId($entity, $field));
         }
     }
 
@@ -141,7 +141,7 @@ class ORMEmbeddableListener implements EventSubscriber
         $entity = $event->getEntity();
 
         foreach ($this->getFileReferenceFields($entity) as $field) {
-            $this->handler->postLoad($this->getFieldValue($event, $field));
+            $this->handler->loaded($this->getFieldValue($event, $field));
         }
     }
 
@@ -150,13 +150,13 @@ class ORMEmbeddableListener implements EventSubscriber
         $entity = $event->getEntity();
 
         foreach ($this->getFileReferenceFields($entity) as $field) {
-            $this->handler->postRemove($this->getFieldValue($event, $field));
+            $this->handler->removed($this->getFieldValue($event, $field));
         }
     }
 
     public function postFlush()
     {
-        $this->handler->postFlush();
+        $this->handler->flush();
     }
 
     public function getSubscribedEvents()

@@ -10,6 +10,7 @@ Feature: Write log on events.
 
     Examples:
       | driver         |
+      | dbal           |
       | orm            |
       | orm_embeddable |
 
@@ -22,6 +23,7 @@ Feature: Write log on events.
 
     Examples:
       | driver         |
+      | dbal           |
       | orm            |
       | orm_embeddable |
 
@@ -35,6 +37,7 @@ Feature: Write log on events.
 
     Examples:
       | driver         |
+      | dbal           |
       | orm            |
       | orm_embeddable |
 
@@ -48,6 +51,7 @@ Feature: Write log on events.
 
     Examples:
       | driver         |
+      | dbal           |
       | orm            |
       | orm_embeddable |
 
@@ -61,5 +65,6 @@ Feature: Write log on events.
 
     Examples:
       | driver         |
+      | dbal           |
       | orm            |
       | orm_embeddable |

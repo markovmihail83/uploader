@@ -5,7 +5,7 @@
 
 namespace ExampleApp\Command\Base;
 
-use ExampleApp\DependencyInjection\IAppContainer;
+use ExampleApp\DependencyInjection\AppContainer;
 use ExampleApp\Exception\FileNotFoundException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -14,7 +14,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 abstract class Command extends \Symfony\Component\Console\Command\Command
 {
     /**
-     * @var IAppContainer
+     * @var AppContainer
      */
     protected $container;
 
@@ -28,7 +28,7 @@ abstract class Command extends \Symfony\Component\Console\Command\Command
      */
     protected $output;
 
-    public function __construct($commandName, IAppContainer $container)
+    public function __construct($commandName, AppContainer $container)
     {
         parent::__construct($commandName);
 

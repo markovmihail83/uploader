@@ -10,5 +10,6 @@ Feature: Inject when loading.
 
     Examples:
       | driver         | fs prefix       | uri                                   |
+      | dbal           | {upload path}/  | /uploads/{last uploaded filename}     |
       | orm            | {upload path}/  | /uploads/{last uploaded filename}     |
       | orm_embeddable | embeddableFs:// | /flysystem-uploads/некоторый-file.ext |

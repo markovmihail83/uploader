@@ -277,20 +277,11 @@ class ExampleAppContext implements Context, SnippetAcceptingContext
      */
     public function ACleanDatabase()
     {
-        $this->cleanORMDatabase();
-        $this->cleanORMEmbeddableDatabase();
+        @unlink($this->getVar('project root') . '/src/Resources/data/orm.sqlite');
+        @unlink($this->getVar('project root') . '/src/Resources/data/orm_embeddable.sqlite');
+        @unlink($this->getVar('project root') . '/src/Resources/data/dbal.sqlite');
 
         require __DIR__ . '/../../example-app/bin/prepare.php';
-    }
-
-    private function cleanORMDatabase()
-    {
-        @unlink($this->getVar('project root') . '/src/Resources/data/orm.sqlite');
-    }
-
-    private function cleanORMEmbeddableDatabase()
-    {
-        @unlink($this->getVar('project root') . '/src/Resources/data/orm_embeddable.sqlite');
     }
 
     /**
