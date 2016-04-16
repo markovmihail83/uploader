@@ -21,6 +21,16 @@ class PropertyHandler
     }
 
     /**
+     * @param object $fileReference
+     * @param FileMetadata $metadata
+     * @param string|null $value
+     */
+    public function setFile(&$fileReference, FileMetadata $metadata, $value)
+    {
+        $this->setValue($fileReference, $metadata->getFileSetter(), $value);
+    }
+
+    /**
      * @param object $object
      * @param string $property
      *
@@ -29,7 +39,12 @@ class PropertyHandler
     private function getValue($object, $property)
     {
         if (is_array($object)) {
-            return $object[$property];
+            if (!isset($object[$property]) && 0 === strpos($property, 'get')) {
+                $property = lcfirst(substr($property, 3));
+
+            }
+
+            return isset($object[$property]) ? $object[$property] : null;
         }
 
         $getter = 0 === strpos($property, 'get') ? $property : 'get' . ucfirst($property);
@@ -42,16 +57,6 @@ class PropertyHandler
         $reflection->setAccessible(true);
 
         return $reflection->getValue($object);
-    }
-
-    /**
-     * @param object $fileReference
-     * @param FileMetadata $metadata
-     * @param string|null $value
-     */
-    public function setFile(&$fileReference, FileMetadata $metadata, $value)
-    {
-        $this->setValue($fileReference, $metadata->getFileSetter(), $value);
     }
 
     /**

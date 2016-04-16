@@ -45,7 +45,7 @@ class ORMEmbeddableListener implements EventSubscriber
         $entity = $event->getEntity();
 
         foreach ($this->getFileReferenceFields($entity) as $field) {
-            $id = $this->getFileId($entity, $field);
+            $id = $this->getIdentity($entity, $field);
             $fileReference = $this->getFieldValue($event, $field);
 
             $this->handler->persist($id, $fileReference);
@@ -59,9 +59,9 @@ class ORMEmbeddableListener implements EventSubscriber
         return isset($this->fileReferenceProperties[$className]) ? $this->fileReferenceProperties[$className] : [];
     }
 
-    private function getFileId($entity, $field)
+    private function getIdentity($entity, $field)
     {
-        return spl_object_hash($entity) . '#' . $field;
+        return sprintf('%s_%s', spl_object_hash($entity), $field);
     }
 
     private function getFieldValue(LifecycleEventArgs $event, $field)
@@ -77,7 +77,7 @@ class ORMEmbeddableListener implements EventSubscriber
         $entity = $event->getEntity();
 
         foreach ($this->getFileReferenceFields($entity) as $field) {
-            $this->handler->saved($this->getFileId($entity, $field));
+            $this->handler->saved($this->getIdentity($entity, $field));
         }
     }
 
@@ -91,40 +91,28 @@ class ORMEmbeddableListener implements EventSubscriber
                 $oldFileReference = $event->getOldValue($field);
             } else {
                 $newFileReference = $this->getFieldValue($event, $field);
-                $oldFileReference = $this->getEmbeddedFieldFromOldValues($event, $field);
+                $oldFileReference = $this->getOldValues($event, $field);
             }
 
-            $id = $this->getFileId($entity, $field);
+            $id = $this->getIdentity($entity, $field);
             $this->handler->update($id, $newFileReference, $oldFileReference);
         }
     }
 
-    private function getEmbeddedFieldFromOldValues(PreUpdateEventArgs $event, $fieldName)
+    private function getOldValues(PreUpdateEventArgs $event, $fieldName)
     {
-        $oldValue = null;
-        $em = $event->getEntityManager();
-        $entityMetadata = $em->getClassMetadata(ClassUtils::getClass($event->getEntity()));
-        $embeddedMetadata = null;
+        $oldValue = [];
+        $fieldLength = strlen($fieldName) + 1;
 
         foreach ($event->getEntityChangeSet() as $name => $field) {
             if (false === strpos($name, $fieldName)) {
                 continue;
             }
 
-            $mapping = $entityMetadata->getFieldMapping($name);
-
-            if (!$embeddedMetadata) {
-                $embeddedMetadata = $em->getClassMetadata($mapping['originalClass']);
-            }
-
-            if (!$oldValue) {
-                $oldValue = $embeddedMetadata->getReflectionClass()->newInstanceWithoutConstructor();
-            }
-
-            $embeddedMetadata->setFieldValue($oldValue, $mapping['originalField'], $field[0]);
+            $oldValue[substr($name, $fieldLength)] = $field[0];
         }
 
-        return $oldValue;
+        return $oldValue ?: null;
     }
 
     public function postUpdate(LifecycleEventArgs $event)
@@ -132,7 +120,7 @@ class ORMEmbeddableListener implements EventSubscriber
         $entity = $event->getEntity();
 
         foreach ($this->getFileReferenceFields($entity) as $field) {
-            $this->handler->updated($this->getFileId($entity, $field));
+            $this->handler->updated($this->getIdentity($entity, $field));
         }
     }
 

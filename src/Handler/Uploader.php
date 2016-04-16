@@ -50,7 +50,7 @@ class Uploader
         }
 
         if ($oldFileReference && (!$newFileReference || !$this->getUploadHandler()->isFilesEqual($newFileReference, $oldFileReference, $metadataName))) {
-            $this->oldFiles[$id] = [$oldFileReference, $metadataName];
+            $this->oldFiles[$id] = [$oldFileReference, $metadataName ?: get_class($newFileReference)];
         }
     }
 

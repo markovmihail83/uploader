@@ -40,94 +40,73 @@ class ORMListener implements EventSubscriber
     public function prePersist(LifecycleEventArgs $event)
     {
         $entity = $event->getEntity();
+        $entityClass = ClassUtils::getClass($entity);
 
-        if (!$this->isFileReference($entity)) {
+        if (!isset($this->fileReferenceEntities[$entityClass])) {
             return;
         }
 
-        $this->handler->persist($this->getFileId($entity), $entity);
-    }
-
-    private function isFileReference($entity)
-    {
-        return isset($this->fileReferenceEntities[ClassUtils::getClass($entity)]);
-    }
-
-    private function getFileId($entity)
-    {
-        return spl_object_hash($entity);
+        $this->handler->persist(spl_object_hash($entity), $entity, $entityClass);
     }
 
     public function postPersist(LifecycleEventArgs $event)
     {
         $entity = $event->getEntity();
+        $entityClass = ClassUtils::getClass($entity);
 
-        if (!$this->isFileReference($entity)) {
+        if (!isset($this->fileReferenceEntities[$entityClass])) {
             return;
         }
 
-        $this->handler->saved($this->getFileId($entity));
+        $this->handler->saved(spl_object_hash($entity));
     }
 
     public function preUpdate(PreUpdateEventArgs $event)
     {
         $entity = $event->getEntity();
+        $entityClass = ClassUtils::getClass($entity);
 
-        if (!$this->isFileReference($entity)) {
+        if (!isset($this->fileReferenceEntities[$entityClass])) {
             return;
         }
 
-        $this->handler->update($this->getFileId($entity), $entity, $this->getOldEntity($event, $entity));
-    }
-
-    private function getOldEntity(PreUpdateEventArgs $event, $entity)
-    {
-        $oldEntity = clone $entity;
-
-        $metadata = $event->getEntityManager()->getClassMetadata(ClassUtils::getClass($entity));
-
-        foreach ($event->getEntityChangeSet() as $name => $field) {
-            if (false !== strpos($name, '.')) {
-                continue;
-            }
-
-            $metadata->setFieldValue($oldEntity, $name, $field[0]);
-        }
-
-        return $oldEntity;
+        $this->handler->update(spl_object_hash($entity), $entity, $this->getOldValues($event), $entityClass);
     }
 
     public function postUpdate(LifecycleEventArgs $event)
     {
         $entity = $event->getEntity();
+        $entityClass = ClassUtils::getClass($entity);
 
-        if (!$this->isFileReference($entity)) {
+        if (!isset($this->fileReferenceEntities[$entityClass])) {
             return;
         }
 
-        $this->handler->updated($this->getFileId($entity));
+        $this->handler->updated(spl_object_hash($entity));
     }
 
     public function postLoad(LifecycleEventArgs $event)
     {
         $entity = $event->getEntity();
+        $entityClass = ClassUtils::getClass($entity);
 
-        if (!$this->isFileReference($entity)) {
+        if (!isset($this->fileReferenceEntities[$entityClass])) {
             return;
         }
 
-        $this->handler->loaded($entity);
+        $this->handler->loaded($entity, $entityClass);
     }
 
     public function postRemove(LifecycleEventArgs $event)
     {
         $entity = $event->getEntity();
+        $entityClass = ClassUtils::getClass($entity);
 
-        if (!$this->isFileReference($entity)) {
+        if (!isset($this->fileReferenceEntities[$entityClass])) {
             return;
         }
 
-        $this->handler->removed($entity);
+        $this->handler->removed($entity, $entityClass);
     }
 
     public function postFlush()
@@ -138,5 +117,20 @@ class ORMListener implements EventSubscriber
     public function getSubscribedEvents()
     {
         return $this->events;
+    }
+
+    private function getOldValues(PreUpdateEventArgs $event)
+    {
+        $oldValues = [];
+
+        foreach ($event->getEntityChangeSet() as $name => $field) {
+            if (false !== strpos($name, '.')) {
+                continue;
+            }
+
+            $oldValues[$name] = $field[0];
+        }
+
+        return $oldValues ?: null;
     }
 }

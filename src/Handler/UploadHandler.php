@@ -106,7 +106,7 @@ class UploadHandler
         $this->move($fileReference, $metadataName, IUploadEvent::PRE_UPDATE, IUploadEvent::POST_UPDATE);
     }
 
-    public function deleteOldFile(&$fileReference, $metadataName = null)
+    public function deleteOldFile($fileReference, $metadataName = null)
     {
         $metadata = $this->metadataRepo->getMetadata($metadataName ?: $fileReference);
         $file = $this->propertyHandler->getFile($fileReference, $metadata);
