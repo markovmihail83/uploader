@@ -129,7 +129,8 @@ class ORMEmbeddableListener implements EventSubscriber
         $entity = $event->getEntity();
 
         foreach ($this->getFileReferenceFields($entity) as $field) {
-            $this->handler->loaded($this->getFieldValue($event, $field));
+            $fileReference = $this->getFieldValue($event, $field);
+            $this->handler->loaded($fileReference);
         }
     }
 
@@ -138,7 +139,8 @@ class ORMEmbeddableListener implements EventSubscriber
         $entity = $event->getEntity();
 
         foreach ($this->getFileReferenceFields($entity) as $field) {
-            $this->handler->removed($this->getFieldValue($event, $field));
+            $fileReference = $this->getFieldValue($event, $field);
+            $this->handler->removed($fileReference);
         }
     }
 
