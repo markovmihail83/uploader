@@ -1,31 +1,22 @@
-sudo: required
+language: php
+sudo: false
 
-env:
-  - PHP_VERSION=5
-  - PHP_VERSION=7
-
-services:
-  - docker
+php:
+  - 5.6
+  - 7.0
 
 cache:
   directories:
     - "$HOME/.composer/cache"
 
-before_install:
-  - sudo apt-get update
-  - sudo apt-get install -o Dpkg::Options::="--force-confold" --force-yes -y docker-engine
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L https://github.com/docker/compose/releases/download/1.6.2/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
-  - docker-compose build php$PHP_VERSION
-
 install:
-  - shortcuts/composer$PHP_VERSION install --no-interaction
+  - php -r "readfile('https://getcomposer.org/installer');" | php
+  - php composer.phar config --global github-oauth.github.com $GH_TOKEN
+  - php -d memory_limit=-1 composer.phar install --no-interaction
 
 script:
-  - shortcuts/composer$PHP_VERSION test
-  - bash shortcuts/composer$PHP_VERSION phpmd
+  - php composer.phar test
+  - php composer.phar phpmd
 
 notifications:
   slack:
