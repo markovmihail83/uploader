@@ -225,7 +225,8 @@ class UploadHandlerLazyLoader implements IUploadHandlerLazyLoader {
 <a name="step-7" />Шаг 7: Интегрируйте c хранилища данных. <sub>[на верх](#top)</sub>
 ---
 
-Используйте [готовых слушателей][datastore-listeners] для популярных хранилищ данных.
+- [Готовая интеграция с сущностями doctrine][integration-with-doctrine-entities]
+- [Готовая интеграция с встраиваемых объектов doctrine][integration-with-doctrine-embeddables]
 
 > Или интегрируйте со своим слоем хранение данных используя загрузчика. <br />
   См. [как использовать загрузчика?][how-to-use-the-uploader]
@@ -241,3 +242,5 @@ class UploadHandlerLazyLoader implements IUploadHandlerLazyLoader {
 [metadata]: metadata.md
 [IFilesystemAdapterRepoLazyLoader]: ../../src/LazyLoad/IFilesystemAdapterRepoLazyLoader.php
 [IUploadHandlerLazyLoader]: ../../src/LazyLoad/IUploadHandlerLazyLoader.php
+[integration-with-doctrine-entities]: integration-with-doctrine-entities.md
+[integration-with-doctrine-embeddables]: integration-with-doctrine-embeddables.md

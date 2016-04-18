@@ -16,7 +16,7 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
  */
 class ORMListener implements EventSubscriber
 {
-    private $handler;
+    private $uploader;
 
     private $fileReferenceEntities;
 
@@ -25,14 +25,14 @@ class ORMListener implements EventSubscriber
     /**
      * ORMEmbeddableListener constructor.
      *
-     * @param Uploader $handler
+     * @param Uploader $uploader
      * @param array $fileReferenceEntities Map of entity classnames that is a file reference (which defined
      *                                            in the mappings).
      * @param array $events doctrine subscribed events
      */
-    public function __construct(Uploader $handler, array $fileReferenceEntities, array $events)
+    public function __construct(Uploader $uploader, array $fileReferenceEntities, array $events)
     {
-        $this->handler = $handler;
+        $this->uploader = $uploader;
         $this->fileReferenceEntities = $fileReferenceEntities;
         $this->events = $events;
     }
@@ -46,7 +46,7 @@ class ORMListener implements EventSubscriber
             return;
         }
 
-        $this->handler->persist(spl_object_hash($entity), $entity, $entityClass);
+        $this->uploader->persist(spl_object_hash($entity), $entity, $entityClass);
     }
 
     public function postPersist(LifecycleEventArgs $event)
@@ -58,7 +58,7 @@ class ORMListener implements EventSubscriber
             return;
         }
 
-        $this->handler->saved(spl_object_hash($entity));
+        $this->uploader->saved(spl_object_hash($entity));
     }
 
     public function preUpdate(PreUpdateEventArgs $event)
@@ -70,7 +70,7 @@ class ORMListener implements EventSubscriber
             return;
         }
 
-        $this->handler->update(spl_object_hash($entity), $entity, $this->getOldValues($event), $entityClass);
+        $this->uploader->update(spl_object_hash($entity), $entity, $this->getOldValues($event), $entityClass);
     }
 
     public function postUpdate(LifecycleEventArgs $event)
@@ -82,7 +82,7 @@ class ORMListener implements EventSubscriber
             return;
         }
 
-        $this->handler->updated(spl_object_hash($entity));
+        $this->uploader->updated(spl_object_hash($entity));
     }
 
     public function postLoad(LifecycleEventArgs $event)
@@ -94,7 +94,7 @@ class ORMListener implements EventSubscriber
             return;
         }
 
-        $this->handler->loaded($entity, $entityClass);
+        $this->uploader->loaded($entity, $entityClass);
     }
 
     public function postRemove(LifecycleEventArgs $event)
@@ -106,12 +106,12 @@ class ORMListener implements EventSubscriber
             return;
         }
 
-        $this->handler->removed($entity, $entityClass);
+        $this->uploader->removed($entity, $entityClass);
     }
 
     public function postFlush()
     {
-        $this->handler->flush();
+        $this->uploader->flush();
     }
 
     public function getSubscribedEvents()
