@@ -41,7 +41,11 @@ abstract class DBALCommand extends Command
         $statement = $this->conn->prepare('SELECT id, file FROM uploadable t WHERE t.id = :id');
         $statement->bindValue('id', $this->getId());
         $statement->execute();
-        
-        return $statement->fetch();
+
+        $uploadable = $statement->fetch();
+        $uploadable['uri'] = null;
+        $uploadable['fileInfo'] = null;
+
+        return $uploadable;
     }
 }
