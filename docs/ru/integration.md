@@ -1,30 +1,29 @@
 <a name="top" />Инструкция по интеграцию
-========================================
+===
 
 - [Шаг 0: Введение.](#step-0)
     - [Шаг 1: Создавайте репозиторий адаптеров файловой системы.](#step-1)
     - [Шаг 2: Создавайте репозиторий неймеров.](#step-2)
-    - [Шаг 3: Реализуйте `Atom\Uploader\Handler\IPropertyHandler`.](#step-3)
-    - [Шаг 4: Реализуйте `Atom\Uploader\Event\IEventDispatcher`.](#step-4)
-    - [Шаг 5: Создавайте репозиторий метаданных.](#step-5)
-    - [Шаг 6: Создавайте обработчика загрузки.](#step-6)
-    - [Шаг 7: Создавайте обработчика событий.](#step-7)
-    - [Шаг 8: Интегрируйте со слоем хранение данных.](#step-8)
+    - [Шаг 4: Реализуйте `Atom\Uploader\Event\IEventDispatcher`.](#step-3)
+    - [Шаг 4: Создавайте репозиторий метаданных.](#step-4)
+    - [Шаг 5: Создавайте обработчика загрузки.](#step-5)
+    - [Шаг 6: Создавайте загрузчика.](#step-6)
+    - [Шаг 7: Интегрируйте c хранилища данных.](#step-7)
 
 
 <a name="step-0" />Шаг 0: Введение.
------------------------------------
+---
 
 В этом инструкции сервисы будут создаваться с использованием оператора ```new```, <br />
 но вместо этого вы должны зарегистрировать их в вашем Фреймворке.
 
-<a name="step-1" />Шаг 1: Создавайте репозиторий адаптеров файловой системы. <sub>[на верх](#top)</sub>
--------------------------------------------------------------------------------------------------------
+<a name="step-1" />Шаг 1: Создавайте репозиторий адаптеров файловой системы.
+---
 
 ```php
     $filesystemMap = [
-        // 'fs_adapter' в дальнейшем можно использовать при создании метаданных.
-        // $filesystemAdapter должен быть экземпляром интерфейса Atom\Uploader\Filesystem\IFilesystemAdapter
+        // 'fs_adapter' в дальнейшем используется при создании метаданных.
+        // $filesystemAdapter должен быть экземпляром Atom\Uploader\Filesystem\IFilesystemAdapter
         'fs_adapter' => $filesystemAdapter,
         ...
     ];
@@ -33,11 +32,10 @@
 ```
 
 
-> В качестве `$filesystemAdapter` можно использовать [готовых адаптеров](available-fs-adapters.md),
-  и/или [создать свое](custom-filesystem.md).
+> В качестве `$filesystemAdapter` можно использовать [готовых адаптеров и/или создать свое][fs-adapters].
 
-<a name="step-2" />Шаг 2: Создавайте репозиторий неймеров. <sub>[на верх](#top)</sub>
--------------------------------------------------------------------------------------
+<a name="step-2" />Шаг 2: Создавайте репозиторий неймеров.
+---
 
 ```php
     $namerMap = [
@@ -50,31 +48,15 @@
     $namerRepo = new Atom\Uploader\Naming\NamerRepo($namerMap);
 ```
 
-> В качестве `$namer` можно использовать [готовых неймеров](available-namers.md)
-  и/или [создать свое](custom-namer.md).
+> В качестве `$namer` можно использовать [готовых неймеров и/или создать свое][namers].
 
-<a name="step-3" />Шаг 3: Реализуйте [<sub>`Atom\Uploader\Handler\IPropertyHandler`.</sub>](../../src/Handler/IPropertyHandler.php) <sub>[на верх](#top)</sub>
----------------------------------------------------------------------------------------------------------------------------------------------------------
-
-> Это нужно для чтение и запись свойств загружаемого объекта. <br />
-
-Пример реализации с использованием `symfony/property-access` [`ExampleApp\Handler\PropertyHandler`](../../example-app/src/Handler/PropertyHandler.php):
-
-```php
-    $propertyHandler = ...;
-```
-
-
-<a name="step-4" />Шаг 4: Реализуйте [<sub>`Atom\Uploader\Event\IEventDispatcher`.</sub>](../../src/Event/IEventDispatcher.php) <sub>[на верх](#top)</sub>
------------------------------------------------------------------------------------------------------------------------------------------------------
+<a name="step-3" />Шаг 3: Реализуйте [<sub>`Atom\Uploader\Event\IEventDispatcher`.</sub>][IEventDispatcher] <sub>[на верх](#top)</sub>
+---
 
 > Это обертка над диспетчером событий вашего Фреймворка.
 
-Сначала реализуйте интерфейс [`Atom\Uploader\Event\IUploadEvent`](../../src/Event/IUploadEvent.php). <br />
-Для этого достаточно использовать следующий трейт [`Atom\Uploader\Event\UploadEvent`](../../src/Event/UploadEvent.php).
-
-> Почему это сделано так?
->- для того чтобы оставить возможность наследоваться от базового события вашего диспетчера событий.
+Сначала реализуйте интерфейс [`Atom\Uploader\Event\IUploadEvent`][IUploadEvent]. <br />
+Для этого достаточно использовать следующий трейт [`Atom\Uploader\Event\UploadEvent`][UploadEvent].
 
 Пример реализации для `symfony`:
 
@@ -93,7 +75,7 @@ class UploadEvent extends Event implements IUploadEvent
 }
 ```
 
-Теперь можно реализовать [`Atom\Uploader\Event\IEventDispatcher`](../../src/Event/IEventDispatcher.php).
+Теперь можно реализовать [`Atom\Uploader\Event\IEventDispatcher`][IEventDispatcher].
 
 Пример реализации для `symfony`:
 
@@ -138,15 +120,15 @@ class EventDispatcher implements IEventDispatcher
     $dispatcher = new Acme\Event\EventDispatcher();
 ```
 
-<a name="step-5" />Шаг 5: Создавайте репозиторий метаданных. <sub>[на верх](#top)</sub>
----------------------------------------------------------------------------------------
+<a name="step-4" />Шаг 4: Создавайте репозиторий метаданных. <sub>[на верх](#top)</sub>
+---
 
 > Сначала подготовьте метаданные,
-  для этого нужно создать экземпляры класса [`Atom\Uploader\Metadata\FileMetadata`](../../src/Metadata/FileMetadata.php)
-  с нужными вам параметрами. [Подробнее о метаданных](metadata.md).
+  для этого нужно создать экземпляры класса [`Atom\Uploader\Metadata\FileMetadata`][FileMetadata]
+  с нужными вам параметрами. [Подробнее о метаданных][metadata].
 
 ```php
-    $classNamesForMetadata = [
+    $metadataNames = [
         'Atom\Uploader\Model\Embeddable\FileReference' => 'metadata-name'
     ];
 
@@ -156,15 +138,13 @@ class EventDispatcher implements IEventDispatcher
         ...
     ]
 
-    $metadataRepo = new MetadataRepo($classNamesForMetadata, $metadataMap);
+    $metadataRepo = new MetadataRepo($metadataNames, $metadataMap);
 ```
 
-> `$classNamesForMetadata` должен содержат хэш типа: `['имя загружаемого класса' => 'имя метаданных']`. <br />
+<a name="step-5" />Шаг 5: Создавайте обработчика загрузки. <sub>[на верх](#top)</sub>
+---
 
-<a name="step-6" />Шаг 6: Создавайте обработчика загрузки. <sub>[на верх](#top)</sub>
---------------------------------------------------------------------------------------
-
-Сначала реализуйте [`Atom\Uploader\LazyLoad\IFilesystemAdapterRepoLazyLoader`](../../src/LazyLoad/IFilesystemAdapterRepoLazyLoader.php).
+Сначала реализуйте [`Atom\Uploader\LazyLoad\IFilesystemAdapterRepoLazyLoader`][IFilesystemAdapterRepoLazyLoader].
 
 Пример реализации для `symfony`:
 
@@ -191,15 +171,11 @@ class FilesystemAdapterRepoLazyLoader implements IFilesystemAdapterRepoLazyLoade
 }
 ```
 
-Затем создавайте экземпляр этого класса:
-
-```php
-    $adapterRepoLoader = new Acme\LazyLoad\FilesystemAdapterRepoLazyLoader($container);
-```
-
 Затем создавайте обработчика загрузки.
 
 ```php
+    $adapterRepoLoader = new Acme\LazyLoad\FilesystemAdapterRepoLazyLoader($container);
+
     $uploadHandler = new Atom\Uploader\Handler\UploadHandler(
         $metadataRepo,
         $propertyHandler,
@@ -209,10 +185,10 @@ class FilesystemAdapterRepoLazyLoader implements IFilesystemAdapterRepoLazyLoade
     );
 ```
 
-<a name="step-7" />Шаг 7: Создавайте обработчика событий. <sub>[на верх](#top)</sub>
--------------------------------------------------------------------------------------
+<a name="step-6" />Шаг 6: Создавайте загрузчика. <sub>[на верх](#top)</sub>
+---
 
-Сначала реализуйте [`Atom\Uploader\LazyLoad\IUploadHandlerLazyLoader`](../../src/LazyLoad/IUploadHandlerLazyLoader.php).
+Сначала реализуйте [`Atom\Uploader\LazyLoad\IUploadHandlerLazyLoader`][IUploadHandlerLazyLoader].
 
 Пример реализации для `symfony`:
 
@@ -239,22 +215,29 @@ class UploadHandlerLazyLoader implements IUploadHandlerLazyLoader {
 }
 ```
 
-Затем создавайте экземпляр этого класса:
+Затем создавайте загрузчика.
 
 ```php
     $uploadHandlerLazyLoader = new Acme\LazyLoad\UploadHandlerLazyLoader($container);
-```
-
-Затем создавайте обработчика событий.
-
-```php
     $eventHandler = new Atom\Uploader\Handler\EventHandler($uploadHandlerLazyLoader);
 ```
 
-<a name="step-8" />Шаг 8: Интегрируйте со слоем хранение данных. <sub>[на верх](#top)</sub>
--------------------------------------------------------------------------------------------
+<a name="step-7" />Шаг 7: Интегрируйте c хранилища данных. <sub>[на верх](#top)</sub>
+---
 
-Используйте [готовых слушателей](db-persistance-layer-listeners.md) для популярных библиотек, таких как `doctrine` и т.д.
+Используйте [готовых слушателей][datastore-listeners] для популярных хранилищ данных.
 
-> Или интегрируйте со своим слоем хранение данных используя обработчика событий. <br />
-  Для этого прочитайте [как использовать обработчика событий](how-to-use-the-event-handler.md).
+> Или интегрируйте со своим слоем хранение данных используя загрузчика. <br />
+  См. [как использовать загрузчика?][how-to-use-the-uploader]
+
+[datastore-listeners]: datastore-listeners.md
+[how-to-use-the-uploader]: how-to-use-the-uploader.md
+[fs-adapters]: fs-adapters.md
+[namers]: namers.md
+[IEventDispatcher]: ../../src/Event/IEventDispatcher.php
+[IUploadEvent]: ../../src/Event/IUploadEvent.php
+[UploadEvent]: ../../src/Event/UploadEvent.php
+[FileMetadata]: ../../src/Metadata/FileMetadata.php
+[metadata]: metadata.md
+[IFilesystemAdapterRepoLazyLoader]: ../../src/LazyLoad/IFilesystemAdapterRepoLazyLoader.php
+[IUploadHandlerLazyLoader]: ../../src/LazyLoad/IUploadHandlerLazyLoader.php

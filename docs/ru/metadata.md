@@ -1,7 +1,8 @@
 Метаданные
 ==========
 
-###### Создавайте экземпляр класса [`Atom\Uploader\Metadata\FileMetadata`](../../src/Metadata/FileMetadata.php) со следующими параметрами:
+Создавайте экземпляр класса [`Atom\Uploader\Metadata\FileMetadata`](../../src/Metadata/FileMetadata.php) со следующими параметрами:
+---
 
 - `$fileSetter` <br >
 
