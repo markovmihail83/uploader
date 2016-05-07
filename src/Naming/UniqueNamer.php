@@ -17,7 +17,7 @@ class UniqueNamer implements INamer
     public function name(\SplFileInfo $file)
     {
         $name = uniqid(null, true);
-        $extension = $this->escape($file->getExtension() ?: $file->getClientOriginalExtension());
+        $extension = $this->escape($file->getExtension());
 
         if (!empty($extension)) {
             $name = sprintf('%s.%s', $name, $extension);
