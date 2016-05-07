@@ -161,7 +161,7 @@ class UploadHandler
     private function moveUploadedFile(\SplFileInfo $file, $fileName, FileMetadata $metadata)
     {
         $filesystem = $this->getFilesystemAdapterRepo()->getFilesystem($metadata->getFsAdapter());
-        $stream = fopen((string)$file, 'r+');
+        $stream = fopen((string)$file, 'r');
         $isMoved = $filesystem->writeStream($metadata->getFsPrefix(), $fileName, $stream);
 
         if (!$isMoved) {
