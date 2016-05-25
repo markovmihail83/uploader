@@ -191,5 +191,5 @@ $uploader->removed($uploadable, 'uploadable');
 Выше приведенные примеры лучше использовать в событиях хранилища данных(если такое есть), см [ORMListener].
 
 [dbal]: http://www.doctrine-project.org/projects/dbal.html
-[ORMListener]: https://github.com/atom-azimov/uploader/blob/master/src/Listener/ORM/ORMListener.php
+[ORMListener]: https://github.com/atom-php/uploader/blob/master/src/Listener/ORM/ORMListener.php
 [step-4]: integration.md#step-4

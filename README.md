@@ -3,15 +3,16 @@ AtomUploader
 
 PHP библиотека которая обеспечивает сохранение загруженных файлов.
 
-[![Build Status](https://travis-ci.org/atom-azimov/uploader.svg?branch=master)](https://travis-ci.org/atom-azimov/uploader)
-[![Join the chat at https://gitter.im/atom-azimov/uploader](https://badges.gitter.im/atom-azimov/uploader.svg)](https://gitter.im/atom-azimov/uploader?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-[![License](https://poser.pugx.org/atom-azimov/uploader/license)](https://github.com/atom-azimov/uploader/blob/master/LICENSE)
-[![Dependency Status](https://www.versioneye.com/user/projects/56c6762318b271002c69b141/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56c6762318b271002c69b141)
+[![Build Status](https://travis-ci.org/atom-php/uploader.svg?branch=master)](https://travis-ci.org/atom-php/uploader)
+[![Join the chat at https://gitter.im/atom-php/uploader](https://badges.gitter.im/atom-php/uploader.svg)](https://gitter.im/atom-php/uploader?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Slack Status](https://atom-php.herokuapp.com/badge.svg)](https://atom-php.herokuapp.com/)
+[![License](https://poser.pugx.org/atom-php/uploader/license)](https://github.com/atom-php/uploader/blob/master/LICENSE)
+[![Dependency Status](https://www.versioneye.com/user/projects/5745e02ace8d0e004737275a/badge.svg?style=flat)](https://www.versioneye.com/user/projects/5745e02ace8d0e004737275a)
 
-[![Latest Stable Version](https://poser.pugx.org/atom-azimov/uploader/v/stable)](https://packagist.org/packages/atom-azimov/uploader)
-[![Latest Unstable Version](https://poser.pugx.org/atom-azimov/uploader/v/unstable)](https://packagist.org/packages/atom-azimov/uploader)
-[![Total Downloads](https://poser.pugx.org/atom-azimov/uploader/downloads)](https://packagist.org/packages/atom-azimov/uploader)
-[![Code Climate](https://codeclimate.com/github/atom-azimov/uploader/badges/gpa.svg)](https://codeclimate.com/github/atom-azimov/uploader)
+[![Latest Stable Version](https://poser.pugx.org/atom-php/uploader/v/stable)](https://packagist.org/packages/atom-php/uploader)
+[![Latest Unstable Version](https://poser.pugx.org/atom-php/uploader/v/unstable)](https://packagist.org/packages/atom-php/uploader)
+[![Total Downloads](https://poser.pugx.org/atom-php/uploader/downloads)](https://packagist.org/packages/atom-php/uploader)
+[![Code Climate](https://codeclimate.com/github/atom-php/uploader/badges/gpa.svg)](https://codeclimate.com/github/atom-php/uploader)
 
 ---
 
@@ -42,5 +43,5 @@ PHP библиотека которая обеспечивает сохране�
 > А если не хотите ждать и можете самостаятельно интегрировать с вашим фреймворком то прочитайте [инструкцию][integration].
 
 [integration]: docs/ru/integration.md
-[symfony]: https://github.com/atom-azimov/uploader-bundle
+[symfony]: https://github.com/atom-php/uploader-bundle
 [embeddables]: http://doctrine-orm.readthedocs.org/projects/doctrine-orm/en/latest/tutorials/embeddables.html
