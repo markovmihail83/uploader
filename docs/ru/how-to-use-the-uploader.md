@@ -136,7 +136,7 @@ $newUploadable = array_merge($oldUploadable, ['file' => $file]);
 $transactionId = uniqid();
 
 // Перед обновлением новый файл(если есть) сохраняется.
-$uploader->update($identity, $newUploadable, $oldUploadable, 'uploadable');
+$uploader->update($transactionId, $newUploadable, $oldUploadable, 'uploadable');
 
 try {
     $conn->update('uploadable', ['file' => $newUploadable['file']], compact('id'));
