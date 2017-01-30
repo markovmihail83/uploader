@@ -68,7 +68,7 @@ trait ContextVars
                 return true;
             case 'false':
                 return false;
-            case 'null';
+            case 'null':
                 return null;
         }
 
