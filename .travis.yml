@@ -16,7 +16,6 @@ install:
 
 script:
   - php composer.phar test
-  - php composer.phar phpmd
 
 notifications:
   slack:
