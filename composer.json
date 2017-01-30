@@ -26,17 +26,15 @@
     },
     "require-dev": {
         "doctrine/orm": "^2.5",
-        "phpspec/phpspec": "^2.4",
-        "phpunit/phpunit": "^5.1",
+        "phpspec/phpspec": "^4.@dev",
+        "phpunit/phpunit": "^5.7.9",
         "league/flysystem": "^1.0",
         "mikey179/vfsStream": "^1.6",
         "twistor/flysystem-stream-wrapper": "^1.0",
-        "behat/behat": "^3.@dev",
-        "symfony/console": "^3.0",
-        "symfony/yaml": "^3.0",
-        "symfony/property-access": "^3.0",
-        "phpmd/phpmd": "^2.4",
-        "fabpot/php-cs-fixer": "^1.11",
+        "behat/behat": "^3.3",
+        "symfony/console": "^3.2",
+        "symfony/yaml": "^3.2",
+        "symfony/property-access": "^3.2",
         "doctrine/dbal": "^2.5"
     },
     "suggest": {
@@ -57,8 +55,6 @@
         "test": [
             "phpspec run",
             "behat"
-        ],
-        "phpmd": "phpmd src xml cleancode,codesize,controversial,design,naming,unusedcode",
-        "cs-fix": "php-cs-fixer fix"
+        ]
     }
 }
