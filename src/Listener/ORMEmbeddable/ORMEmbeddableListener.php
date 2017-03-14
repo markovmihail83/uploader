@@ -76,7 +76,9 @@ class ORMEmbeddableListener implements EventSubscriber
         $value = $entity;
         foreach (explode('.', $field) as $part) {
             $metadata = $event->getEntityManager()->getClassMetadata(ClassUtils::getClass($value));
-            $value = $metadata->getFieldValue($value, $part);
+            if (!$value = $metadata->getFieldValue($value, $part)) {
+                return null;
+            }
         }
 
         return $value;
