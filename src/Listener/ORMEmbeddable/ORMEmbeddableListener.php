@@ -67,9 +67,19 @@ class ORMEmbeddableListener implements EventSubscriber
     private function getFieldValue(LifecycleEventArgs $event, $field)
     {
         $entity = $event->getEntity();
-        $metadata = $event->getEntityManager()->getClassMetadata(ClassUtils::getClass($entity));
+        if (strpos($field, '.') === false) {
+            $metadata = $event->getEntityManager()->getClassMetadata(ClassUtils::getClass($entity));
 
-        return $metadata->getFieldValue($entity, $field);
+            return $metadata->getFieldValue($entity, $field);
+        }
+
+        $value = $entity;
+        foreach (explode('.', $field) as $part) {
+            $metadata = $event->getEntityManager()->getClassMetadata(ClassUtils::getClass($value));
+            $value = $metadata->getFieldValue($value, $part);
+        }
+
+        return $value;
     }
 
     public function postPersist(LifecycleEventArgs $event)
