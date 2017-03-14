@@ -11,10 +11,16 @@ $configDir = __DIR__ . '/../src/Resources/config';
 $doctrineBin = sprintf('"%s" %s/../../vendor/doctrine/orm/bin/doctrine.php', PHP_BINARY, __DIR__);
 $doctrineUpdateCommand = sprintf('%s orm:schema-tool:update --force', $doctrineBin);
 
+//$odmBin = sprintf('"%s" %s/../../vendor/doctrine/orm/bin/doctrine.php', PHP_BINARY, __DIR__);
+//$odmUpdateCommand = sprintf('%s doctrine:mongodbdb:schema:update --force', $odmBin);
+
 chdir($configDir . '/orm');
 exec($doctrineUpdateCommand);
 chdir($configDir . '/orm_embeddable');
 exec($doctrineUpdateCommand);
+
+//chdir($configDir . '/odm');
+//exec($odmUpdateCommand);
 
 chdir($cwd);
 

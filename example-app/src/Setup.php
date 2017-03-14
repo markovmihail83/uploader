@@ -26,6 +26,7 @@ use ExampleApp\Command\ORM\UpdateCommand;
 use ExampleApp\Command\ORM\UploadCommand;
 use ExampleApp\Command\ORMEmbeddable;
 use ExampleApp\Command\DBAL;
+use ExampleApp\Command\ODM;
 use ExampleApp\DependencyInjection\AppContainer;
 use ExampleApp\Entity\ORM\UploadableEntity;
 use ExampleApp\Entity\ORMEmbeddable\EntityHasEmbeddedFile;
@@ -252,6 +253,11 @@ class Setup
                 new DBAL\GetCommand('dbal:get', $container),
                 new DBAL\RemoveCommand('dbal:remove', $container),
                 new DBAL\UpdateCommand('dbal:update', $container),
+
+                new ODM\UploadCommand('odm:upload', $container),
+                new ODM\GetCommand('odm:get', $container),
+                new ODM\RemoveCommand('odm:remove', $container),
+                new ODM\UpdateCommand('odm:update', $container),
             ]
         );
     }
